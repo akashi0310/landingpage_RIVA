@@ -1,229 +1,113 @@
-# Landing Page RIVA Du Học
-
-Landing page giới thiệu chương trình du học của Viện RIVA.
-
-**Live URL:** https://akashi0310.github.io/landingpage_RIVA/
-**GitHub Repo:** https://github.com/akashi0310/landingpage_RIVA
+# RIVA GLOBAL — VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO
+> **Hệ Sinh Thái Số Toàn Diện V1**: Kết nối tài năng Việt Nam với đấu trường khoa học & sáng tạo quốc tế.  
+> Được thiết kế chuẩn hóa theo **ảnh `8.png`** và tài liệu **`HƯỚNG DẪN CHUNG VỀ THIẾT KẾ.docx`**.
 
 ---
 
-## Cấu trúc thư mục
+## 🌟 1. CÁC MÀN HÌNH CHÍNH (THEO ẢNH 8.PNG)
 
+Hệ thống tích hợp thanh điều hướng nhanh **RIVA DEMO NAVIGATOR** ở trên cùng, cho phép chuyển đổi 1-click giữa tất cả các màn hình:
+
+1. **Trang Chủ (Landing Page)** *(Ảnh 8.png - Trái)*:
+   - **Hero Section**: Tiêu đề *"ĐƯA TÀI NĂNG VIỆT NAM RA ĐẤU TRƯỜNG QUỐC TẾ"*, bản đồ số phát sáng (Digital World Map) với các tuyến kết nối thời gian thực từ Việt Nam tới Hoa Kỳ, Đức, Thụy Sĩ, Thái Lan.
+   - **Trust Section**: Mạng lưới đối tác quốc tế bảo trợ (IFIA, WIIPA, SVIIF, IPITEX, iENA, Geneva, WIPO).
+   - **Smart UX Finder**: Bộ lọc thông minh *"Bạn đang tìm cơ hội nào?"* (Đối tượng, Lĩnh vực, Quốc gia mong muốn).
+   - **Competitions Section (CMS-Driven)**: Card các cuộc thi đang mở (SVIIF 🇺🇸, IPITEX 🇹🇭, iENA 🇩🇪, Geneva 🇨🇭) với trạng thái 🟢 ĐANG MỞ, 🟡 SẮP MỞ.
+   - **Về RIVA (About RIVA)**: Phim tư liệu đoàn Việt Nam tại Silicon Valley, sứ mệnh & chương trình ươm mầm *RIVA Innovation Mentoring*.
+   - **Global Network & Stories**: Dấu ấn các đoàn học sinh Việt Nam trên các đấu trường thế giới.
+   - **Thành Tựu & Quy Trình 7 Bước**: Infographic số liệu lớn (18+ Quốc gia, 350+ Huy chương) & Timeline 7 bước từ ý tưởng đến nhận bằng khen quốc tế.
+   - **Bảng Vàng Thành Tích (Student Stories)**: Chân dung và đề tài của các thủ khoa đoạt Huy chương Vàng.
+   - **Tin tức & Sự kiện**: Cập nhật từ đấu trường quốc tế.
+   - **Final CTA & Lead Form**: Biểu mẫu đăng ký tư vấn trực tiếp lưu vào bảng `leads` của Supabase.
+
+2. **Chi Tiết Cuộc Thi — SVIIF 2027** *(Ảnh 8.png - Giữa trên)*:
+   - Quốc kỳ Hoa Kỳ 🇺🇸, địa điểm Thung lũng Silicon (Santa Clara, California), thời hạn nộp hồ sơ.
+   - Hệ thống tab chi tiết: **TỔNG QUAN**, **ĐIỀU KIỆN**, **LĨNH VỰC**, **HỒ SƠ**, **TIMELINE**, **CHI PHÍ**, **FAQ**.
+   - Nút nộp đơn trực tiếp.
+
+3. **Cổng Đăng Ký - Đăng Nhập** *(Ảnh 8.png - Phải trên)*:
+   - Modal xác thực mô phỏng `portal.riva.global`.
+   - Hỗ trợ Supabase Auth và tích hợp sẵn 2 nút tài khoản Demo 1-click (Thí sinh Demo / Admin Demo).
+
+4. **Dashboard Thí Sinh** *(Ảnh 8.png - Giữa dưới)*:
+   - Lời chào: *Xin chào, Nguyễn Văn A (THPT Chuyên Hà Nội - Amsterdam)*.
+   - Thống kê: 01 Cuộc thi, 02 Dự án, 01 Thông báo.
+   - Thẻ hồ sơ mới nhất SVIIF 2027 với tiến trình 4 giai đoạn xét duyệt.
+   - Biểu mẫu nộp thông tin thí sinh & đề tài nghiên cứu lưu trực tiếp vào bảng `applications` của Supabase.
+
+5. **Portal Quản Trị - Dashboard** *(Ảnh 8.png - Phải giữa)*:
+   - 4 Thẻ chỉ số: 12 Cuộc thi, 486 Tổng hồ sơ, 321 Đã duyệt, 87 Chờ xử lý.
+   - Biểu đồ xu hướng đăng ký hồ sơ theo tháng (Interactive Trend Chart).
+
+6. **Quản Lý Cuộc Thi & Xét Duyệt Hồ Sơ** *(Ảnh 8.png - Phải dưới)*:
+   - Bảng quản lý danh mục cuộc thi (Thêm mới, Xem, Xóa, Cập nhật trạng thái).
+   - Hàng chờ thẩm định hồ sơ thí sinh: Nút **[Duyệt 🟢]**, **[Từ chối 🔴]**.
+   - Chức năng **[Xuất Excel / CSV]** tải về danh sách hồ sơ thực tế.
+
+---
+
+## 🚀 2. CHẠY VÀ KIỂM THỬ LOCAL
+
+Máy chủ phát triển hiện đang khởi chạy tại:
 ```
-Landing_page_RIVA/
-├── index.html       # Toàn bộ landing page (HTML + CSS + JS trong 1 file)
-├── LOGO RIVA.png    # Logo chính thức của RIVA (dùng trong navbar, hero, footer)
-└── README.md        # File hướng dẫn này
-```
-
-> Tất cả CSS và JavaScript đều nằm trong `index.html` — không cần cài thêm thư viện hay build tool nào.
-
----
-
-## Các section trong landing page
-
-| Section | Mô tả | Tìm trong file bằng từ khóa |
-|---|---|---|
-| Navbar | Menu điều hướng + logo | `<nav class="navbar"` |
-| Hero | Banner đầu trang + stats | `<section class="hero"` |
-| Giới thiệu | 2 cột giới thiệu RIVA | `id="gioi-thieu"` |
-| Điểm nổi bật | 6 thẻ USP | `id="diem-noi-bat"` |
-| Chương trình | 4 thẻ chương trình + bộ lọc | `id="chuong-trinh"` |
-| Đối tượng | 3 thẻ glassmorphism | `id="doi-tuong"` |
-| Lịch trình | Timeline 7 bước | `id="lich-trinh"` |
-| Chi phí | 5 thẻ theo quốc gia | `id="chi-phi"` |
-| FAQ | 8 câu hỏi accordion | `id="faq"` |
-| Form đăng ký | Form liên hệ + validation | `id="dang-ky"` |
-| CTA cuối | Kêu gọi hành động | `class="final-cta"` |
-| Footer | Thông tin liên hệ | `<footer` |
-
----
-
-## Cách chỉnh sửa nội dung
-
-Mở `index.html` bằng VS Code (hoặc Notepad++), dùng **Ctrl+F** để tìm từ khóa bên dưới và thay thế nội dung thực tế.
-
-### Danh sách placeholder cần điền
-
-| Placeholder | Ý nghĩa | Tìm bằng |
-|---|---|---|
-| `(+84) xxx xxx xxx` | Số điện thoại RIVA | `(+84)` |
-| `info@riva.edu.vn` | Email liên hệ | `info@riva` |
-| `123 Đường ABC, Quận X, TP.HCM` | Địa chỉ văn phòng | `123 Đường ABC` |
-| `RIVA Education` | Tên đầy đủ (footer) | `RIVA Education` |
-| Nội dung giới thiệu | Đoạn văn giới thiệu RIVA | `id="gioi-thieu"` |
-| Nội dung chương trình | Tên & mô tả 4 chương trình | `id="chuong-trinh"` |
-| Chi phí cụ thể | Số tiền từng quốc gia | `id="chi-phi"` |
-| Câu hỏi FAQ | 8 Q&A thực tế | `id="faq"` |
-| Link mạng xã hội | Facebook, Zalo, Instagram | `fa-facebook`, `fa-tiktok` |
-
-### Thay số điện thoại trong form validation
-
-Tìm dòng sau trong `<script>`:
-```js
-const phoneRegex = /^(0|\+84)[0-9]{9}$/;
-```
-Regex này chấp nhận số VN 10 chữ số bắt đầu bằng `0` hoặc `+84`. Không cần sửa trừ khi muốn thay đổi format.
-
----
-
-## Cách thay đổi logo
-
-1. Thay file `LOGO RIVA.png` bằng logo mới (giữ nguyên tên file)
-2. Hoặc sửa đường dẫn trong HTML — tìm tất cả `LOGO RIVA.png`:
-   ```
-   Ctrl+F → "LOGO RIVA.png"
-   ```
-   Có 3 chỗ: navbar, hero, footer.
-
-**Lưu ý logo trên nền tối:** Footer và một số nơi dùng CSS filter để logo hiển thị màu trắng:
-```css
-filter: brightness(0) invert(1);
-```
-Nếu logo mới đã có màu trắng sẵn, xóa dòng filter đó đi.
-
----
-
-## Cách thay đổi màu sắc
-
-Mở `index.html`, tìm phần `:root` ở đầu `<style>`:
-
-```css
-:root {
-  --primary: #4f46e5;    /* Tím indigo — màu chính */
-  --accent: #10b981;     /* Xanh lá — màu nhấn */
-  --dark-bg: #0f172a;    /* Nền tối */
-  --card-bg: #1e293b;    /* Nền card */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-}
+http://localhost:3000/
 ```
 
-Chỉ cần đổi giá trị hex là toàn bộ trang thay đổi theo.
-
----
-
-## Cách cập nhật và push lên GitHub
-
-### Lần đầu (đã làm)
-
-Repo đã được tạo và push. Không cần lặp lại bước này.
-
-### Khi cần cập nhật nội dung
-
-Mỗi khi sửa `index.html` hoặc thêm file mới, chạy các lệnh sau trong terminal (Git Bash hoặc PowerShell):
-
+Nếu muốn chạy thủ công:
 ```bash
-# 1. Vào thư mục dự án
-cd "C:/Users/lapla/OneDrive/Desktop/Đi làm/Những công việc phải làm/10-8 till 17-8/Landing_page_RIVA"
+# Cài đặt thư viện
+npm install
 
-# 2. Kiểm tra những file đã thay đổi
-git status
+# Khởi chạy dev server
+npm run dev
 
-# 3. Thêm file vào staging
-git add index.html
-# Hoặc thêm tất cả:
-git add .
-
-# 4. Commit với mô tả
-git commit -m "cập nhật nội dung section chi phí"
-
-# 5. Push lên GitHub
-git push
-```
-
-### Nếu git push bị lỗi xác thực (authentication)
-
-Tạo Personal Access Token mới trên GitHub:
-1. Vào https://github.com/settings/tokens/new
-2. Đặt tên token, chọn **No expiration**
-3. Tích vào **repo** (Full control of private repositories)
-4. Nhấn **Generate token** → copy token (chỉ hiện 1 lần)
-
-Sau đó push với token trong URL:
-```bash
-git push https://akashi0310:TOKEN_CUA_BAN@github.com/akashi0310/landingpage_RIVA.git main
-```
-Thay `TOKEN_CUA_BAN` bằng token vừa copy.
-
----
-
-## Bật/tắt GitHub Pages
-
-GitHub Pages đã được bật. Sau mỗi lần push, trang sẽ tự cập nhật sau khoảng **1–2 phút**.
-
-Nếu cần bật lại:
-1. Vào https://github.com/akashi0310/landingpage_RIVA/settings/pages
-2. **Source**: Deploy from a branch
-3. **Branch**: main / (root)
-4. Nhấn **Save**
-
----
-
-## Troubleshooting
-
-### Trang không cập nhật sau khi push
-
-- Chờ 1–2 phút rồi hard refresh: **Ctrl+Shift+R**
-- Kiểm tra tab **Actions** trên GitHub để xem deployment có lỗi không
-
-### Logo không hiển thị
-
-- Đảm bảo file `LOGO RIVA.png` nằm **cùng thư mục** với `index.html`
-- Tên file phân biệt chữ hoa/thường — phải đúng là `LOGO RIVA.png`
-
-### Form gửi không hoạt động
-
-Form hiện tại chỉ có frontend validation và hiển thị toast "Đăng ký thành công". Để nhận email thực sự, cần tích hợp backend hoặc dùng dịch vụ như:
-- [Formspree](https://formspree.io/) — miễn phí, chỉ cần thêm `action="https://formspree.io/f/YOUR_ID"` vào `<form>`
-- [EmailJS](https://www.emailjs.com/) — gửi email từ JavaScript
-
-### Lỗi UnicodeEncodeError khi chạy Python script
-
-Nếu chạy `gen_word_v2.py` trên Windows và gặp lỗi encoding:
-```
-UnicodeEncodeError: 'cp1252' codec can't encode character
-```
-Thêm vào đầu script:
-```python
-import sys, io
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# Kiểm tra build sản phẩm
+npm run build
 ```
 
 ---
 
-## Checklist nội dung cần hoàn thiện
+## 🗄️ 3. KẾT NỐI SUPABASE
 
-- [ ] Điền số điện thoại thực tế (tìm `(+84) xxx xxx xxx`)
-- [ ] Điền email liên hệ (tìm `info@riva.edu.vn`)
-- [ ] Điền địa chỉ văn phòng (tìm `123 Đường ABC`)
-- [ ] Viết đoạn giới thiệu RIVA thực tế (section `id="gioi-thieu"`)
-- [ ] Cập nhật tên và mô tả 4 chương trình du học
-- [ ] Điền chi phí cụ thể cho từng quốc gia
-- [ ] Viết 8 câu hỏi FAQ thực tế
-- [ ] Thêm link Facebook, Zalo, Instagram của RIVA
-- [ ] Kiểm tra và cập nhật stats ở Hero (số học sinh, đối tác, năm kinh nghiệm)
-- [ ] Cân nhắc tích hợp form gửi email (Formspree hoặc EmailJS)
+Toàn bộ cấu trúc cơ sở dữ liệu đã được viết sẵn trong file [`supabase/schema.sql`](file:///c:/Users/lapla/Desktop/Đi%20làm/Những%20công%20việc%20phải%20làm/Việc%20phụ/cô%20Hà/2026-10-8/Landing%20page%20NCKH/supabase/schema.sql):
 
----
+### Các bảng dữ liệu:
+- `competitions`: Danh sách và thông số các cuộc thi quốc tế.
+- `leads`: Hồ sơ tư vấn từ form Landing Page.
+- `applications`: Hồ sơ dự thi và đề tài của thí sinh nộp qua Portal.
+- `achievements`: Bảng vàng thành tích học sinh tiêu biểu.
 
-## Các file liên quan khác
-
-| File | Mô tả | Vị trí |
-|---|---|---|
-| `landing_du_hoc.html` | Bản gốc landing page (trước khi copy vào repo) | `10-8 till 17-8/` |
-| `DAN_Y_AN_PHAM_DU_HOC_RIVA.docx` | Dàn ý chi tiết các đầu việc ấn phẩm du học | `10-8 till 17-8/` |
-| `gen_word_v2.py` | Script Python tạo file Word từ Excel | `C:/Users/lapla/` |
-| `CHECKLIST ẤN PHẨM DU HỌC.xlsx` | File Excel gốc chứa danh sách đầu việc | `RIVA_theo_tuan/Excel_file/` |
+### Các bước kích hoạt Supabase thật:
+1. Đăng nhập vào [Supabase Console](https://app.supabase.com) và tạo một Project mới.
+2. Mở mục **SQL Editor** trong dự án Supabase, copy toàn bộ nội dung từ file `supabase/schema.sql` và bấm **Run**.
+3. Lấy thông tin **Project URL** và **Anon Public Key** từ mục *Project Settings > API*.
+4. Mở file `.env` (hoặc copy từ `.env.example`) và điền:
+   ```env
+   VITE_SUPABASE_URL=https://your-project-id.supabase.co
+   VITE_SUPABASE_ANON_KEY=your-anon-public-key-here
+   ```
+5. Khi không có file `.env` hoặc đang kiểm thử nội bộ, ứng dụng tự động chạy ở chế độ **Local Storage Reactive Fallback**, bảo đảm kiểm thử 100% tính năng mà không bị lỗi.
 
 ---
 
-## Links hữu ích
+## ☁️ 4. DEPLOY LÊN VERCEL
 
-- **Live landing page:** https://akashi0310.github.io/landingpage_RIVA/
-- **GitHub repo:** https://github.com/akashi0310/landingpage_RIVA
-- **GitHub Pages settings:** https://github.com/akashi0310/landingpage_RIVA/settings/pages
-- **Tạo Personal Access Token:** https://github.com/settings/tokens/new
-- **Trang theo tuần (nguồn tham khảo):** https://akashi0310.github.io/RIVA_theo_tuan/
-- **Font Plus Jakarta Sans:** https://fonts.google.com/specimen/Plus+Jakarta+Sans
-- **Font Awesome icons:** https://fontawesome.com/icons
+Dự án đã có sẵn file [`vercel.json`](file:///c:/Users/lapla/Desktop/Đi%20làm/Những%20công%20việc%20phải%20làm/Việc%20phụ/cô%20Hà/2026-10-8/Landing%20page%20NCKH/vercel.json) với cấu hình tiêu chuẩn:
+
+1. Đẩy mã nguồn lên kho chứa GitHub / GitLab.
+2. Truy cập [Vercel Dashboard](https://vercel.com) > **Add New Project** > Chọn kho chứa.
+3. Framework Preset: **Vite** (Build Command: `npm run build`, Output Directory: `dist`).
+4. Trong phần **Environment Variables**, thêm 2 biến:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+5. Bấm **Deploy**. Vercel sẽ tự động build và xuất bản trang web với tên miền toàn cầu.
+
+---
+
+## 🎨 5. DESIGN SYSTEM SPECIFICATIONS
+- **Phong cách**: Institutional (Trang trọng, uy tín), International (Quốc tế), Technology (Công nghệ hiện đại).
+- **Màu chủ đạo**:
+  - Deep Space / Navy đậm: `#030A17`, `#071A3A`, `#0C234B`
+  - Vàng Gold (CTA, Huy chương, Số liệu): `#C9A227`, `#EEC94D`
+  - Xanh Công nghệ: `#146EF5`, `#60A5FA`
+- **Typography**: Google Fonts `Plus Jakarta Sans` & `Inter`.

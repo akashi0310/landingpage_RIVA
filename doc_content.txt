@@ -1,0 +1,131 @@
+HƯỚNG DẪN CHUNG VỀ THIẾT KẾ (DESIGN SYSTEM)
+Phong cách: Institutional (Trang trọng, uy tín), International (Quốc tế), Technology (Hiện đại, công nghệ).
+Màu sắc:
+Nền: Navy đậm (#071A3A) hoặc Trắng sạch (#FFFFFF).
+Chữ: Trắng (trên nền tối) hoặc Xám đậm (#0B1220 - trên nền sáng).
+Nhấn mạnh (CTA, số liệu): Vàng Gold (#C9A227) và Xanh dương (#146EF5).
+Font chữ: Inter / Plus Jakarta Sans (Hiện đại, dễ đọc).
+Hình ảnh: Sử dụng ảnh thật chất lượng cao (HD) của học sinh Việt Nam, sân khấu quốc tế, huy chương, lễ trao giải, bản đồ số. Hạn chế tối đa ảnh stock sáo rỗng.
+CẤU TRÚC NỘI DUNG 15 SLIDE
+SLIDE 1: TIÊU ĐỀ
+Bố cục: Căn giữa, nền Navy đậm.
+Nội dung:
+Logo RIVA (Vector trắng/vàng).
+Dòng chữ lớn: R I V A
+Dòng phụ: VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO
+Tiêu đề chính: HỆ SINH THÁI SỐ TOÀN DIỆN V1
+Dòng cuối: Kết nối tài năng Việt Nam với đấu trường khoa học & sáng tạo quốc tế
+SLIDE 2: GIỚI THIỆU CHUNG & ĐỊNH VỊ
+Bố cục: Chia 2 cột (Trái: Text, Phải: Visual).
+Nội dung:
+Tiêu đề: VỀ RIVA
+Headline: KHÔNG CHỈ LÀ TỔ CHỨC THI, MÀ LÀ CẦU NỐI QUỐC TẾ
+Ý chính:
+Sứ mệnh: Đưa trí tuệ Việt Nam ra thế giới.
+Tầm nhìn: Trở thành đơn vị dẫn đầu trong việc kết nối các sân chơi Sáng tạo, STEM, Nghiên cứu khoa học quốc tế uy tín.
+Visual: Ảnh một nhóm học sinh Việt Nam đang tự hào cầm cờ Tổ quốc tại một cuộc thi sáng tạo lớn ở nước ngoài (ví dụ: SVIIF - USA).
+SLIDE 3: KIẾN TRÚC TỔNG THỂ (BIG PICTURE)
+Bố cục: Sơ đồ khối (Organizational Chart) đẹp mắt.
+Nội dung:
+Tiêu đề: KIẾN TRÚC HỆ THỐNG RIVA
+Trung tâm: RIVA GLOBAL PLATFORM
+3 nhánh lớn tỏa ra:
+WEBSITE PUBLIC: (Thương hiệu & Thông tin)
+PORTAL THÍ SINH: (Tuyển sinh & Quản lý hồ sơ)
+ADMIN QUẢN TRỊ: (Vận hành hệ thống & CMS)
+Nhấn mạnh sự đồng bộ và kết nối dữ liệu.
+SLIDE 4: GIAO DIỆN PUBLIC WEBSITE — HERO SECTION
+Bố cục: Mô phỏng giao diện web (gọn gàng, hiện đại).
+Nội dung:
+Mô phỏng Header với các menu (Giới thiệu, Cuộc thi, Vinh danh...) và 2 nút CTA nổi bật (Đăng ký/Đăng nhập).
+Headline lớn: ĐƯA TÀI NĂNG VIỆT NAM RA ĐẤU TRƯỜNG QUỐC TẾ
+Visual nền: Đồ họa bản đồ thế giới với các đường kết nối kỹ thuật số từ Việt Nam đến các trung tâm sáng tạo (USA, EU, Asia).
+2 nút CTA chính: [KHÁM PHÁ CUỘC THI] và [ĐĂNG KÝ THAM GIA →].
+SLIDE 5: CHIẾN LƯỢC TRUST & UY TÍN QUỐC TẾ
+Bố cục: Dạng lưới Logo (Logo Grid).
+Nội dung:
+Tiêu đề: MẠNG LƯỚI TOÀN CẦU
+Headline: ĐỐI TÁC & SỰ CÔNG NHẬN QUỐC TẾ
+Hiển thị logo các tổ chức lớn (IFIA, WIIPA...), các cuộc thi danh giá (SVIIF, IPITEX, iENA, Geneva...), và các đối tác chiến lược trong nước.
+Phần này khẳng định vị thế pháp lý và uy tín của RIVA.
+SLIDE 6: CÔNG CỤ TÌM KIẾM CƠ HỘI THÔNG MINH (UX FOCUS)
+Bố cục: Mô phỏng giao diện tương tác "Filter".
+Nội dung:
+Tiêu đề: TRẢI NGHIỆM NGƯỜI DÙNG (UX) TỐI ƯU
+Câu hỏi lớn: BẠN ĐANG TÌM CƠ HỘI NÀO?
+Hiển thị 2 bước chọn:
+Bạn là? (Học sinh, Sinh viên, Phụ huynh...)
+Bạn quan tâm? (Khoa học, AI, Môi trường...)
+Nút kết quả: [TÌM CƠ HỘI PHÙ HỢP →]
+Giải quyết bài toán cá nhân hóa, chuyển đổi người dùng tốt hơn Landing page thường.
+SLIDE 7: DANH SÁCH CÁC CUỘC THI ĐANG MỞ (CMS-DRIVEN)
+Bố cục: Dạng lưới các Card (Card Grid).
+Nội dung:
+Tiêu đề: CƠ HỘI ĐANG MỞ
+Hiển thị 3 Card mẫu (ví dụ: SVIIF USA, IPITEX Thái Lan, iENA Đức).
+Mỗi Card có: Cờ nước, Tên cuộc thi, Logo cuộc thi, Thời gian, Deadline đăng ký, Trạng thái 🟢 ĐANG MỞ.
+Nút CTA: [XEM CHI TIẾT] [ĐĂNG KÝ →].
+Nhấn mạnh dữ liệu được quản lý từ CMS, dễ dàng cập nhật.
+SLIDE 8: DỊCH VỤ ĐÀO TẠO: CHƯƠNG TRÌNH RIVA
+Bố cục: Chia 2 cột so sánh hoặc 2 khối nội dung song song.
+Nội dung:
+Tiêu đề: ƯƠM MẦM SÁNG TẠO
+Headline: KHÔNG CHỈ TUYỂN THÍ SINH, MÀ CÒN ĐÀO TẠO NHÀ SÁNG TẠO
+Ví dụ các chương trình: RIVA Innovation Program, STEM Research, Mentoring...
+Mỗi chương trình có 1 Card giới thiệu ngắn gọn.
+Phân tách rõ ràng giữa "Cuộc thi" (Tranh tài) và "Chương trình" (Đào tạo).
+SLIDE 9: VINH DANH TÀI NĂNG VIỆT (SOCIAL PROOF)
+Bố cục: Dạng lưới ảnh chân dung (Portrait Grid).
+Nội dung:
+Tiêu đề: GƯƠNG MẶT TIÊU BIỂU - BẢNG VÀNG THÀNH TÍCH
+Hiển thị ảnh chân dung 4-6 học sinh, sinh viên xuất sắc nhất đã đạt giải.
+Dưới mỗi ảnh: Tên, Huy chương (🥇Gold, 🥈Silver), Tên cuộc thi (SVIIF, IPITEX...).
+CTA: [XEM TẤT CẢ GƯƠNG MẶT →].
+Chìa khóa để thuyết phục phụ huynh và học sinh.
+SLIDE 10: HỆ THỐNG THÀNH TỰU & BÁO CÁO DỮ LIỆU LỚN
+Bố cục: Infographic số liệu lớn & Biểu đồ.
+Nội dung:
+Tiêu đề: THÀNH TỰU RIVA
+Headline: TẦM VÓC QUỐC GIA TRÊN BẢN ĐỒ SÁNG TẠO
+Hiển thị các con số ấn tượng (màu Gold): XX+ Quốc gia, XX+ Cuộc thi, XXX+ Dự án, XXX+ Giải thưởng, XX+ Đoàn Việt Nam tham dự.
+Biểu đồ nhỏ thể hiện sự tăng trưởng số lượng hồ sơ qua các năm.
+SLIDE 11: QUY TRÌNH THAM GIA 7 BƯỚC (TỪ A-Z)
+Bố cục: Timeline ngang hoặc dọc (sạch sẽ).
+Nội dung:
+Tiêu đề: QUY TRÌNH THAM DỰ TINH GỌN & CHUYÊN NGHIỆP
+TẠO TÀI KHOẢN (RIVA ID)
+CHỌN CUỘC THI
+TẠO HỒ SƠ DỰ ÁN
+NỘP HỒ SƠ & THANH TOÁN
+RIVA XÉT DUYỆT
+THAM GIA QUỐC TẾ
+NHẬN KẾT QUẢ & CHỨNG NHẬN
+CTA: [BẮT ĐẦU ĐĂNG KÝ →].
+SLIDE 12: CỔNG THÍ SINH (PORTAL) & FUNNEL TUYỂN SINH
+Bố cục: Sơ đồ phễu (Funnel Chart).
+Nội dung:
+Tiêu đề: PHỄU TUYỂN SINH KHÉP KÍN
+Thể hiện luồng đi: Social Media/Google -> Homepage -> Tìm cơ hội -> Lead Form (Tư vấn) -> Đăng ký Portal -> Nộp hồ sơ -> Xét duyệt -> Tham gia -> Vinh danh -> Social Proof (vòng lặp).
+Nhấn mạnh việc thu thập dữ liệu (Lead) và quy trình xét duyệt minh bạch.
+SLIDE 13: HỆ THỐNG QUẢN TRỊ RIVA ADMIN
+Bố cục: Mô phỏng giao diện Dashboard Admin (Light Admin Theme).
+Nội dung:
+Tiêu đề: RIVA ADMIN: QUYỀN NĂNG QUẢN TRỊ
+Hiển thị các thẻ thống kê (Widget): Tổng hồ sơ, Chờ duyệt, Đã duyệt, Doanh thu.
+Biểu đồ đường hiển thị xu hướng đăng ký theo tháng.
+Demo một phần bảng danh sách hồ sơ chờ duyệt với các action button (Duyệt/Từ chối).
+Thể hiện sự chuyên nghiệp, hiện đại của bộ máy vận hành.
+SLIDE 14: CÔNG NGHỆ & BẢO MẬT
+Bố cục: Sơ đồ kiến trúc công nghệ (Tech Stack).
+Nội dung:
+Tiêu đề: NỀN TẢNG CÔNG NGHỆ VỮNG CHẮC
+Hiển thị logo các công nghệ cốt lõi: Next.js (Frontend), NestJS/Laravel (Backend), PostgreSQL (Database), Object Storage (Media).
+Nhấn mạnh: Bảo mật, Tốc độ cao, Khả năng mở rộng (Scalable).
+Yếu tố quan trọng để thuyết phục đối tác về sự ổn định của hệ thống.
+SLIDE 15: FINAL CTA & THÔNG TIN LIÊN HỆ
+Bố cục: Nền Navy đậm, căn giữa (Trang trọng).
+Nội dung:
+Headline lớn: SẴN SÀNG ĐƯA Ý TƯỞNG CỦA BẠN RA THẾ GIỚI?
+Dòng phụ: Hãy đồng hành cùng RIVA để viết tiếp câu chuyện thành công của trí tuệ Việt Nam.
+Nút CTA lớn (Gold): [ĐĂNG KÝ THAM GIA NGAY] hoặc [NHẬN TƯ VẤN]
+Footer: Logo RIVA | riva.global | Email | Hotline | Địa chỉ.
