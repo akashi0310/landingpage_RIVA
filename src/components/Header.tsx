@@ -118,7 +118,7 @@ export const Header: React.FC<HeaderProps> = ({
               justifyContent: 'center'
             }}>
               <img
-                src="/logo-riva.png"
+                src={`${import.meta.env.BASE_URL}logo-riva.png`}
                 alt="Logo RIVA"
                 style={{
                   width: '100%',

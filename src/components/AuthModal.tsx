@@ -110,7 +110,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
             marginBottom: '10px'
           }}>
             <img 
-              src="/logo-riva.png" 
+              src={`${import.meta.env.BASE_URL}logo-riva.png`}
               alt="Logo RIVA" 
               style={{
                 width: '100%',

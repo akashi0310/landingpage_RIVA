@@ -132,7 +132,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) 
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <img 
-                src="/logo-riva.png" 
+                src={`${import.meta.env.BASE_URL}logo-riva.png`}
                 alt="Logo RIVA" 
                 style={{ width: '40px', height: '40px', objectFit: 'contain' }}
               />
