@@ -22,10 +22,10 @@ export const AchievementsAndProcess: React.FC<AchievementsAndProcessProps> = ({
   onStartProcess
 }) => {
   const steps = [
-    { num: '01', title: 'Tạo tài khoản', subtitle: 'RIVA ID cá nhân', desc: 'Đăng ký nhanh tài khoản bảo mật để quản lý đề tài', icon: Compass },
+    { num: '01', title: 'Đăng ký tư vấn', subtitle: 'Thông tin liên hệ', desc: 'Để lại thông tin để RIVA liên hệ và tìm hiểu nhu cầu', icon: Compass },
     { num: '02', title: 'Chọn cuộc thi', subtitle: 'Mỹ, Đức, Thụy Sĩ...', desc: 'Lựa chọn đấu trường phù hợp độ tuổi & chuyên ngành', icon: FolderPlus },
     { num: '03', title: 'Tạo hồ sơ dự án', subtitle: 'Ý tưởng & Đề tài', desc: 'Khai báo tên đề tài, tóm tắt và mô hình nghiên cứu', icon: FileCheck },
-    { num: '04', title: 'Nộp hồ sơ sơ tuyển', subtitle: 'Thẩm định hồ sơ', desc: 'Nộp đơn trực tuyến qua cổng điện tử RIVA Portal', icon: Send },
+    { num: '04', title: 'Nộp hồ sơ sơ tuyển', subtitle: 'Thẩm định hồ sơ', desc: 'Chuyên viên hướng dẫn chuẩn bị và gửi hồ sơ sơ tuyển', icon: Send },
     { num: '05', title: 'RIVA Cố vấn', subtitle: 'Nâng cấp Poster & Video', desc: 'Hội đồng chuyên gia tập huấn kỹ năng thuyết trình', icon: UserCheck2 },
     { num: '06', title: 'Tranh tài quốc tế', subtitle: 'On-site hoặc Hybrid', desc: 'Tham gia triển lãm, chấm thi trước ban giám khảo thế giới', icon: Plane },
     { num: '07', title: 'Vinh danh & Trao giải', subtitle: 'Huy chương & Chứng nhận', desc: 'Nhận bằng khen quốc tế, mở rộng cơ hội học bổng', icon: GraduationCap }

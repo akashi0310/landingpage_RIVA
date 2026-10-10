@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Send, CheckCircle2, Sparkles, Phone, Mail, MapPin, ShieldCheck, HeartHandshake } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { api } from '../lib/supabase';
+import { isLeadFormConfigured, submitLead } from '../lib/leads';
 import { Lead } from '../types';
 
-export const LeadConsultationForm: React.FC = () => {
+export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = ({ selectedCompetition }) => {
   const [formData, setFormData] = useState<Lead>({
     full_name: '',
     email: '',
@@ -12,19 +12,39 @@ export const LeadConsultationForm: React.FC = () => {
     role: 'student',
     school: '',
     interest_competition: 'SVIIF (Hoa Kỳ)',
-    interest_field: 'AI & Khoa học máy tính',
+    interest_field: '',
     message: ''
   });
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [website, setWebsite] = useState('');
+  const request = useRef({ id: '', payload: '' });
+  const submitting = useRef(false);
+
+  useEffect(() => {
+    const names: Record<string, string> = { SVIIF: 'SVIIF (Hoa Kỳ)', IPITEX: 'IPITEX (Thái Lan)', IENA: 'iENA (Đức)', GENEVA: 'Geneva (Thụy Sĩ)' };
+    if (selectedCompetition && names[selectedCompetition]) {
+      setFormData(data => ({ ...data, interest_competition: names[selectedCompetition] }));
+      setSuccess(false);
+    }
+  }, [selectedCompetition]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting.current) return;
+    submitting.current = true;
     setLoading(true);
+    setError('');
 
     try {
-      await api.submitLead(formData);
+      const payload = JSON.stringify(formData);
+      if (!request.current.id || request.current.payload !== payload) {
+        request.current = { id: crypto.randomUUID(), payload };
+      }
+      await submitLead(formData, request.current.id, website);
+      request.current = { id: '', payload: '' };
       setSuccess(true);
       confetti({
         particleCount: 80,
@@ -39,13 +59,14 @@ export const LeadConsultationForm: React.FC = () => {
         role: 'student',
         school: '',
         interest_competition: 'SVIIF (Hoa Kỳ)',
-        interest_field: 'AI & Khoa học máy tính',
+        interest_field: '',
         message: ''
       });
     } catch (err) {
-      alert('Có lỗi xảy ra khi gửi thông tin. Vui lòng thử lại!');
+      setError(err instanceof Error ? err.message : 'Có lỗi xảy ra khi gửi thông tin. Vui lòng thử lại!');
     } finally {
       setLoading(false);
+      submitting.current = false;
     }
   };
 
@@ -63,7 +84,7 @@ export const LeadConsultationForm: React.FC = () => {
             <div>
               <div className="badge badge-gold" style={{ marginBottom: '16px' }}>
                 <Sparkles size={14} />
-                FINAL CTA & TƯ VẤN 1-ON-1
+                ĐĂNG KÝ TƯ VẤN
               </div>
               <h2 className="section-title" style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 900, marginBottom: '20px' }}>
                 SẴN SÀNG ĐƯA Ý TƯỞNG CỦA BẠN RA THẾ GIỚI?
@@ -133,7 +154,7 @@ export const LeadConsultationForm: React.FC = () => {
                   <CheckCircle2 size={42} color="var(--color-success)" style={{ margin: '0 auto 12px' }} />
                   <h4 style={{ fontSize: '18px', color: 'white', marginBottom: '8px' }}>Gửi thông tin thành công!</h4>
                   <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', lineHeight: 1.6, marginBottom: '16px' }}>
-                    Hội đồng RIVA đã tiếp nhận yêu cầu tư vấn. Chúng tôi sẽ liên hệ lại qua điện thoại / email trong vòng 24 giờ.
+                    RIVA đã nhận được thông tin và sẽ liên hệ qua điện thoại hoặc email bạn cung cấp.
                   </p>
                   <button 
                     className="btn btn-sm btn-outline" 
@@ -144,10 +165,16 @@ export const LeadConsultationForm: React.FC = () => {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit}>
+                  {!isLeadFormConfigured && <p role="status" style={{ color: 'var(--color-gold-bright)', marginBottom: '16px' }}>Form tư vấn đang được thiết lập. Vui lòng quay lại sau để gửi thông tin.</p>}
+                  {error && <p role="alert" style={{ color: '#fca5a5', marginBottom: '16px' }}>{error}</p>}
+                  <div className="form-honeypot" aria-hidden="true">
+                    <label>Website<input name="website" tabIndex={-1} autoComplete="off" value={website} onChange={e => setWebsite(e.target.value)} /></label>
+                  </div>
                   <div className="grid-2" style={{ gap: '14px' }}>
                     <div className="form-group" style={{ marginBottom: '12px' }}>
-                      <label className="form-label">Họ và tên thí sinh *</label>
+                      <label className="form-label" htmlFor="lead-name">Họ và tên người liên hệ *</label>
                       <input 
+                        id="lead-name" autoComplete="name" maxLength={120}
                         type="text" 
                         required
                         className="form-input" 
@@ -158,8 +185,9 @@ export const LeadConsultationForm: React.FC = () => {
                     </div>
 
                     <div className="form-group" style={{ marginBottom: '12px' }}>
-                      <label className="form-label">Số điện thoại / Zalo *</label>
+                      <label className="form-label" htmlFor="lead-phone">Số điện thoại / Zalo *</label>
                       <input 
+                        id="lead-phone" autoComplete="tel" maxLength={30} pattern="[+0-9() .-]{8,30}"
                         type="tel" 
                         required
                         className="form-input" 
@@ -172,8 +200,9 @@ export const LeadConsultationForm: React.FC = () => {
 
                   <div className="grid-2" style={{ gap: '14px' }}>
                     <div className="form-group" style={{ marginBottom: '12px' }}>
-                      <label className="form-label">Email liên hệ *</label>
+                      <label className="form-label" htmlFor="lead-email">Email liên hệ *</label>
                       <input 
+                        id="lead-email" autoComplete="email" maxLength={254}
                         type="email" 
                         required
                         className="form-input" 
@@ -184,8 +213,9 @@ export const LeadConsultationForm: React.FC = () => {
                     </div>
 
                     <div className="form-group" style={{ marginBottom: '12px' }}>
-                      <label className="form-label">Bạn là?</label>
+                      <label className="form-label" htmlFor="lead-role">Bạn là?</label>
                       <select 
+                        id="lead-role"
                         className="form-select"
                         value={formData.role}
                         onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
@@ -199,8 +229,9 @@ export const LeadConsultationForm: React.FC = () => {
 
                   <div className="grid-2" style={{ gap: '14px' }}>
                     <div className="form-group" style={{ marginBottom: '12px' }}>
-                      <label className="form-label">Trường học / Lớp</label>
+                      <label className="form-label" htmlFor="lead-school">Trường học / Lớp</label>
                       <input 
+                        id="lead-school" maxLength={200}
                         type="text" 
                         className="form-input" 
                         placeholder="Ví dụ: THPT Chuyên KHTN, Lớp 11"
@@ -210,8 +241,9 @@ export const LeadConsultationForm: React.FC = () => {
                     </div>
 
                     <div className="form-group" style={{ marginBottom: '12px' }}>
-                      <label className="form-label">Cuộc thi quan tâm</label>
+                      <label className="form-label" htmlFor="lead-competition">Cuộc thi quan tâm</label>
                       <select 
+                        id="lead-competition"
                         className="form-select"
                         value={formData.interest_competition}
                         onChange={(e) => setFormData({ ...formData, interest_competition: e.target.value })}
@@ -226,8 +258,9 @@ export const LeadConsultationForm: React.FC = () => {
                   </div>
 
                   <div className="form-group" style={{ marginBottom: '16px' }}>
-                    <label className="form-label">Tóm tắt ý tưởng nghiên cứu / Câu hỏi của bạn</label>
+                    <label className="form-label" htmlFor="lead-message">Tóm tắt ý tưởng nghiên cứu / Câu hỏi của bạn</label>
                     <textarea 
+                      id="lead-message" maxLength={3000}
                       className="form-textarea"
                       rows={3}
                       placeholder="Mô tả ngắn gọn hướng đề tài hoặc những khó khăn bạn đang gặp phải..."
@@ -240,14 +273,14 @@ export const LeadConsultationForm: React.FC = () => {
                     type="submit" 
                     className="btn btn-gold" 
                     style={{ width: '100%', padding: '14px' }}
-                    disabled={loading}
+                    disabled={loading || !isLeadFormConfigured}
                   >
                     <Send size={16} />
                     <span>{loading ? 'Đang gửi dữ liệu...' : 'GỬI ĐĂNG KÝ TƯ VẤN NGAY'}</span>
                   </button>
 
                   <div style={{ textAlign: 'center', marginTop: '12px', fontSize: '11px', color: 'var(--color-text-dim)' }}>
-                    🔒 Dữ liệu được bảo mật an toàn trên hệ thống máy chủ RIVA.
+                    Khi gửi, bạn đồng ý để RIVA liên hệ tư vấn qua thông tin đã cung cấp.
                   </div>
                 </form>
               )}

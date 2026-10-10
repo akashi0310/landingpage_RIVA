@@ -1,3 +1,4 @@
+> **Phiên bản hiện tại:** Landing page quảng cáo và đăng ký tư vấn, không có đăng nhập, portal thí sinh/quản trị hay thanh toán. Form đang chờ kết nối Google Sheets. Xem [GOOGLE-SHEETS-SETUP.md](GOOGLE-SHEETS-SETUP.md) và [DEPLOY-GITHUB-PAGES.md](DEPLOY-GITHUB-PAGES.md). Các mô tả portal/Supabase bên dưới là tài liệu của bản demo cũ.
 # RIVA GLOBAL — VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO
 > **Hệ Sinh Thái Số Toàn Diện V1**: Kết nối tài năng Việt Nam với đấu trường khoa học & sáng tạo quốc tế.  
 > Được thiết kế chuẩn hóa theo **ảnh `8.png`** và tài liệu **`HƯỚNG DẪN CHUNG VỀ THIẾT KẾ.docx`**.

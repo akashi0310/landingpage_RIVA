@@ -59,7 +59,7 @@ export const Hero: React.FC<HeroProps> = ({
             className="btn btn-lg btn-primary"
             onClick={onRegisterClick}
           >
-            <span>ĐĂNG KÝ THAM GIA</span>
+            <span>ĐĂNG KÝ TƯ VẤN</span>
             <ArrowRight size={18} />
           </button>
         </div>

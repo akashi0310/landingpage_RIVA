@@ -1,13 +1,16 @@
 import React from 'react';
 import { Sparkles, Mail, Phone, MapPin, Globe, Shield, ArrowUp } from 'lucide-react';
 
-export const Footer: React.FC = () => {
+export const Footer: React.FC<{ onNavigate: (id: string) => void }> = ({ onNavigate }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <footer style={{
+    <footer onClick={(event) => {
+      const link = (event.target as HTMLElement).closest('a[href^="#"]');
+      if (link) { event.preventDefault(); onNavigate(link.getAttribute('href')!.slice(1)); }
+    }} style={{
       background: '#020712',
       borderTop: '1px solid var(--color-border)',
       padding: '70px 0 30px',

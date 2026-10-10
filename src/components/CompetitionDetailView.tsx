@@ -27,7 +27,7 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
   onBack,
   onRegister
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'eligibility' | 'categories' | 'dossier' | 'timeline' | 'cost' | 'faq'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'eligibility' | 'categories' | 'dossier' | 'timeline' | 'faq'>('overview');
 
   return (
     <div style={{ minHeight: '100vh', paddingBottom: '100px' }}>
@@ -106,7 +106,7 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
                 style={{ fontSize: '16px', padding: '16px 36px', boxShadow: '0 8px 30px var(--color-gold-glow)' }}
                 onClick={() => onRegister(competition.code)}
               >
-                <span>ĐĂNG KÝ THAM GIA NGAY →</span>
+                <span>ĐĂNG KÝ TƯ VẤN →</span>
               </button>
             </div>
           </div>
@@ -146,12 +146,6 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
             onClick={() => setActiveTab('timeline')}
           >
             TIMELINE
-          </button>
-          <button 
-            className={`tab-item ${activeTab === 'cost' ? 'active' : ''}`}
-            onClick={() => setActiveTab('cost')}
-          >
-            CHI PHÍ
           </button>
           <button 
             className={`tab-item ${activeTab === 'faq' ? 'active' : ''}`}
@@ -334,33 +328,6 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-        )}
-
-        {/* Tab 6: Cost */}
-        {activeTab === 'cost' && (
-          <div className="glass-card" style={{ padding: '36px' }}>
-            <h3 style={{ fontSize: '22px', marginBottom: '16px' }}>Chi phí & Chính sách học bổng</h3>
-            <p style={{ color: 'var(--color-text-muted)', marginBottom: '24px', lineHeight: 1.7 }}>
-              RIVA cam kết hỗ trợ tối đa thí sinh Việt Nam với chi phí minh bạch, có chính sách tài trợ theo chất lượng đề tài:
-            </p>
-            <div className="grid-2">
-              <div style={{ padding: '24px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', border: '1px solid var(--color-border)' }}>
-                <h4 style={{ color: 'var(--color-gold-bright)', marginBottom: '8px' }}>Gói Trực tiếp (On-site tại Mỹ)</h4>
-                <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
-                  Bao gồm: Lệ phí thi của ban tổ chức Mỹ, gian hàng triển lãm, xe đưa đón theo đoàn tại California, 
-                  khách sạn tiêu chuẩn, thư mời bảo lãnh xin visa B1/B2 và chuyến thăm Đại học Stanford.
-                </p>
-              </div>
-
-              <div style={{ padding: '24px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', border: '1px solid var(--color-border)' }}>
-                <h4 style={{ color: '#60A5FA', marginBottom: '8px' }}>Gói Trực tuyến (Hybrid Online)</h4>
-                <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
-                  Dành cho thí sinh không thu xếp xuất cảnh được: Trưng bày poster tại gian hàng đoàn RIVA tại Silicon Valley, 
-                  phỏng vấn ban giám khảo trực tuyến qua Zoom, huy chương gửi về qua đường ngoại giao.
-                </p>
-              </div>
             </div>
           </div>
         )}

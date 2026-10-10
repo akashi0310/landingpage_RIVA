@@ -11,7 +11,7 @@ Các lần push tiếp theo vào `main` tự động cập nhật demo.
 Workflow chạy `npm ci`, sau đó `npm run build -- --mode github-pages`, và xuất bản thư mục `dist`.
 Chế độ này dùng base `/landingpage_RIVA/`; chạy local và build thông thường vẫn dùng `/`.
 
-Demo mặc định dùng dữ liệu mẫu và localStorage của từng trình duyệt, không dùng chung dữ liệu giữa người xem. Không cần cấu hình Supabase để xem demo.
+Landing page dùng nội dung giới thiệu có sẵn, không có đăng nhập, portal hay thanh toán. Form đăng ký gửi về Google Sheets khi đã thiết lập `VITE_GOOGLE_SHEETS_URL`; xem [hướng dẫn kết nối](GOOGLE-SHEETS-SETUP.md). Khi chưa thiết lập, nút gửi tắt; website không giả lập thành công hoặc lưu đăng ký vào localStorage.
 
 Kiểm tra build trên Windows:
 

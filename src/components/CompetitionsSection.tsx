@@ -29,7 +29,7 @@ export const CompetitionsSection: React.FC<CompetitionsSectionProps> = ({
         <div className="section-header">
           <div className="section-label">
             <Sparkles size={14} />
-            <span>CƠ HỘI ĐANG MỞ (CMS-DRIVEN)</span>
+            <span>CƠ HỘI ĐANG MỞ</span>
           </div>
           <h2 className="section-title">
             CÁC ĐẤU TRƯỜNG KHOA HỌC & SÁNG CHẾ QUỐC TẾ
@@ -154,7 +154,7 @@ export const CompetitionsSection: React.FC<CompetitionsSectionProps> = ({
                     style={{ flex: 1 }}
                     onClick={() => onApplyCompetition(comp.code)}
                   >
-                    <span>Đăng ký →</span>
+                    <span>Nhận tư vấn →</span>
                   </button>
                 </div>
               </div>
