@@ -40,7 +40,7 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
               <Filter size={13} />
               TRẢI NGHIỆM NGƯỜI DÙNG TỐI ƯU (SMART UX FINDER)
             </div>
-            <h2 style={{ fontSize: '30px', fontWeight: 800, marginBottom: '12px' }}>
+            <h2 className="section-title" style={{ fontSize: '30px', fontWeight: 800, marginBottom: '12px' }}>
               BẠN ĐANG TÌM CƠ HỘI NÀO?
             </h2>
             <p style={{ color: 'var(--color-text-muted)', fontSize: '15px' }}>

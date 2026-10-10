@@ -65,7 +65,7 @@ export const LeadConsultationForm: React.FC = () => {
                 <Sparkles size={14} />
                 FINAL CTA & TƯ VẤN 1-ON-1
               </div>
-              <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 900, lineHeight: 1.2, marginBottom: '20px' }}>
+              <h2 className="section-title" style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 900, marginBottom: '20px' }}>
                 SẴN SÀNG ĐƯA Ý TƯỞNG CỦA BẠN RA THẾ GIỚI?
               </h2>
               <p style={{ color: 'var(--color-text-light)', fontSize: '16px', lineHeight: 1.7, marginBottom: '28px' }}>

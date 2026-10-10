@@ -47,7 +47,7 @@ export const AchievementsAndProcess: React.FC<AchievementsAndProcessProps> = ({
               <Award size={13} />
               THÀNH TỰU RIVA
             </div>
-            <h2 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '12px' }}>
+            <h2 className="section-title" style={{ fontSize: '32px', fontWeight: 800, marginBottom: '12px' }}>
               TẦM VÓC QUỐC GIA TRÊN BẢN ĐỒ SÁNG TẠO
             </h2>
             <p style={{ color: 'var(--color-text-muted)', fontSize: '15px' }}>

@@ -566,7 +566,10 @@ button, input, select, textarea {
 .section-title {
   font-size: clamp(26px, 3.8vw, 40px);
   font-weight: 800;
-  line-height: 1.25;
+  line-height: 1.35;
+  letter-spacing: 0.025em;
+  word-spacing: 0.22em;
+  text-wrap: balance;
   margin-bottom: 16px;
 }
 
