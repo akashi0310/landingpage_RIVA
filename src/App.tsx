@@ -77,7 +77,7 @@ export const App: React.FC = () => {
 
       {/* VIEW 1: HOME LANDING PAGE */}
       {activeView === 'home' && (
-        <main>
+        <main className="landing-page">
           {/* Hero with glowing interactive map */}
           <Hero 
             onExploreClick={() => {
