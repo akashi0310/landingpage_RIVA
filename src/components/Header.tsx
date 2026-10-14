@@ -1,92 +1,199 @@
-import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Menu, X, Phone, Sparkles, ChevronRight } from 'lucide-react';
 
 const links = [
-  ['about', 'Giới thiệu'], ['competitions', 'Cuộc thi'], ['finder', 'Tìm cơ hội'],
-  ['achievements', 'Thành tích'], ['process', 'Quy trình'], ['news', 'Tin tức']
+  ['about', 'Giới thiệu'], 
+  ['competitions', 'Cuộc thi'], 
+  ['finder', 'Tìm cơ hội'],
+  ['achievements', 'Thành tích'], 
+  ['process', 'Quy trình'], 
+  ['news', 'Tin tức']
 ];
 
 export const Header: React.FC<{ onNavigate: (id: string) => void }> = ({ onNavigate }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const navigate = (id: string) => { setMobileMenuOpen(false); onNavigate(id); };
+
+  // Close mobile menu on resize to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 1024 && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [mobileMenuOpen]);
+
+  // Lock body scroll when mobile menu is open for smooth mobile UX
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
+  const navigate = (id: string) => { 
+    setMobileMenuOpen(false); 
+    onNavigate(id); 
+  };
+
   return (
     <header className="site-header">
       <nav aria-label="Điều hướng chính" className="container site-nav">
-          {/* Logo RIVA */}
-          <div
-            onClick={() => navigate('top')}
-            style={{ display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}
-          >
-            {/* Logo RIVA Image */}
-            <div style={{
-              width: '48px',
-              height: '48px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <img
-                src={`${import.meta.env.BASE_URL}logo-riva.png`}
-                alt="Logo RIVA"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  filter: 'drop-shadow(0 0 10px rgba(255, 222, 67, 0.45))'
-                }}
-              />
-            </div>
-
-            <div>
-              <div style={{
-                fontSize: '22px',
-                fontWeight: 900,
-                letterSpacing: '0.15em',
-                lineHeight: 1,
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}>
-                <span>RIVA</span>
-                <span style={{
-                  fontSize: '10px',
-                  background: 'rgba(255, 222, 67, 0.2)',
-                  color: 'var(--color-gold-bright)',
-                  padding: '2px 6px',
-                  borderRadius: '4px',
-                  fontWeight: 700,
-                  letterSpacing: '0.04em'
-                }}>GLOBAL</span>
-              </div>
-              <div style={{
-                fontSize: '10px',
-                color: 'var(--color-text-muted)',
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                fontWeight: 600,
-                marginTop: '3px'
-              }}>
-                VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO
-              </div>
-            </div>
+        {/* Logo RIVA */}
+        <div
+          onClick={() => navigate('top')}
+          className="site-logo-container"
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter') navigate('top'); }}
+          style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', userSelect: 'none' }}
+        >
+          {/* Logo RIVA Image */}
+          <div style={{
+            width: '44px',
+            height: '44px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}>
+            <img
+              src={`${import.meta.env.BASE_URL}logo-riva.png`}
+              alt="Logo RIVA"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 0 10px rgba(255, 222, 67, 0.45))'
+              }}
+            />
           </div>
 
-
-        <div className="site-nav-links">
-          {links.map(([id, label]) => <a key={id} href={'#' + id} onClick={e => { e.preventDefault(); navigate(id); }}>{label}</a>)}
+          <div>
+            <div style={{
+              fontSize: '20px',
+              fontWeight: 900,
+              letterSpacing: '0.12em',
+              lineHeight: 1,
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}>
+              <span>RIVA</span>
+              <span style={{
+                fontSize: '10px',
+                background: 'rgba(255, 222, 67, 0.2)',
+                color: 'var(--color-gold-bright)',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                fontWeight: 700,
+                letterSpacing: '0.04em'
+              }}>GLOBAL</span>
+            </div>
+            <div className="site-logo-subtitle" style={{
+              fontSize: '9px',
+              color: 'var(--color-text-muted)',
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              fontWeight: 600,
+              marginTop: '3px'
+            }}>
+              VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO
+            </div>
+          </div>
         </div>
+
+        {/* Desktop Navigation Links */}
+        <div className="site-nav-links">
+          {links.map(([id, label]) => (
+            <a 
+              key={id} 
+              href={'#' + id} 
+              onClick={e => { e.preventDefault(); navigate(id); }}
+            >
+              {label}
+            </a>
+          ))}
+        </div>
+
+        {/* Actions & Mobile Toggle */}
         <div className="site-nav-actions">
-          <a href="#register-lead" className="btn btn-sm btn-gold" onClick={e => { e.preventDefault(); navigate('register-lead'); }}>Nhận tư vấn</a>
-          <button className="site-menu-toggle" aria-label={mobileMenuOpen ? 'Đóng menu' : 'Mở menu'} aria-expanded={mobileMenuOpen} aria-controls="mobile-navigation" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          <a 
+            href="#register-lead" 
+            className="btn btn-sm btn-gold header-cta-btn" 
+            onClick={e => { e.preventDefault(); navigate('register-lead'); }}
+          >
+            <span>Nhận tư vấn</span>
+          </a>
+
+          <button 
+            className="site-menu-toggle" 
+            aria-label={mobileMenuOpen ? 'Đóng menu' : 'Mở menu'} 
+            aria-expanded={mobileMenuOpen} 
+            aria-controls="mobile-navigation" 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X size={26} color="var(--color-gold-bright)" /> : <Menu size={26} />}
           </button>
         </div>
       </nav>
-      {mobileMenuOpen && <nav id="mobile-navigation" aria-label="Điều hướng trên điện thoại" className="site-mobile-nav">
-        {links.map(([id, label]) => <a key={id} href={'#' + id} onClick={e => { e.preventDefault(); navigate(id); }}>{label}</a>)}
-        <a href="#register-lead" className="btn btn-gold" onClick={e => { e.preventDefault(); navigate('register-lead'); }}>Đăng ký tư vấn</a>
-      </nav>}
+
+      {/* Mobile Drawer Navigation with backdrop */}
+      {mobileMenuOpen && (
+        <>
+          <div 
+            className="site-mobile-backdrop" 
+            onClick={() => setMobileMenuOpen(false)} 
+            aria-hidden="true" 
+          />
+          <nav 
+            id="mobile-navigation" 
+            aria-label="Điều hướng trên điện thoại" 
+            className="site-mobile-nav"
+          >
+            <div className="mobile-nav-list">
+              {links.map(([id, label]) => (
+                <a 
+                  key={id} 
+                  href={'#' + id} 
+                  className="mobile-nav-link"
+                  onClick={e => { e.preventDefault(); navigate(id); }}
+                >
+                  <span>{label}</span>
+                  <ChevronRight size={18} color="var(--color-sky)" />
+                </a>
+              ))}
+            </div>
+
+            <div className="mobile-nav-footer">
+              <a 
+                href="#register-lead" 
+                className="btn btn-gold btn-lg" 
+                style={{ width: '100%', justifyContent: 'center' }}
+                onClick={e => { e.preventDefault(); navigate('register-lead'); }}
+              >
+                <Sparkles size={18} />
+                <span>ĐĂNG KÝ NHẬN TƯ VẤN</span>
+              </a>
+
+              <a 
+                href="tel:0988000000" 
+                className="btn btn-outline" 
+                style={{ width: '100%', justifyContent: 'center', marginTop: '10px' }}
+              >
+                <Phone size={16} />
+                <span>HOTLINE: 0988.xxx.xxx</span>
+              </a>
+            </div>
+          </nav>
+        </>
+      )}
     </header>
   );
 };

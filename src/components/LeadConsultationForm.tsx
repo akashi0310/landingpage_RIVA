@@ -71,14 +71,9 @@ export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = 
   };
 
   return (
-    <section id="register-lead" style={{ padding: '90px 0', background: 'radial-gradient(circle at 50% 50%, rgba(19, 59, 190, 0.25) 0%, #03081c 80%)' }}>
+    <section id="register-lead" style={{ padding: '50px 0 80px', background: 'radial-gradient(circle at 50% 50%, rgba(19, 59, 190, 0.25) 0%, #03081c 80%)' }}>
       <div className="container">
-        <div className="glass-card" style={{
-          padding: '48px 40px',
-          border: '1px solid rgba(255, 222, 67, 0.45)',
-          background: 'rgba(7, 21, 69, 0.88)',
-          boxShadow: 'var(--shadow-lg)'
-        }}>
+        <div className="glass-card lead-consult-wrapper">
           <div className="grid-2" style={{ gap: '48px', alignItems: 'center' }}>
             {/* Left: Final Call to Action Information (Slide 15) */}
             <div>
@@ -130,12 +125,7 @@ export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = 
             </div>
 
             {/* Right: Registration & Consultation Form */}
-            <div style={{
-              background: 'rgba(3, 8, 28, 0.94)',
-              padding: '36px',
-              borderRadius: '16px',
-              border: '1px solid var(--color-border)'
-            }}>
+            <div className="lead-consult-form-box">
               <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '6px', color: 'white' }}>
                 Đăng ký nhận tư vấn đề tài
               </h3>

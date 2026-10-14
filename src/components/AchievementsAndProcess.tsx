@@ -32,22 +32,22 @@ export const AchievementsAndProcess: React.FC<AchievementsAndProcessProps> = ({
   ];
 
   return (
-    <section id="process" style={{ padding: '90px 0' }}>
+    <section className="achievements-process-section" style={{ padding: '60px 0' }}>
       <div className="container">
-        {/* Section 1: Big Numbers Stats */}
+        {/* Section 1: Big Numbers Stats (Thành tích) */}
         <div id="achievements" className="glass-card" style={{
-          padding: '48px 36px',
-          marginBottom: '80px',
+          padding: '44px 32px',
+          marginBottom: '70px',
           background: 'radial-gradient(ellipse at center, rgba(19, 59, 190, 0.4) 0%, rgba(3, 8, 28, 0.96) 100%)',
           border: '1px solid rgba(255, 222, 67, 0.4)',
           boxShadow: 'var(--shadow-lg)'
         }}>
-          <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto 40px' }}>
+          <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto 36px' }}>
             <div className="badge badge-gold" style={{ marginBottom: '12px' }}>
               <Award size={13} />
               THÀNH TỰU RIVA
             </div>
-            <h2 className="section-title" style={{ fontSize: '32px', fontWeight: 800, marginBottom: '12px' }}>
+            <h2 className="section-title" style={{ fontSize: 'clamp(24px, 3.5vw, 32px)', fontWeight: 800, marginBottom: '12px' }}>
               TẦM VÓC QUỐC GIA TRÊN BẢN ĐỒ SÁNG TẠO
             </h2>
             <p style={{ color: 'var(--color-text-muted)', fontSize: '15px' }}>
@@ -55,46 +55,41 @@ export const AchievementsAndProcess: React.FC<AchievementsAndProcessProps> = ({
             </p>
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(5, 1fr)',
-            gap: '20px',
-            textAlign: 'center'
-          }}>
-            <div>
-              <div style={{ fontSize: '42px', fontWeight: 900, color: 'var(--color-gold-bright)', lineHeight: 1 }}>18+</div>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: 'white', marginTop: '10px' }}>Quốc gia</div>
-              <div style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>Mạng lưới tổ chức liên kết</div>
+          <div className="achievements-metrics-grid">
+            <div className="metric-item">
+              <div className="metric-number" style={{ color: 'var(--color-gold-bright)' }}>18+</div>
+              <div className="metric-label">Quốc gia</div>
+              <div className="metric-sub">Mạng lưới tổ chức liên kết</div>
             </div>
 
-            <div>
-              <div style={{ fontSize: '42px', fontWeight: 900, color: 'var(--color-sky)', lineHeight: 1 }}>28+</div>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: 'white', marginTop: '10px' }}>Cuộc thi</div>
-              <div style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>Sân chơi quốc tế hàng năm</div>
+            <div className="metric-item">
+              <div className="metric-number" style={{ color: 'var(--color-sky)' }}>28+</div>
+              <div className="metric-label">Cuộc thi</div>
+              <div className="metric-sub">Sân chơi quốc tế hàng năm</div>
             </div>
 
-            <div>
-              <div style={{ fontSize: '42px', fontWeight: 900, color: 'var(--color-gold-bright)', lineHeight: 1 }}>1,200+</div>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: 'white', marginTop: '10px' }}>Dự án</div>
-              <div style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>Được ươm mầm & cố vấn</div>
+            <div className="metric-item">
+              <div className="metric-number" style={{ color: 'var(--color-gold-bright)' }}>1,200+</div>
+              <div className="metric-label">Dự án</div>
+              <div className="metric-sub">Được ươm mầm & cố vấn</div>
             </div>
 
-            <div>
-              <div style={{ fontSize: '42px', fontWeight: 900, color: '#34D399', lineHeight: 1 }}>350+</div>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: 'white', marginTop: '10px' }}>Huy chương</div>
-              <div style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>HCV, HCB, Giải đặc biệt WIPO</div>
+            <div className="metric-item">
+              <div className="metric-number" style={{ color: '#34D399' }}>350+</div>
+              <div className="metric-label">Huy chương</div>
+              <div className="metric-sub">HCV, HCB, Giải đặc biệt WIPO</div>
             </div>
 
-            <div>
-              <div style={{ fontSize: '42px', fontWeight: 900, color: '#F472B6', lineHeight: 1 }}>45+</div>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: 'white', marginTop: '10px' }}>Đoàn Quốc Gia</div>
-              <div style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>Xuất cảnh thi đấu an toàn</div>
+            <div className="metric-item">
+              <div className="metric-number" style={{ color: '#F472B6' }}>45+</div>
+              <div className="metric-label">Đoàn Quốc Gia</div>
+              <div className="metric-sub">Xuất cảnh thi đấu an toàn</div>
             </div>
           </div>
         </div>
 
-        {/* Section 2: 7-Step Participation Process (Slide 11) */}
-        <div>
+        {/* Section 2: 7-Step Participation Process (Slide 11 - Quy trình) */}
+        <div id="process">
           <div className="section-header">
             <div className="section-label">
               <Sparkles size={14} />

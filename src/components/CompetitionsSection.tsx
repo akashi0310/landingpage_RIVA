@@ -23,10 +23,10 @@ export const CompetitionsSection: React.FC<CompetitionsSectionProps> = ({
   onApplyCompetition
 }) => {
   return (
-    <section id="competitions" style={{ padding: '90px 0' }}>
+    <section id="competitions" className="competitions-section" style={{ padding: '48px 0 76px' }}>
       <div className="container">
         {/* Section Header */}
-        <div className="section-header">
+        <div className="section-header" style={{ marginBottom: '36px' }}>
           <div className="section-label">
             <Sparkles size={14} />
             <span>CƠ HỘI ĐANG MỞ</span>
@@ -134,13 +134,16 @@ export const CompetitionsSection: React.FC<CompetitionsSectionProps> = ({
                 </div>
 
                 {/* Card Footer Actions */}
-                <div style={{
-                  padding: '16px 24px 20px',
-                  background: 'rgba(3, 10, 23, 0.4)',
-                  borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-                  display: 'flex',
-                  gap: '12px'
-                }}>
+                <div 
+                  className="competition-card-actions"
+                  style={{
+                    padding: '16px 20px 20px',
+                    background: 'rgba(3, 10, 23, 0.4)',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                    display: 'flex',
+                    gap: '10px'
+                  }}
+                >
                   <button 
                     className="btn btn-outline"
                     style={{ flex: 1 }}

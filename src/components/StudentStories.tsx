@@ -29,14 +29,7 @@ export const StudentStories: React.FC<StudentStoriesProps> = ({ achievements }) 
           {achievements.map((item) => (
             <div 
               key={item.id} 
-              className="glass-card glass-card-interactive"
-              style={{
-                display: 'flex',
-                gap: '24px',
-                padding: '24px',
-                alignItems: 'center',
-                flexWrap: 'wrap'
-              }}
+              className="glass-card glass-card-interactive student-story-card"
             >
               {/* Avatar image */}
               <div style={{ position: 'relative', width: '120px', height: '120px', flexShrink: 0 }}>
@@ -70,7 +63,7 @@ export const StudentStories: React.FC<StudentStoriesProps> = ({ achievements }) 
               </div>
 
               {/* Student Details */}
-              <div style={{ flex: 1, minWidth: '220px' }}>
+              <div style={{ flex: 1, minWidth: 0, width: '100%' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
                   <span className="badge badge-gold" style={{ fontSize: '11px' }}>
                     {item.award}

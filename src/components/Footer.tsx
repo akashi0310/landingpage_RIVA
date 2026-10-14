@@ -18,12 +18,7 @@ export const Footer: React.FC<{ onNavigate: (id: string) => void }> = ({ onNavig
     }}>
       <div className="container">
         {/* Main Footer Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '2fr 1fr 1fr 1.5fr',
-          gap: '40px',
-          marginBottom: '50px'
-        }}>
+        <div className="footer-main-grid">
           {/* Col 1: Brand Info */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>

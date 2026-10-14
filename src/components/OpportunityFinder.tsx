@@ -27,20 +27,20 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
   });
 
   return (
-    <section id="finder" style={{ padding: '80px 0', background: 'rgba(5, 16, 38, 0.6)' }}>
+    <section id="finder" style={{ padding: '48px 0 64px', background: 'rgba(5, 16, 38, 0.6)' }}>
       <div className="container">
         <div className="glass-card" style={{
-          padding: '40px',
+          padding: '36px 32px',
           background: 'radial-gradient(ellipse at top, rgba(19, 59, 190, 0.35) 0%, rgba(7, 21, 69, 0.92) 100%)',
           border: '1px solid rgba(117, 194, 250, 0.35)',
           boxShadow: 'var(--shadow-lg)'
         }}>
-          <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 32px' }}>
+          <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 28px' }}>
             <div className="badge badge-blue" style={{ marginBottom: '12px' }}>
               <Filter size={13} />
               TRẢI NGHIỆM NGƯỜI DÙNG TỐI ƯU (SMART UX FINDER)
             </div>
-            <h2 className="section-title" style={{ fontSize: '30px', fontWeight: 800, marginBottom: '12px' }}>
+            <h2 className="section-title" style={{ fontSize: 'clamp(24px, 3.5vw, 30px)', fontWeight: 800, marginBottom: '12px' }}>
               BẠN ĐANG TÌM CƠ HỘI NÀO?
             </h2>
             <p style={{ color: 'var(--color-text-muted)', fontSize: '15px' }}>
@@ -49,12 +49,7 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
           </div>
 
           {/* Interactive Filters Grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '20px',
-            marginBottom: '28px'
-          }}>
+          <div className="finder-filters-grid">
             {/* Step 1: Role */}
             <div className="form-group">
               <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -129,7 +124,7 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
               </span>
             </div>
 
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               {filteredCompetitions.slice(0, 3).map(comp => (
                 <button
                   key={comp.id}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Phone, Sparkles } from 'lucide-react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { TrustSection } from './components/TrustSection';
@@ -21,18 +22,55 @@ export const App: React.FC = () => {
   const [leadCompetition, setLeadCompetition] = useState('');
   const [sectionTarget, setSectionTarget] = useState('');
 
+  const scrollToTarget = (id: string) => {
+    if (id === 'top') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    // Header sticky offset: 74px
+    // For competitions, scroll lower down so both header and cards are in prime view
+    let offset = 74;
+    if (id === 'competitions') {
+      offset = 20; // Scrolls deeper down so cards are centered and visible without cut-off
+    } else if (id === 'about') {
+      offset = 60;
+    } else if (id === 'process') {
+      offset = 60;
+    } else if (id === 'achievements') {
+      offset = 60;
+    }
+
+    const rect = el.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const targetY = rect.top + scrollTop - offset;
+
+    window.scrollTo({
+      top: Math.max(0, targetY),
+      behavior: 'smooth'
+    });
+  };
+
   const navigateToSection = (id: string) => {
-    setActiveView('home');
-    setSectionTarget(id);
+    if (activeView !== 'home') {
+      setActiveView('home');
+      setSectionTarget(id);
+    } else {
+      scrollToTarget(id);
+    }
   };
 
   useEffect(() => {
     if (activeView === 'home' && sectionTarget) {
-      document.getElementById(sectionTarget)?.scrollIntoView({ behavior: 'smooth' });
-      setSectionTarget('');
+      const timer = setTimeout(() => {
+        scrollToTarget(sectionTarget);
+        setSectionTarget('');
+      }, 60);
+      return () => clearTimeout(timer);
     }
   }, [activeView, sectionTarget]);
-
 
   const handleSelectCompetition = (code: string) => {
     setSelectedCompCode(code);
@@ -58,14 +96,8 @@ export const App: React.FC = () => {
         <main id="top" className="landing-page">
           {/* Hero with glowing interactive map */}
           <Hero 
-            onExploreClick={() => {
-              const el = document.getElementById('competitions');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-            onRegisterClick={() => {
-              const el = document.getElementById('register-lead');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
+            onExploreClick={() => navigateToSection('competitions')}
+            onRegisterClick={() => navigateToSection('register-lead')}
             onSelectCompetition={handleSelectCompetition}
           />
 
@@ -93,10 +125,7 @@ export const App: React.FC = () => {
 
           {/* Achievements & 7-Step Participation Process (Slide 10 & 11) */}
           <AchievementsAndProcess 
-            onStartProcess={() => {
-              const el = document.getElementById('register-lead');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
+            onStartProcess={() => navigateToSection('register-lead')}
           />
 
           {/* Student Stories / Hall of Fame (Slide 9 Social Proof) */}
@@ -107,6 +136,21 @@ export const App: React.FC = () => {
 
           {/* Lead Consultation Form (Slide 12 & 15) */}
           <LeadConsultationForm selectedCompetition={leadCompetition} />
+
+          {/* Mobile Floating Quick Action Bar */}
+          <div className="mobile-floating-bar" aria-label="Liên hệ nhanh">
+            <a href="tel:0988000000" className="mobile-floating-btn mobile-floating-phone">
+              <Phone size={16} />
+              <span>Hotline</span>
+            </a>
+            <button 
+              onClick={() => navigateToSection('register-lead')} 
+              className="mobile-floating-btn mobile-floating-consult"
+            >
+              <Sparkles size={16} />
+              <span>Nhận tư vấn ngay</span>
+            </button>
+          </div>
         </main>
       )}
 

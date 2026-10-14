@@ -14,10 +14,10 @@ export const AboutSection: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   return (
-    <section id="about" style={{ padding: '90px 0', background: 'rgba(3, 10, 23, 0.4)' }}>
+    <section id="about" style={{ padding: '48px 0 76px', background: 'rgba(3, 10, 23, 0.4)' }}>
       <div className="container">
         {/* Top Header */}
-        <div className="section-header">
+        <div className="section-header" style={{ marginBottom: '36px' }}>
           <div className="section-label">
             <Sparkles size={14} />
             <span>VỀ RIVA (ABOUT US)</span>
@@ -32,7 +32,7 @@ export const AboutSection: React.FC = () => {
         </div>
 
         {/* 2 Columns: Visual Showcase & Core Pillars */}
-        <div className="grid-2" style={{ alignItems: 'center', gap: '48px' }}>
+        <div className="grid-2" style={{ alignItems: 'center', gap: '36px' }}>
           {/* Left: Video & Media Showcase (as in 8.png About RIVA card) */}
           <div className="glass-card" style={{
             position: 'relative',
@@ -42,7 +42,7 @@ export const AboutSection: React.FC = () => {
             boxShadow: 'var(--shadow-lg)'
           }}>
             <div style={{
-              height: '340px',
+              height: 'clamp(220px, 35vw, 340px)',
               position: 'relative',
               backgroundImage: 'url("https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=900&auto=format&fit=crop&q=80")',
               backgroundSize: 'cover',
@@ -104,18 +104,18 @@ export const AboutSection: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ padding: '20px 24px', background: 'rgba(7, 21, 69, 0.95)' }}>
-              <div style={{ display: 'flex', gap: '20px', justifyContent: 'space-around', textAlign: 'center' }}>
+            <div className="about-video-metrics">
+              <div className="about-video-metrics-inner">
                 <div>
                   <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--color-gold-bright)' }}>100%</div>
                   <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>Visa bảo lãnh đoàn</div>
                 </div>
-                <div style={{ width: '1px', background: 'var(--color-border)' }} />
+                <div className="metrics-divider" />
                 <div>
                   <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--color-sky)' }}>1-on-1</div>
                   <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>Cố vấn cùng chuyên gia</div>
                 </div>
-                <div style={{ width: '1px', background: 'var(--color-border)' }} />
+                <div className="metrics-divider" />
                 <div>
                   <div style={{ fontSize: '18px', fontWeight: 800, color: '#34D399' }}>Top 1</div>
                   <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>Mạng lưới NCKH trẻ VN</div>
