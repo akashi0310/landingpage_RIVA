@@ -27,7 +27,7 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: npm run build -- --mode github-pages
+      - run: npm run build:pages
         env:
           VITE_GOOGLE_SHEETS_URL: ${{ vars.VITE_GOOGLE_SHEETS_URL }}
       - uses: actions/configure-pages@v5

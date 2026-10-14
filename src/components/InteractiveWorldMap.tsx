@@ -48,8 +48,11 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
 
   const activeDest = destinations.find(d => d.id === (hoveredDestId || selectedDestId)) || null;
 
-  const handleDestinationClick = (dest: MapDestination) => {
+  const handleDestinationSelect = (dest: MapDestination) => {
     setSelectedDestId(dest.id);
+  };
+
+  const handleViewDetail = (dest: MapDestination) => {
     if (onSelectCompetition) {
       onSelectCompetition(dest.code);
     }
@@ -81,7 +84,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
                 key={dest.id}
                 type="button"
                 className={`map-pill-btn ${isSelected ? 'active' : ''}`}
-                onClick={() => handleDestinationClick(dest)}
+                onClick={() => handleDestinationSelect(dest)}
                 onMouseEnter={() => setHoveredDestId(dest.id)}
                 onMouseLeave={() => setHoveredDestId(null)}
               >
@@ -357,7 +360,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
                 <g
                   key={`node-${dest.id}`}
                   style={{ cursor: 'pointer' }}
-                  onClick={() => handleDestinationClick(dest)}
+                  onClick={() => handleDestinationSelect(dest)}
                   onMouseEnter={() => setHoveredDestId(dest.id)}
                   onMouseLeave={() => setHoveredDestId(null)}
                 >
@@ -390,6 +393,25 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
                     r={isSelected ? '5' : '3.5'}
                     fill={nodeColor}
                   />
+
+                  {/* Nhãn văn bản SVG (luôn hiển thị rõ trên bản đồ cả mobile và desktop) */}
+                  <text
+                    x={dest.coords.x}
+                    y={dest.coords.y - 12}
+                    textAnchor="middle"
+                    fill={isSelected ? '#FFDE43' : '#9DD6FB'}
+                    fontSize={isSelected ? '11' : '9.5'}
+                    fontWeight="800"
+                    style={{
+                      letterSpacing: '0.04em',
+                      paintOrder: 'stroke',
+                      stroke: '#03081c',
+                      strokeWidth: '3px',
+                      strokeLinejoin: 'round'
+                    }}
+                  >
+                    {dest.code}
+                  </text>
                 </g>
               );
             })}
@@ -423,6 +445,23 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
               fill="#FFDE43"
               filter="drop-shadow(0 0 10px rgba(255, 222, 67, 0.9))"
             />
+            {/* Nhãn VN HUB phát sáng chữ hoa */}
+            <text
+              x={VIETNAM_HUB.coords.x + 14}
+              y={VIETNAM_HUB.coords.y + 4}
+              fill="#FFDE43"
+              fontSize="11"
+              fontWeight="900"
+              style={{
+                letterSpacing: '0.05em',
+                paintOrder: 'stroke',
+                stroke: '#03081c',
+                strokeWidth: '3.5px',
+                strokeLinejoin: 'round'
+              }}
+            >
+              ★ VN HUB
+            </text>
           </g>
         </svg>
 
@@ -497,7 +536,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
               <div
                 key={`tag-${dest.id}`}
                 className={`map-floating-tag tag-competition ${isSelected ? 'active-tag' : ''}`}
-                onClick={() => handleDestinationClick(dest)}
+                onClick={() => handleDestinationSelect(dest)}
                 onMouseEnter={() => setHoveredDestId(dest.id)}
                 onMouseLeave={() => setHoveredDestId(null)}
                 style={tagStyle}
@@ -545,7 +584,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
             <button
               type="button"
               className="btn btn-sm btn-gold"
-              onClick={() => handleDestinationClick(activeDest)}
+              onClick={() => handleViewDetail(activeDest)}
             >
               <span>Xem chi tiết kỳ thi</span>
               <ChevronRight size={14} />

@@ -870,6 +870,82 @@ button, input, select, textarea {
   gap: 12px;
 }
 
+/* Responsive Map Styles */
+@media (max-width: 992px) {
+  .map-floating-tag {
+    padding: 6px 10px;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .digital-map-viewport {
+    height: 270px;
+    border-radius: 16px;
+  }
+
+  /* Ẩn các thẻ floating HTML trên màn hình nhỏ để tránh che khuất, thay vào đó điều hướng qua Quick Pills và Inspector Drawer */
+  .map-floating-tags-container {
+    display: none !important;
+  }
+
+  .map-control-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .map-control-title {
+    font-size: 11px;
+  }
+
+  .map-quick-pills {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .map-quick-pills::-webkit-scrollbar {
+    display: none;
+  }
+
+  .map-pill-btn {
+    flex-shrink: 0;
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  .drawer-inner {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .drawer-info {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .digital-map-viewport {
+    height: 220px;
+    border-radius: 14px;
+  }
+
+  .drawer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .drawer-inner .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* Section Header Typography */
 .section-header {
   text-align: center;
