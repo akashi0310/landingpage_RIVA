@@ -1,35 +1,86 @@
-# Kích hoạt form đăng ký vào Google Sheets
+# Hướng Dẫn Kích Hoạt Form Đăng Ký Vào Google Sheets (3 Phút)
 
-Website chỉ giới thiệu và nhận yêu cầu tư vấn, không có tài khoản thí sinh, quản trị hay thanh toán. Google Sheets là nơi quản lý thông tin đăng ký.
+Website RIVA sử dụng **Google Sheets** làm cơ sở dữ liệu nhận thông tin đăng ký tư vấn từ Phụ huynh và Học sinh. Khi người dùng bấm **Gửi đăng ký**, toàn bộ dữ liệu sẽ tự động nhảy vào file Google Sheet online của bạn theo thời gian thực.
 
-## 1. Tạo nơi nhận dữ liệu
+---
 
-1. Tạo một Google Sheet mới tại https://sheets.new và đặt tên **RIVA – Đăng ký tư vấn**.
-2. Trong Sheet, mở **Tiện ích mở rộng → Apps Script**.
-3. Thay nội dung `Code.gs` bằng file [google-apps-script/Code.gs](google-apps-script/Code.gs) của dự án và lưu.
-4. Chọn hàm **setup**, bấm **Run / Chạy** và cấp quyền trong tài khoản của bạn. Hàm này tạo tab `Dang ky tu van` và lưu ID Sheet trong Script Properties.
-5. Chọn **Deploy → New deployment → Web app**. Chọn **Execute as: Me** và **Who has access: Anyone** để người đăng ký không cần đăng nhập Google.
-6. Copy **Web app URL** có dạng `https://script.google.com/macros/s/…/exec` rồi gửi lại cho người triển khai website. Không dùng URL `/dev`.
+## ⚡ Các Bước Thực Hiện Nhanh (Chỉ mất 2 - 3 phút)
 
-Sheet vẫn để riêng tư, chỉ chia sẻ với người phụ trách. Web app chỉ nhận thông tin mới; không có API đọc danh sách đăng ký. Không gửi mật khẩu Google hoặc token truy cập.
+### Bước 1: Tạo file Google Sheet mới
+1. Mở trình duyệt và truy cập: **https://sheets.new** (hoặc tạo một Google Sheet mới trên Google Drive của bạn).
+2. Đặt tên cho file trang tính, ví dụ: `RIVA – Hồ Sơ Đăng Ký Tuyển Sinh`.
 
-## 2. Kết nối GitHub Pages
+---
 
-Trong repository: **Settings → Secrets and variables → Actions → Variables → New repository variable**:
+### Bước 2: Dán mã Google Apps Script
+1. Trên thanh menu của Google Sheet, chọn: **Tiện ích mở rộng** (Extensions) → **Apps Script**.
+2. Một tab mới sẽ mở ra với trình soạn thảo mã `Code.gs`.
+3. Xóa hết code mẫu hiện có, mở file [google-apps-script/Code.gs](google-apps-script/Code.gs) trong thư mục dự án và copy toàn bộ nội dung dán vào.
+4. Bấm biểu tượng **Lưu dự án** (Save / hình đĩa mềm 💾 hoặc nhấn `Ctrl + S`).
 
-- Name: `VITE_GOOGLE_SHEETS_URL`
-- Value: Web app URL ở trên.
+---
 
-Chạy lại workflow **Deploy demo to GitHub Pages** trong tab Actions. Chạy local thì đặt biến tương tự trong `.env.local` và khởi động lại Vite.
+### Bước 3: Triển khai Ứng dụng web (Web App)
+1. Ở góc trên bên phải màn hình Apps Script, bấm nút **Triển khai** (Deploy) → chọn **Tùy chọn triển khai mới** (New deployment).
+2. Bấm vào biểu tượng bánh răng ⚙️ bên cạnh "Chọn loại" (Select type) → chọn **Ứng dụng web** (Web app).
+3. Điền cấu hình như sau:
+   - **Mô tả** (Description): `RIVA Web Registration v1`
+   - **Thực thi dưới dạng** (Execute as): Chọn **Tôi** (Me - email của bạn).
+   - **Ai có quyền truy cập** (Who has access): Chọn **Bất kỳ ai** (Anyone) *(⚠️ Rất quan trọng: Phải chọn "Bất kỳ ai" để Phụ huynh vào web gửi thông tin không bị yêu cầu đăng nhập Google).*
+4. Bấm **Triển khai** (Deploy).
+5. Nếu Google hiển thị cửa sổ yêu cầu cấp quyền:
+   - Chọn tài khoản Google của bạn.
+   - Bấm **Nâng cao** (Advanced) → Bấm tiếp **Đi tới... (không an toàn)** (Go to... unsafe).
+   - Bấm **Cho phép** (Allow).
+6. Google sẽ cung cấp cho bạn một **URL ứng dụng web** (Web app URL), có dạng:
+   ```text
+   https://script.google.com/macros/s/AKfycbx.../exec
+   ```
+   *(Lưu ý: URL phải kết thúc bằng `/exec`, không dùng URL kết thúc bằng `/dev`).*
+7. Bấm **Sao chép** (Copy) đường link này.
 
-## 3. Kiểm tra trước khi nhận đăng ký thật
+---
 
-Gửi một đăng ký thử với dữ liệu giả từ chính link GitHub Pages, rồi mở Sheet xác nhận có đúng một hàng mới và form báo thành công. Thử trên điện thoại và cửa sổ ẩn danh để bảo đảm không cần đăng nhập Google. Thử lỗi mạng: form giữ dữ liệu và không báo thành công. Gửi lại cùng yêu cầu sử dụng cùng mã để tránh hàng trùng khi lần trước đã được ghi.
+### Bước 4: Dán URL vào Website RIVA
+Bạn có thể kết nối bằng **1 trong 2 cách** sau:
 
-Các cột: thời gian, mã đăng ký, họ tên, điện thoại/Zalo, email, vai trò, trường/lớp, cuộc thi, lĩnh vực (để trống nếu form không hỏi), lời nhắn, URL nguồn. Số điện thoại lưu dạng văn bản để giữ số 0 đầu.
+#### Cách A: Dán trực tiếp trên giao diện website (Nhanh nhất)
+1. Mở website RIVA trên trình duyệt.
+2. Cuộn xuống phần **Cổng đăng ký** (hoặc bấm nút "Đăng ký tư vấn").
+3. Bấm vào nút **⚙️ Cài đặt** ở góc dưới form đăng ký.
+4. Dán URL đã sao chép ở Bước 3 vào ô và bấm **Lưu kết nối**.
+5. Hệ thống sẽ lưu và kích hoạt ngay lập tức mà không cần khởi động lại website!
 
-Nếu gặp lỗi gửi: kiểm tra quyền truy cập **Anyone**, URL `/exec`, hàm `setup`, và Apps Script **Executions**. Sau khi sửa script, cập nhật deployment bằng phiên bản mới. Frontend không dùng `no-cors` vì phản hồi opaque không chứng minh dữ liệu đã được lưu.
+#### Cách B: Lưu vào file cấu hình `.env`
+1. Mở file `.env` trong thư mục gốc của dự án.
+2. Dán link vào dòng `VITE_GOOGLE_SHEETS_URL`:
+   ```env
+   VITE_GOOGLE_SHEETS_URL=https://script.google.com/macros/s/AKfycbx.../exec
+   ```
+3. Khởi động lại dự án hoặc chạy `npm run build`.
 
-Hiện chưa có URL Apps Script nên nút gửi đang tắt và hiển thị thông báo đang thiết lập. Chưa có dữ liệu gửi tới Google Sheets; cần kiểm tra thực tế sau khi cấu hình. Bộ lọc honeypot hạn chế bot đơn giản; Apps Script có hạn mức, nên khi chạy chiến dịch lớn cần theo dõi và bổ sung chống spam phù hợp.
+---
 
-Tài liệu Google: https://developers.google.com/apps-script/guides/web và https://developers.google.com/apps-script/guides/content.
+## 📊 Dữ Liệu Sẽ Được Tự Động Lưu Vào Google Sheet
+
+Khi có Phụ huynh đăng ký, Google Apps Script sẽ tự động tạo tab trang tính **`Dang ky tu van`** với giao diện chuẩn RIVA (tiêu đề màu xanh Navy, chữ màu Vàng Gold):
+
+| Cột | Tiêu đề | Mô tả |
+| :--- | :--- | :--- |
+| **A** | Thời gian đăng ký | Múi giờ Việt Nam (dd/MM/yyyy HH:mm:ss) |
+| **B** | Mã hồ sơ | Mã định danh UUID chống trùng lặp |
+| **C** | Họ và tên người đăng ký | Họ tên Phụ huynh hoặc Thí sinh |
+| **D** | Số điện thoại / Zalo | Giữ nguyên số 0 ở đầu (dạng văn bản) |
+| **E** | Email | Email liên hệ nhận thông báo |
+| **F** | Vai trò | Phụ huynh / Học sinh / Giáo viên hướng dẫn |
+| **G** | Học sinh & Trường / Lớp | Thông tin tên con, trường học và lớp |
+| **H** | Cuộc thi quan tâm | SVIIF Mỹ, IPITEX Thái Lan, iENA Đức, Geneva Thụy Sĩ... |
+| **I** | Lĩnh vực đề tài | AI, Y tế, Môi trường, Robotics... |
+| **J** | Nội dung tư vấn / Lời nhắn | Tóm tắt đề tài hoặc nguyện vọng của gia đình |
+| **K** | Nguồn đăng ký | URL trang web phát sinh lượt gửi |
+
+---
+
+## 💡 Lưu Ý Quan Trọng
+- **Bảo mật:** Trang tính Google Sheet vẫn hoàn toàn riêng tư trong Google Drive của bạn. Người ngoài chỉ có thể ghi đơn mới vào chứ không thể đọc danh sách hay xem thông tin của các phụ huynh khác.
+- **Cập nhật script:** Nếu bạn chỉnh sửa mã trong `Code.gs` sau này, hãy nhớ bấm **Triển khai → Quản lý bản triển khai (Manage deployments)** → Sửa (hình bút chì) → Chọn **Phiên bản mới (New version)** → Bấm **Triển khai** để thay đổi có hiệu lực.
