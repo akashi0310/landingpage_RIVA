@@ -283,7 +283,7 @@ export const Hero: React.FC<HeroProps> = ({
         <div className="modal-overlay" onClick={() => setShowVideoModal(false)}>
           <div
             className="modal-content"
-            style={{ maxWidth: '960px', padding: '24px', background: '#020614', border: '1px solid rgba(204, 153, 0, 0.45)' }}
+            style={{ maxWidth: '960px', padding: '24px', background: '#00004D', border: '1px solid rgba(204, 153, 0, 0.45)' }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
