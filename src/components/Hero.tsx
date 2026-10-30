@@ -332,7 +332,7 @@ export const Hero: React.FC<HeroProps> = ({
           </div>
 
           {/* Digital World Map & Flight Network Explorer */}
-          <div className="sviif-map-container">
+          <div id="competitions" className="sviif-map-container">
             <div style={{ textAlign: 'center', marginBottom: '24px' }}>
               <div style={{ fontSize: '12px', fontWeight: 800, color: 'var(--color-gold)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '6px' }}>
                 BẢN ĐỒ SỐ ĐIỀU PHỐI QUỐC TẾ

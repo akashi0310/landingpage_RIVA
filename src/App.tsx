@@ -4,7 +4,6 @@ import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { TrustSection } from './components/TrustSection';
 import { OpportunityFinder } from './components/OpportunityFinder';
-import { CompetitionsSection } from './components/CompetitionsSection';
 import { CompetitionDetailView } from './components/CompetitionDetailView';
 import { AboutSection } from './components/AboutSection';
 import { GlobalNetwork } from './components/GlobalNetwork';
@@ -207,12 +206,6 @@ export const App: React.FC = () => {
             onSelectCompetition={handleSelectCompetition}
           />
 
-          {/* Competitions Section (Slide 7 CMS-driven) */}
-          <CompetitionsSection 
-            competitions={competitions}
-            onSelectCompetition={handleSelectCompetition}
-            onApplyCompetition={handleApplyCompetition}
-          />
 
           {/* About RIVA & Innovation Mentoring (Slide 2 & 8) - Newspaper Article Feature */}
           <AboutSection onConsultClick={() => navigateToSection('register-lead')} />

@@ -291,8 +291,8 @@ body {
 }
 
 #competitions {
-  /* Scrolls lower down so that both header and cards are in prime viewport */
-  scroll-margin-top: 24px;
+  /* Scrolls to interactive world map with header clearance */
+  scroll-margin-top: 80px;
 }
 
 #about {
