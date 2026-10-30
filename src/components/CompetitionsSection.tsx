@@ -60,7 +60,7 @@ export const CompetitionsSection: React.FC<CompetitionsSectionProps> = ({
                 {/* Card Top Banner / Country Header */}
                 <div style={{
                   padding: '24px 24px 16px',
-                  background: 'linear-gradient(180deg, rgba(19, 59, 190, 0.22) 0%, transparent 100%)',
+                  background: 'linear-gradient(180deg, rgba(51, 102, 255, 0.22) 0%, transparent 100%)',
                   borderBottom: '1px solid rgba(240, 242, 192, 0.1)'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>

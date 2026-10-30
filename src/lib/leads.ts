@@ -1,6 +1,11 @@
 import type { Lead } from '../types';
 
-const STORAGE_KEY = 'RIVA_GOOGLE_SHEETS_URL';
+/**
+ * Đường link Web App Google Apps Script nhận dữ liệu và đẩy vào Google Sheet online.
+ * Khi cần thay đổi trang tính, bạn có thể chỉnh sửa trực tiếp URL tại đây:
+ */
+export const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbz9BmASooRLCoPArX0cxj1yuXsvrR0qKM_oVRqlvAJG-z4W5JUDQ01E4DflOrG66IEe-A/exec';
+
 const LEADS_BACKUP_KEY = 'RIVA_PENDING_LEADS_BACKUP';
 
 /**
@@ -12,40 +17,23 @@ export function isValidScriptUrl(url: string): boolean {
 }
 
 /**
- * Lấy URL Google Sheets Apps Script hiện tại (ưu tiên cài đặt trong trình duyệt, sau đó tới biến môi trường)
+ * Lấy URL Google Sheets (ưu tiên biến môi trường VITE_GOOGLE_SHEETS_URL nếu có, nếu không lấy URL mặc định)
  */
 export function getGoogleSheetsUrl(): string {
-  if (typeof window !== 'undefined') {
-    const local = window.localStorage.getItem(STORAGE_KEY);
-    if (local && isValidScriptUrl(local)) return local.trim();
-  }
   const envUrl = (import.meta.env.VITE_GOOGLE_SHEETS_URL || '').trim();
   if (isValidScriptUrl(envUrl)) return envUrl;
-  return '';
+  return GOOGLE_SHEETS_URL;
 }
 
 /**
- * Lưu URL Google Sheets Apps Script vào bộ nhớ trình duyệt
- */
-export function setGoogleSheetsUrl(url: string): void {
-  if (typeof window === 'undefined') return;
-  const clean = url.trim();
-  if (clean && isValidScriptUrl(clean)) {
-    window.localStorage.setItem(STORAGE_KEY, clean);
-  } else {
-    window.localStorage.removeItem(STORAGE_KEY);
-  }
-}
-
-/**
- * Trạng thái form đã được kết nối URL hay chưa
+ * Form đã được cấu hình sẵn sàng
  */
 export function isLeadFormConfigured(): boolean {
-  return Boolean(getGoogleSheetsUrl());
+  return true;
 }
 
 /**
- * Lưu hồ sơ tạm thời vào LocalStorage nếu chưa có Google Sheet hoặc mất mạng
+ * Lưu hồ sơ tạm thời vào LocalStorage phòng trường hợp mất mạng
  */
 function backupLeadLocally(lead: Lead, requestId: string): void {
   try {
@@ -59,59 +47,11 @@ function backupLeadLocally(lead: Lead, requestId: string): void {
   } catch (_) {}
 }
 
-export function getPendingLeadsCount(): number {
-  try {
-    const existing = JSON.parse(window.localStorage.getItem(LEADS_BACKUP_KEY) || '[]');
-    return existing.length;
-  } catch (_) {
-    return 0;
-  }
-}
-
 /**
- * Kiểm tra kết nối tới Google Apps Script URL
+ * Gửi thông tin đăng ký tư vấn vào Google Sheets online
  */
-export async function testGoogleSheetsConnection(targetUrl?: string): Promise<{ ok: boolean; message: string }> {
-  const url = (targetUrl || getGoogleSheetsUrl()).trim();
-  if (!isValidScriptUrl(url)) {
-    return { ok: false, message: 'URL không đúng định dạng Google Apps Script (phải có dạng https://script.google.com/macros/s/.../exec)' };
-  }
-
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 12000);
-    const res = await fetch(url, {
-      method: 'GET',
-      signal: controller.signal,
-      redirect: 'follow',
-      credentials: 'omit'
-    });
-    clearTimeout(timer);
-
-    if (res.ok) {
-      return { ok: true, message: 'Kết nối thành công tới Google Apps Script!' };
-    }
-    return { ok: false, message: `Máy chủ phản hồi mã lỗi ${res.status}` };
-  } catch (err) {
-    // Trình duyệt có thể chặn CORS với GET request nhưng POST qua Web App vẫn hoạt động
-    return { ok: true, message: 'Đã nhận diện URL hợp lệ. Bạn có thể tiến hành gửi thử đăng ký!' };
-  }
-}
-
-/**
- * Gửi thông tin đăng ký tư vấn vào Google Sheets
- */
-export async function submitLead(lead: Lead, requestId: string, website: string): Promise<{ success: boolean; isDemo?: boolean }> {
+export async function submitLead(lead: Lead, requestId: string, website: string): Promise<{ success: boolean }> {
   const endpoint = getGoogleSheetsUrl();
-
-  // Nếu chưa cấu hình Google Sheet URL: Lưu tạm thời vào máy và báo thành công dạng thử nghiệm
-  if (!endpoint) {
-    backupLeadLocally(lead, requestId);
-    return {
-      success: true,
-      isDemo: true
-    };
-  }
 
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), 20000);
@@ -154,7 +94,7 @@ export async function submitLead(lead: Lead, requestId: string, website: string)
     } catch (fetchErr) {
       // Cơ chế bảo vệ Fallback: Nếu trình duyệt chặn CORS redirect, gửi với mode no-cors
       // Apps Script vẫn nhận đủ payload và ghi vào Google Sheet 100%!
-      console.warn('Đang kích hoạt cơ chế gửi dự phòng an toàn...', fetchErr);
+      console.warn('Đang kích hoạt cơ chế gửi dự phòng...', fetchErr);
       await fetch(endpoint, {
         method: 'POST',
         body,

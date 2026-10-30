@@ -71,7 +71,7 @@ export const Hero: React.FC<HeroProps> = ({
         {/* Quick Trust Highlights Metric Grid */}
         <div className="hero-metrics-grid">
           <div className="glass-card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(255, 222, 67, 0.16)', color: 'var(--color-gold)' }}>
+            <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(204, 153, 0, 0.16)', color: 'var(--color-gold)' }}>
               <Award size={22} />
             </div>
             <div>
@@ -81,7 +81,7 @@ export const Hero: React.FC<HeroProps> = ({
           </div>
 
           <div className="glass-card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(19, 59, 190, 0.28)', color: 'var(--color-sky)' }}>
+            <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(51, 102, 255, 0.28)', color: 'var(--color-sky)' }}>
               <TrendingUp size={22} />
             </div>
             <div>

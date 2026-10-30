@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import { Competition, Lead, Application, Achievement, ApplicationStatus } from '../types';
+import { Competition, Lead, Application, Achievement, ApplicationStatus, SiteSettings, AboutArticleData, NewsArticle } from '../types';
+import { defaultSiteSettings, defaultAboutArticle, defaultNewsArticles } from './content';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
@@ -359,5 +360,104 @@ export const api = {
       }
     }
     return INITIAL_ACHIEVEMENTS;
+  },
+
+  // 5. Site Settings (Hotline, Email, Addresses, Slogan)
+  async getSiteSettings(): Promise<SiteSettings> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('site_settings').select('*').limit(1).single();
+        if (!error && data) return data as SiteSettings;
+      } catch (err) {
+        console.warn('Supabase site_settings fetch error:', err);
+      }
+    }
+    return getStorageItem<SiteSettings>('riva_site_settings', defaultSiteSettings);
+  },
+
+  async saveSiteSettings(settings: SiteSettings): Promise<SiteSettings> {
+    setStorageItem('riva_site_settings', settings);
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('site_settings').upsert({ id: 'main_settings', ...settings });
+      } catch (err) {
+        console.warn('Supabase site_settings save error:', err);
+      }
+    }
+    return settings;
+  },
+
+  // 6. About Article (Newspaper layout data)
+  async getAboutArticle(): Promise<AboutArticleData> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('about_article').select('*').limit(1).single();
+        if (!error && data) return data as AboutArticleData;
+      } catch (err) {
+        console.warn('Supabase about_article fetch error:', err);
+      }
+    }
+    return getStorageItem<AboutArticleData>('riva_about_article', defaultAboutArticle);
+  },
+
+  async saveAboutArticle(article: AboutArticleData): Promise<AboutArticleData> {
+    setStorageItem('riva_about_article', article);
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('about_article').upsert({ id: 'main_about', ...article });
+      } catch (err) {
+        console.warn('Supabase about_article save error:', err);
+      }
+    }
+    return article;
+  },
+
+  // 7. News & Articles (Rich content with image + text)
+  async getNewsArticles(): Promise<NewsArticle[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('news_articles').select('*').order('date', { ascending: false });
+        if (!error && data && data.length > 0) return data as NewsArticle[];
+      } catch (err) {
+        console.warn('Supabase news_articles fetch error:', err);
+      }
+    }
+    return getStorageItem<NewsArticle[]>('riva_news_articles', defaultNewsArticles);
+  },
+
+  async saveNewsArticle(article: NewsArticle): Promise<NewsArticle[]> {
+    let list = await this.getNewsArticles();
+    const index = list.findIndex(n => n.id === article.id);
+    if (index >= 0) {
+      list[index] = article;
+    } else {
+      list.unshift({ ...article, id: article.id || `news-${Date.now()}` });
+    }
+    setStorageItem('riva_news_articles', list);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('news_articles').upsert(article);
+      } catch (err) {
+        console.warn('Supabase news save error:', err);
+      }
+    }
+    return list;
+  },
+
+  async deleteNewsArticle(id: string): Promise<NewsArticle[]> {
+    let list = await this.getNewsArticles();
+    list = list.filter(n => n.id !== id);
+    setStorageItem('riva_news_articles', list);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('news_articles').delete().eq('id', id);
+      } catch (err) {
+        console.warn('Supabase news delete error:', err);
+      }
+    }
+    return list;
   }
 };
+

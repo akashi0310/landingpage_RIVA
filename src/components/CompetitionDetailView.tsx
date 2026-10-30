@@ -55,7 +55,7 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
 
       {/* Hero Banner for Competition Detail (matching 8.png top middle) */}
       <div style={{
-        background: 'radial-gradient(ellipse at 50% 20%, rgba(19, 59, 190, 0.4) 0%, rgba(7, 21, 69, 0.96) 65%, #03081c 100%)',
+        background: 'radial-gradient(ellipse at 50% 20%, rgba(51, 102, 255, 0.4) 0%, rgba(9, 21, 61, 0.96) 65%, #050d26 100%)',
         borderBottom: '1px solid var(--color-border)',
         padding: '50px 0 40px',
         position: 'relative'
@@ -308,8 +308,8 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
                     width: '46px', 
                     height: '46px', 
                     borderRadius: '12px', 
-                    background: 'linear-gradient(135deg, #FFDE43, #F0F2C0)', 
-                    color: '#03081c',
+                    background: 'linear-gradient(135deg, #CC9900, #F0F2C0)', 
+                    color: '#050d26',
                     fontWeight: 900,
                     display: 'flex',
                     alignItems: 'center',

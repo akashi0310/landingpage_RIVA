@@ -1,57 +1,57 @@
 /* ====================================================================
    RIVA INNOVATION RESEARCH INSTITUTE - DESIGN SYSTEM
    Brand Palette Update:
-   - Primary Deep Royal Blue: #133BBE
-   - Vibrant Golden Yellow:   #FFDE43
-   - Soft Cream Ivory:        #F0F2C0
-   - Bright Sky Tech Blue:    #75C2FA
+   - Primary Modern Royal Blue: #3366FF
+   - Warm Gold Accent:         #CC9900
+   - Soft Cream Ivory:         #F0F2C0
+   - Bright Sky Tech Blue:     #75C2FA
    ==================================================================== */
 
 :root {
   /* Brand Core Tokens */
-  --color-primary: #133bbe;
-  --color-primary-light: #2552eb;
-  --color-primary-hover: #0e2ea0;
-  --color-primary-glow: rgba(19, 59, 190, 0.45);
+  --color-primary: #3366ff;
+  --color-primary-light: #5c85ff;
+  --color-primary-hover: #1f52eb;
+  --color-primary-glow: rgba(51, 102, 255, 0.45);
 
   --color-sky: #75c2fa;
   --color-sky-bright: #9dd6fb;
   --color-sky-glow: rgba(117, 194, 250, 0.35);
 
-  --color-gold: #ffde43;
-  --color-gold-bright: #ffde43;
-  --color-gold-hover: #ffe76e;
-  --color-gold-glow: rgba(255, 222, 67, 0.42);
+  --color-gold: #cc9900;
+  --color-gold-bright: #cc9900;
+  --color-gold-hover: #b38600;
+  --color-gold-glow: rgba(204, 153, 0, 0.42);
 
   --color-cream: #f0f2c0;
   --color-cream-tint: rgba(240, 242, 192, 0.14);
   --color-cream-border: rgba(240, 242, 192, 0.35);
 
   /* Backgrounds */
-  --color-bg-deep: #03081c;
-  --color-bg-navy: #071545;
-  --color-bg-surface: #0a1f63;
-  --color-bg-card: rgba(10, 29, 87, 0.65);
-  --color-bg-card-hover: rgba(19, 59, 190, 0.32);
+  --color-bg-deep: #050d26;
+  --color-bg-navy: #09153d;
+  --color-bg-surface: #0e205c;
+  --color-bg-card: rgba(14, 32, 92, 0.65);
+  --color-bg-card-hover: rgba(51, 102, 255, 0.28);
 
   /* Typography Colors */
   --color-text-white: #ffffff;
   --color-text-light: #f0f2c0;
   --color-text-muted: #9cc1fa;
   --color-text-dim: #6488c9;
-  --color-text-dark: #03081c;
+  --color-text-dark: #050d26;
 
   /* Borders */
   --color-border: rgba(240, 242, 192, 0.14);
-  --color-border-focus: rgba(117, 194, 250, 0.65);
-  --color-border-gold: rgba(255, 222, 67, 0.45);
+  --color-border-focus: rgba(51, 102, 255, 0.65);
+  --color-border-gold: rgba(204, 153, 0, 0.45);
   --color-border-sky: rgba(117, 194, 250, 0.4);
 
   /* Feedback Colors */
   --color-success: #10b981;
   --color-success-bg: rgba(16, 185, 129, 0.16);
-  --color-warning: #ffde43;
-  --color-warning-bg: rgba(255, 222, 67, 0.16);
+  --color-warning: #cc9900;
+  --color-warning-bg: rgba(204, 153, 0, 0.16);
   --color-danger: #ef4444;
   --color-danger-bg: rgba(239, 68, 68, 0.16);
 
@@ -63,10 +63,10 @@
   --radius-full: 9999px;
 
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 8px 24px rgba(3, 8, 28, 0.45);
-  --shadow-lg: 0 16px 40px rgba(3, 8, 28, 0.6);
-  --shadow-gold: 0 0 24px rgba(255, 222, 67, 0.38);
-  --shadow-blue: 0 0 24px rgba(19, 59, 190, 0.45);
+  --shadow-md: 0 8px 24px rgba(5, 13, 38, 0.45);
+  --shadow-lg: 0 16px 40px rgba(5, 13, 38, 0.6);
+  --shadow-gold: 0 0 24px rgba(204, 153, 0, 0.38);
+  --shadow-blue: 0 0 24px rgba(51, 102, 255, 0.45);
   --shadow-sky: 0 0 24px rgba(117, 194, 250, 0.35);
 }
 
@@ -77,9 +77,9 @@
   --color-bg-surface: #ffffff;
   --color-bg-card: #ffffff;
   --color-bg-card-hover: #f8fafc;
-  --color-text-white: #03081c;
-  --color-text-light: #071545;
-  --color-text-muted: #133bbe;
+  --color-text-white: #050d26;
+  --color-text-light: #09153d;
+  --color-text-muted: #3366ff;
   --color-border: #e2e8f0;
 }
 
@@ -106,9 +106,10 @@ body {
   min-height: 100vh;
   width: 100%;
   position: relative;
-  background: radial-gradient(circle at 50% 0%, #133bbe 0%, #081647 40%, #03081c 100%);
-  background-color: #03081c;
+  background: radial-gradient(circle at 50% 0%, #3366ff 0%, #09153d 40%, #050d26 100%);
+  background-color: #050d26;
 }
+
 
 #root, .app-root, .landing-page {
   overflow-x: hidden;
@@ -438,9 +439,9 @@ button, input, select, textarea {
 }
 
 .demo-tab-btn.active.gold {
-  background: linear-gradient(135deg, #ffde43, #f0f2c0);
-  color: #03081c;
-  border-color: #ffde43;
+  background: linear-gradient(135deg, #cc9900, #f0f2c0);
+  color: #050d26;
+  border-color: #cc9900;
   box-shadow: 0 0 14px var(--color-gold-glow);
   font-weight: 800;
 }
@@ -499,42 +500,43 @@ button, input, select, textarea {
 }
 
 .btn-gold {
-  background: linear-gradient(135deg, #ffde43 0%, #f7ce19 100%);
-  color: #03081c;
+  background: linear-gradient(135deg, #e6b000 0%, #cc9900 100%);
+  color: #ffffff;
   font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
   box-shadow: 0 4px 18px var(--color-gold-glow);
-  border: 1px solid #f0f2c0;
+  border: 1px solid rgba(255, 235, 150, 0.4);
 }
 
 .btn-gold:hover {
-  background: linear-gradient(135deg, #ffe56b 0%, #ffde43 100%);
-  box-shadow: 0 6px 24px rgba(255, 222, 67, 0.55);
+  background: linear-gradient(135deg, #f0be1a 0%, #d49f05 100%);
+  box-shadow: 0 6px 24px rgba(204, 153, 0, 0.55);
   transform: translateY(-2px);
-  color: #03081c;
+  color: #ffffff;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #2552eb 0%, #133bbe 100%);
+  background: linear-gradient(135deg, #5c85ff 0%, #3366ff 100%);
   color: #ffffff;
   box-shadow: 0 4px 18px var(--color-primary-glow);
-  border: 1px solid rgba(117, 194, 250, 0.35);
+  border: 1px solid rgba(117, 194, 250, 0.45);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #3765f5 0%, #1742d4 100%);
-  box-shadow: 0 6px 24px rgba(19, 59, 190, 0.6);
+  background: linear-gradient(135deg, #6b92ff 0%, #2050e6 100%);
+  box-shadow: 0 6px 24px rgba(51, 102, 255, 0.6);
   transform: translateY(-2px);
 }
 
 .btn-outline {
-  background: rgba(19, 59, 190, 0.15);
+  background: rgba(51, 102, 255, 0.15);
   color: var(--color-cream);
   border: 1px solid rgba(117, 194, 250, 0.35);
   backdrop-filter: blur(8px);
 }
 
 .btn-outline:hover {
-  background: rgba(19, 59, 190, 0.35);
+  background: rgba(51, 102, 255, 0.35);
   border-color: var(--color-sky);
   color: white;
   transform: translateY(-2px);
@@ -569,9 +571,9 @@ button, input, select, textarea {
 }
 
 .badge-upcoming {
-  background: rgba(255, 222, 67, 0.18);
-  color: #ffde43;
-  border: 1px solid rgba(255, 222, 67, 0.4);
+  background: rgba(204, 153, 0, 0.18);
+  color: #cc9900;
+  border: 1px solid rgba(204, 153, 0, 0.4);
 }
 
 .badge-closed {
@@ -581,7 +583,7 @@ button, input, select, textarea {
 }
 
 .badge-gold {
-  background: rgba(255, 222, 67, 0.16);
+  background: rgba(204, 153, 0, 0.16);
   color: var(--color-gold);
   border: 1px solid var(--color-border-gold);
 }
@@ -677,7 +679,7 @@ button, input, select, textarea {
 
 .hero-title-gradient {
   display: block;
-  background: linear-gradient(135deg, #ffffff 15%, #ffde43 55%, #75c2fa 100%);
+  background: linear-gradient(135deg, #ffffff 15%, #cc9900 55%, #75c2fa 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: 0.025em;
@@ -1282,14 +1284,14 @@ button, input, select, textarea {
 .step-card:hover {
   border-color: var(--color-sky);
   transform: translateY(-4px);
-  background: rgba(19, 59, 190, 0.25);
+  background: rgba(51, 102, 255, 0.25);
 }
 
 .step-number {
   width: 32px;
   height: 32px;
-  background: linear-gradient(135deg, #ffde43, #f0f2c0);
-  color: #03081c;
+  background: linear-gradient(135deg, #cc9900, #f0f2c0);
+  color: #050d26;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1398,14 +1400,14 @@ button, input, select, textarea {
   }
 
   .mobile-floating-phone:active {
-    background: rgba(19, 59, 190, 0.45);
+    background: rgba(51, 102, 255, 0.45);
     color: white;
   }
 
   .mobile-floating-consult {
     flex: 1.4;
-    background: linear-gradient(135deg, #ffde43, #f7ce19);
-    color: #03081c;
+    background: linear-gradient(135deg, #e6b000, #cc9900);
+    color: #ffffff;
     font-weight: 800;
     box-shadow: 0 2px 14px var(--color-gold-glow);
   }

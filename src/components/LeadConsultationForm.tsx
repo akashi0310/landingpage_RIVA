@@ -4,25 +4,14 @@ import {
   CheckCircle2, 
   Sparkles, 
   Phone, 
-  Settings, 
-  X, 
-  ExternalLink, 
-  Check, 
   AlertCircle,
-  FileSpreadsheet,
   Users,
   GraduationCap,
-  School
+  School,
+  ShieldCheck
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { 
-  isLeadFormConfigured, 
-  getGoogleSheetsUrl, 
-  setGoogleSheetsUrl, 
-  testGoogleSheetsConnection, 
-  submitLead,
-  isValidScriptUrl
-} from '../lib/leads';
+import { submitLead } from '../lib/leads';
 import { Lead } from '../types';
 
 export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = ({ selectedCompetition }) => {
@@ -39,18 +28,10 @@ export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = 
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [isDemoSubmission, setIsDemoSubmission] = useState(false);
   const [error, setError] = useState('');
   const [website, setWebsite] = useState('');
   const request = useRef({ id: '', payload: '' });
   const submitting = useRef(false);
-
-  // Modal cấu hình Google Sheet
-  const [showConfigModal, setShowConfigModal] = useState(false);
-  const [inputUrl, setInputUrl] = useState(getGoogleSheetsUrl());
-  const [testResult, setTestResult] = useState<{ ok: boolean; message: string } | null>(null);
-  const [testing, setTesting] = useState(false);
-  const [isConfigured, setIsConfigured] = useState(isLeadFormConfigured());
 
   useEffect(() => {
     const names: Record<string, string> = { 
@@ -69,35 +50,6 @@ export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = 
     setFormData(prev => ({ ...prev, role: newRole }));
   };
 
-  const handleSaveConfig = () => {
-    const trimmed = inputUrl.trim();
-    if (trimmed && !isValidScriptUrl(trimmed)) {
-      setTestResult({
-        ok: false,
-        message: 'URL phải có định dạng https://script.google.com/macros/s/.../exec'
-      });
-      return;
-    }
-    setGoogleSheetsUrl(trimmed);
-    setIsConfigured(Boolean(trimmed));
-    setTestResult({
-      ok: true,
-      message: trimmed ? 'Đã lưu cấu hình Google Sheets thành công!' : 'Đã xóa cấu hình URL.'
-    });
-    setTimeout(() => {
-      setShowConfigModal(false);
-      setTestResult(null);
-    }, 1200);
-  };
-
-  const handleTestUrl = async () => {
-    setTesting(true);
-    setTestResult(null);
-    const res = await testGoogleSheetsConnection(inputUrl);
-    setTesting(false);
-    setTestResult(res);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitting.current) return;
@@ -111,10 +63,9 @@ export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = 
         request.current = { id: crypto.randomUUID(), payload };
       }
       
-      const result = await submitLead(formData, request.current.id, website);
+      await submitLead(formData, request.current.id, website);
       request.current = { id: '', payload: '' };
       
-      setIsDemoSubmission(Boolean(result.isDemo));
       setSuccess(true);
 
       confetti({
@@ -123,7 +74,7 @@ export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = 
         origin: { y: 0.6 }
       });
 
-      // Reset form
+      // Reset form giữ nguyên role và cuộc thi
       setFormData({
         full_name: '',
         email: '',
@@ -143,7 +94,7 @@ export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = 
   };
 
   return (
-    <section id="register-lead" style={{ padding: '60px 0 90px', background: 'radial-gradient(circle at 50% 50%, rgba(19, 59, 190, 0.28) 0%, #03081c 85%)' }}>
+    <section id="register-lead" style={{ padding: '60px 0 90px', background: 'radial-gradient(circle at 50% 50%, rgba(51, 102, 255, 0.28) 0%, #050d26 85%)' }}>
       <div className="container">
         <div className="glass-card lead-consult-wrapper" style={{ position: 'relative' }}>
           
@@ -191,13 +142,13 @@ export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = 
               <div style={{
                 padding: '18px 22px',
                 background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 222, 67, 0.25)',
+                border: '1px solid rgba(204, 153, 0, 0.25)',
                 borderRadius: '14px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '16px'
               }}>
-                <div style={{ padding: '12px', borderRadius: '50%', background: 'linear-gradient(135deg, #133bbe, #146ef5)', color: 'white' }}>
+                <div style={{ padding: '12px', borderRadius: '50%', background: 'linear-gradient(135deg, #3366ff, #5c85ff)', color: 'white' }}>
                   <Phone size={20} />
                 </div>
                 <div>
@@ -205,54 +156,21 @@ export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = 
                     Hotline Tư Vấn Tuyển Sinh 24/7:
                   </div>
                   <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--color-gold-bright)' }}>
-                    0988.xxx.xxx / 024.xxxx.xxxx
+                    0988.234.567 / 024.3856.9999
                   </div>
                 </div>
               </div>
 
-              {/* Trạng thái liên kết Google Sheet */}
-              <div style={{ marginTop: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  fontSize: '12px',
-                  padding: '5px 12px',
-                  borderRadius: '20px',
-                  background: isConfigured ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 222, 67, 0.12)',
-                  color: isConfigured ? '#34d399' : 'var(--color-gold-bright)',
-                  border: isConfigured ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(255, 222, 67, 0.3)'
-                }}>
-                  <FileSpreadsheet size={14} />
-                  <span>{isConfigured ? 'Google Sheets: Đã kết nối tự động lưu' : 'Google Sheets: Chế độ lưu thử nghiệm'}</span>
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() => setShowConfigModal(true)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'var(--color-text-muted)',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    fontSize: '12px',
-                    padding: '4px 8px',
-                    borderRadius: '6px'
-                  }}
-                  title="Cài đặt liên kết Google Sheet"
-                >
-                  <Settings size={14} />
-                  <span>Cài đặt</span>
-                </button>
+              {/* Huy hiệu an tâm bảo mật */}
+              <div style={{ marginTop: '24px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-text-muted)', fontSize: '13px' }}>
+                <ShieldCheck size={16} color="var(--color-gold-bright)" />
+                <span>Hệ thống bảo mật dữ liệu theo quy chuẩn thông tin tuyển sinh RIVA</span>
               </div>
             </div>
 
             {/* Cột phải: Form đăng ký thông tin */}
             <div className="lead-consult-form-box">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <div style={{ marginBottom: '8px' }}>
                 <h3 style={{ fontSize: '22px', fontWeight: 800, color: 'white', margin: 0 }}>
                   Đăng Ký Tư Vấn Hồ Sơ
                 </h3>
@@ -344,39 +262,26 @@ export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = 
 
               {success ? (
                 <div style={{
-                  padding: '30px 24px',
+                  padding: '34px 24px',
                   background: 'rgba(16, 185, 129, 0.12)',
                   border: '1px solid rgba(16, 185, 129, 0.35)',
                   borderRadius: '14px',
                   textAlign: 'center'
                 }}>
-                  <CheckCircle2 size={48} color="#34d399" style={{ margin: '0 auto 16px' }} />
+                  <CheckCircle2 size={50} color="#34d399" style={{ margin: '0 auto 16px' }} />
                   <h4 style={{ fontSize: '20px', color: 'white', marginBottom: '10px', fontWeight: 800 }}>
-                    {isDemoSubmission ? 'Đã ghi nhận thông tin đăng ký!' : 'Gửi thông tin thành công!'}
+                    Gửi thông tin thành công!
                   </h4>
-                  <p style={{ fontSize: '14px', color: 'var(--color-text-light)', lineHeight: 1.6, marginBottom: '20px' }}>
-                    {isDemoSubmission 
-                      ? 'Dữ liệu đã được lưu trữ an toàn trên thiết bị. Bạn có thể bấm "Cài đặt" để dán URL Google Sheet và tự động chuyển toàn bộ dữ liệu vào trang tính online.'
-                      : 'Hồ sơ đã được lưu tự động vào Google Sheets của ban tuyển sinh RIVA. Chuyên viên sẽ gọi điện hoặc gửi kết nối qua Zalo trong thời gian sớm nhất.'}
+                  <p style={{ fontSize: '14px', color: 'var(--color-text-light)', lineHeight: 1.6, marginBottom: '22px' }}>
+                    Hồ sơ đăng ký đã được ghi nhận tự động vào hệ thống tuyển sinh của RIVA. Chuyên viên tư vấn sẽ liên hệ trực tiếp qua Số điện thoại / Zalo trong vòng 24 giờ làm việc.
                   </p>
                   
-                  <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                    <button 
-                      className="btn btn-sm btn-gold" 
-                      onClick={() => setSuccess(false)}
-                    >
-                      Đăng ký thêm hồ sơ khác
-                    </button>
-                    {isDemoSubmission && (
-                      <button 
-                        className="btn btn-sm btn-outline"
-                        onClick={() => { setShowConfigModal(true); }}
-                      >
-                        <Settings size={14} />
-                        <span>Kết nối Google Sheet ngay</span>
-                      </button>
-                    )}
-                  </div>
+                  <button 
+                    className="btn btn-sm btn-gold" 
+                    onClick={() => setSuccess(false)}
+                  >
+                    Đăng ký thêm hồ sơ khác
+                  </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit}>
@@ -398,7 +303,7 @@ export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = 
                     </div>
                   )}
 
-                  {/* Honeypot field chống spam */}
+                  {/* Honeypot field chống spam bot */}
                   <div className="form-honeypot" aria-hidden="true" style={{ display: 'none' }}>
                     <label>Website<input name="website" tabIndex={-1} autoComplete="off" value={website} onChange={e => setWebsite(e.target.value)} /></label>
                   </div>
@@ -543,139 +448,6 @@ export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = 
           </div>
         </div>
       </div>
-
-      {/* MODAL CÀI ĐẶT GOOGLE SHEETS */}
-      {showConfigModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.75)',
-          backdropFilter: 'blur(6px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          padding: '20px'
-        }}>
-          <div style={{
-            background: '#071a3a',
-            border: '1px solid rgba(255, 222, 67, 0.4)',
-            borderRadius: '16px',
-            maxWidth: '560px',
-            width: '100%',
-            padding: '28px',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
-            color: 'white',
-            position: 'relative'
-          }}>
-            <button
-              onClick={() => { setShowConfigModal(false); setTestResult(null); }}
-              style={{
-                position: 'absolute',
-                top: '18px',
-                right: '18px',
-                background: 'rgba(255,255,255,0.08)',
-                border: 'none',
-                color: 'white',
-                borderRadius: '50%',
-                width: '32px',
-                height: '32px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer'
-              }}
-            >
-              <X size={18} />
-            </button>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(255, 222, 67, 0.15)', color: 'var(--color-gold-bright)' }}>
-                <FileSpreadsheet size={24} />
-              </div>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>Kết Nối Google Sheet Online</h3>
-                <p style={{ margin: 0, fontSize: '12px', color: 'var(--color-text-muted)' }}>Tự động đẩy dữ liệu đăng ký vào trang tính của bạn</p>
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>
-                Web App URL của Google Apps Script (kết thúc bằng /exec):
-              </label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="https://script.google.com/macros/s/.../exec"
-                value={inputUrl}
-                onChange={e => setInputUrl(e.target.value)}
-                style={{ width: '100%', fontSize: '13px' }}
-              />
-            </div>
-
-            {testResult && (
-              <div style={{
-                padding: '10px 14px',
-                borderRadius: '8px',
-                fontSize: '12px',
-                marginBottom: '16px',
-                background: testResult.ok ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                border: testResult.ok ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)',
-                color: testResult.ok ? '#34d399' : '#fca5a5',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-                {testResult.ok ? <Check size={16} /> : <AlertCircle size={16} />}
-                <span>{testResult.message}</span>
-              </div>
-            )}
-
-            {/* Hướng dẫn 3 bước nhanh */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '10px',
-              padding: '12px 16px',
-              fontSize: '12px',
-              color: 'var(--color-text-light)',
-              lineHeight: 1.6,
-              marginBottom: '20px'
-            }}>
-              <div style={{ fontWeight: 700, color: 'var(--color-gold-bright)', marginBottom: '4px' }}>
-                Cách lấy link Google Apps Script trong 2 phút:
-              </div>
-              <ol style={{ paddingLeft: '18px', margin: 0 }}>
-                <li>Tạo một Google Sheet mới tại <strong>sheets.new</strong></li>
-                <li>Chọn <strong>Tiện ích mở rộng → Apps Script</strong>, dán mã từ file <code>google-apps-script/Code.gs</code></li>
-                <li>Bấm <strong>Triển khai → Tùy chọn triển khai mới</strong>, chọn Ứng dụng web, phân quyền: <em>"Bất kỳ ai" (Anyone)</em>, copy link dán vào đây.</li>
-              </ol>
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button
-                type="button"
-                className="btn btn-sm btn-outline"
-                onClick={handleTestUrl}
-                disabled={testing || !inputUrl.trim()}
-              >
-                {testing ? 'Đang kiểm tra...' : 'Kiểm tra URL'}
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-sm btn-gold"
-                onClick={handleSaveConfig}
-              >
-                Lưu kết nối
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 };

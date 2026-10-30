@@ -27,7 +27,7 @@ export const TrustSection: React.FC = () => {
                 width: '32px',
                 height: '32px',
                 borderRadius: '8px',
-                background: 'rgba(19, 59, 190, 0.28)',
+                background: 'rgba(51, 102, 255, 0.28)',
                 color: 'var(--color-sky)',
                 display: 'flex',
                 alignItems: 'center',

@@ -38,8 +38,8 @@ export const AchievementsAndProcess: React.FC<AchievementsAndProcessProps> = ({
         <div id="achievements" className="glass-card" style={{
           padding: '44px 32px',
           marginBottom: '70px',
-          background: 'radial-gradient(ellipse at center, rgba(19, 59, 190, 0.4) 0%, rgba(3, 8, 28, 0.96) 100%)',
-          border: '1px solid rgba(255, 222, 67, 0.4)',
+          background: 'radial-gradient(ellipse at center, rgba(51, 102, 255, 0.4) 0%, rgba(5, 13, 38, 0.96) 100%)',
+          border: '1px solid rgba(204, 153, 0, 0.4)',
           boxShadow: 'var(--shadow-lg)'
         }}>
           <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto 36px' }}>

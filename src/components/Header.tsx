@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone, Sparkles, ChevronRight } from 'lucide-react';
+import { Menu, X, Phone, Sparkles, ChevronRight, ShieldCheck } from 'lucide-react';
+import { SiteSettings } from '../types';
 
 const links = [
   ['about', 'Giới thiệu'], 
@@ -10,7 +11,13 @@ const links = [
   ['news', 'Tin tức']
 ];
 
-export const Header: React.FC<{ onNavigate: (id: string) => void }> = ({ onNavigate }) => {
+interface HeaderProps {
+  onNavigate: (id: string) => void;
+  onOpenAdmin: () => void;
+  siteSettings?: SiteSettings;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin, siteSettings }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Close mobile menu on resize to desktop
@@ -41,6 +48,8 @@ export const Header: React.FC<{ onNavigate: (id: string) => void }> = ({ onNavig
     onNavigate(id); 
   };
 
+  const hotlineNum = siteSettings?.hotline || '0988.234.567';
+
   return (
     <header className="site-header">
       <nav aria-label="Điều hướng chính" className="container site-nav">
@@ -69,7 +78,7 @@ export const Header: React.FC<{ onNavigate: (id: string) => void }> = ({ onNavig
                 width: '100%',
                 height: '100%',
                 objectFit: 'contain',
-                filter: 'drop-shadow(0 0 10px rgba(255, 222, 67, 0.45))'
+                filter: 'drop-shadow(0 0 10px rgba(204, 153, 0, 0.45))'
               }}
             />
           </div>
@@ -88,7 +97,7 @@ export const Header: React.FC<{ onNavigate: (id: string) => void }> = ({ onNavig
               <span>RIVA</span>
               <span style={{
                 fontSize: '10px',
-                background: 'rgba(255, 222, 67, 0.2)',
+                background: 'rgba(204, 153, 0, 0.2)',
                 color: 'var(--color-gold-bright)',
                 padding: '2px 6px',
                 borderRadius: '4px',
@@ -123,7 +132,23 @@ export const Header: React.FC<{ onNavigate: (id: string) => void }> = ({ onNavig
         </div>
 
         {/* Actions & Mobile Toggle */}
-        <div className="site-nav-actions">
+        <div className="site-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button 
+            className="btn btn-sm btn-ghost" 
+            onClick={onOpenAdmin}
+            style={{ 
+              color: 'var(--color-text-muted)', 
+              fontSize: '12px',
+              gap: '5px',
+              padding: '6px 10px',
+              border: '1px solid rgba(255, 255, 255, 0.1)' 
+            }}
+            title="Dành cho Quản trị viên"
+          >
+            <ShieldCheck size={14} color="var(--color-gold-bright)" />
+            <span>Admin</span>
+          </button>
+
           <a 
             href="#register-lead" 
             className="btn btn-sm btn-gold header-cta-btn" 
@@ -183,13 +208,22 @@ export const Header: React.FC<{ onNavigate: (id: string) => void }> = ({ onNavig
               </a>
 
               <a 
-                href="tel:0988000000" 
+                href={`tel:${hotlineNum.replace(/[^0-9]/g, '')}`} 
                 className="btn btn-outline" 
                 style={{ width: '100%', justifyContent: 'center', marginTop: '10px' }}
               >
                 <Phone size={16} />
-                <span>HOTLINE: 0988.xxx.xxx</span>
+                <span>HOTLINE: {hotlineNum}</span>
               </a>
+
+              <button 
+                onClick={() => { setMobileMenuOpen(false); onOpenAdmin(); }}
+                className="btn btn-ghost"
+                style={{ width: '100%', justifyContent: 'center', marginTop: '8px', fontSize: '13px', color: 'var(--color-text-dim)', gap: '6px' }}
+              >
+                <ShieldCheck size={14} color="var(--color-gold-bright)" />
+                <span>Quản Trị Hệ Thống (Admin)</span>
+              </button>
             </div>
           </nav>
         </>

@@ -66,8 +66,55 @@ export interface Achievement {
   avatar_url: string;
 }
 
+export interface SiteSettings {
+  hotline: string;
+  hotline_secondary?: string;
+  email: string;
+  email_admissions?: string;
+  address_hn: string;
+  address_hcm: string;
+  org_name: string;
+  slogan: string;
+}
+
+export interface ArticleBlock {
+  id: string;
+  type: 'paragraph' | 'subheading' | 'image' | 'quote';
+  text?: string;
+  imageUrl?: string;
+  imageCaption?: string;
+  authorQuote?: string;
+}
+
+export interface NewsArticle {
+  id: string;
+  title: string;
+  category: string;
+  date: string;
+  author?: string;
+  cover_image: string;
+  desc: string;
+  blocks?: ArticleBlock[];
+  published?: boolean;
+}
+
+export interface AboutArticleData {
+  headline: string;
+  subheadline: string;
+  press_source: string;
+  author: string;
+  date: string;
+  lead_paragraph: string;
+  hero_image: string;
+  hero_caption: string;
+  video_url?: string;
+  video_title?: string;
+  blocks: ArticleBlock[];
+  metrics: { val: string; label: string; desc?: string }[];
+}
+
 export type ActiveView = 
   | 'home' 
   | 'competition-detail' 
-  | 'student-dashboard' 
   | 'admin-dashboard';
+

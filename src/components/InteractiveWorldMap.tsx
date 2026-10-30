@@ -63,7 +63,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
       {/* Top Map Action Bar */}
       <div className="map-control-bar">
         <div className="map-control-title">
-          <span className="pulse-dot" style={{ color: '#FFDE43' }} />
+          <span className="pulse-dot" style={{ color: '#CC9900' }} />
           <span>MẠNG LƯỚI ĐẤU TRƯỜNG TOÀN CẦU RIVA ({destinations.length} QUỐC GIA & ĐIỂM ĐẾN)</span>
         </div>
 
@@ -106,23 +106,23 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
           <defs>
             {/* Gradient cho các đường bay nối */}
             <linearGradient id="flightArcGradDefault" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#FFDE43" stopOpacity="0.95" />
+              <stop offset="0%" stopColor="#CC9900" stopOpacity="0.95" />
               <stop offset="60%" stopColor="#75C2FA" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#133BBE" stopOpacity="0.75" />
+              <stop offset="100%" stopColor="#3366FF" stopOpacity="0.75" />
             </linearGradient>
 
             <linearGradient id="flightArcGradActive" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#FFDE43" stopOpacity="1" />
-              <stop offset="50%" stopColor="#FFE76E" stopOpacity="1" />
+              <stop offset="0%" stopColor="#CC9900" stopOpacity="1" />
+              <stop offset="50%" stopColor="#E6B000" stopOpacity="1" />
               <stop offset="100%" stopColor="#75C2FA" stopOpacity="1" />
             </linearGradient>
 
             {/* Hào quang trung tâm Việt Nam */}
             <radialGradient id="vietnamHubGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#FFDE43" stopOpacity="1" />
-              <stop offset="45%" stopColor="#FFDE43" stopOpacity="0.6" />
-              <stop offset="80%" stopColor="#FFDE43" stopOpacity="0.15" />
-              <stop offset="100%" stopColor="#FFDE43" stopOpacity="0" />
+              <stop offset="0%" stopColor="#CC9900" stopOpacity="1" />
+              <stop offset="45%" stopColor="#CC9900" stopOpacity="0.6" />
+              <stop offset="80%" stopColor="#CC9900" stopOpacity="0.15" />
+              <stop offset="100%" stopColor="#CC9900" stopOpacity="0" />
             </radialGradient>
 
             {/* Pattern Tech Dot Matrix */}
@@ -159,7 +159,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
             {/* Greenland */}
             <path
               d="M 350 40 L 390 35 L 415 65 L 395 105 L 355 85 Z"
-              fill="rgba(19, 59, 190, 0.22)"
+              fill="rgba(51, 102, 255, 0.22)"
               stroke="rgba(117, 194, 250, 0.35)"
               strokeWidth="0.8"
             />
@@ -172,7 +172,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
                  L 220 225 L 195 240 L 180 220 
                  L 160 190 L 130 170 L 110 135 
                  L 75 110 Z"
-              fill="rgba(19, 59, 190, 0.28)"
+              fill="rgba(51, 102, 255, 0.28)"
               stroke="rgba(117, 194, 250, 0.45)"
               strokeWidth="1"
             />
@@ -183,7 +183,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
                  L 275 255 L 315 285 L 305 340 
                  L 270 395 L 250 415 L 235 385 
                  L 225 330 L 215 285 Z"
-              fill="rgba(19, 59, 190, 0.22)"
+              fill="rgba(51, 102, 255, 0.22)"
               stroke="rgba(117, 194, 250, 0.38)"
               strokeWidth="0.9"
             />
@@ -192,14 +192,14 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
             {/* Vương quốc Anh & Ireland */}
             <path
               d="M 455 85 L 475 90 L 470 120 L 450 115 Z"
-              fill="rgba(19, 59, 190, 0.3)"
+              fill="rgba(51, 102, 255, 0.3)"
               stroke="rgba(117, 194, 250, 0.45)"
               strokeWidth="0.8"
             />
             {/* Scandinavia */}
             <path
               d="M 500 50 L 530 45 L 545 75 L 525 105 L 505 95 Z"
-              fill="rgba(19, 59, 190, 0.25)"
+              fill="rgba(51, 102, 255, 0.25)"
               stroke="rgba(117, 194, 250, 0.4)"
               strokeWidth="0.8"
             />
@@ -209,7 +209,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
                  L 510 105 L 555 105 L 570 130 
                  L 550 155 L 520 165 L 490 165 
                  L 465 150 L 460 130 Z"
-              fill="rgba(19, 59, 190, 0.35)"
+              fill="rgba(51, 102, 255, 0.35)"
               stroke="rgba(117, 194, 250, 0.55)"
               strokeWidth="1.1"
             />
@@ -220,14 +220,14 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
                  L 540 170 L 575 210 L 585 260 
                  L 550 340 L 520 375 L 495 330 
                  L 450 260 L 445 210 Z"
-              fill="rgba(19, 59, 190, 0.2)"
+              fill="rgba(51, 102, 255, 0.2)"
               stroke="rgba(117, 194, 250, 0.35)"
               strokeWidth="0.9"
             />
             {/* Madagascar */}
             <path
               d="M 590 320 L 605 330 L 595 370 L 585 360 Z"
-              fill="rgba(19, 59, 190, 0.2)"
+              fill="rgba(51, 102, 255, 0.2)"
               stroke="rgba(117, 194, 250, 0.35)"
               strokeWidth="0.7"
             />
@@ -241,7 +241,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
                  L 745 265 L 705 270 L 685 235 
                  L 645 220 L 620 180 L 585 175 
                  L 570 135 Z"
-              fill="rgba(19, 59, 190, 0.3)"
+              fill="rgba(51, 102, 255, 0.3)"
               stroke="rgba(117, 194, 250, 0.5)"
               strokeWidth="1"
             />
@@ -249,7 +249,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
             {/* Quần đảo Nhật Bản */}
             <path
               d="M 855 125 L 870 135 L 860 170 L 845 155 Z"
-              fill="rgba(19, 59, 190, 0.32)"
+              fill="rgba(51, 102, 255, 0.32)"
               stroke="rgba(117, 194, 250, 0.45)"
               strokeWidth="0.8"
             />
@@ -257,13 +257,13 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
             {/* Đông Nam Á hải đảo (Indonesia, Philippines, Malaysia) */}
             <path
               d="M 720 285 L 755 280 L 780 295 L 735 325 Z"
-              fill="rgba(19, 59, 190, 0.22)"
+              fill="rgba(51, 102, 255, 0.22)"
               stroke="rgba(117, 194, 250, 0.38)"
               strokeWidth="0.7"
             />
             <path
               d="M 785 235 L 805 240 L 795 275 L 780 265 Z"
-              fill="rgba(19, 59, 190, 0.22)"
+              fill="rgba(51, 102, 255, 0.22)"
               stroke="rgba(117, 194, 250, 0.38)"
               strokeWidth="0.7"
             />
@@ -273,13 +273,13 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
               d="M 780 320 
                  L 870 310 L 885 365 L 850 400 
                  L 790 385 L 775 350 Z"
-              fill="rgba(19, 59, 190, 0.24)"
+              fill="rgba(51, 102, 255, 0.24)"
               stroke="rgba(117, 194, 250, 0.4)"
               strokeWidth="0.9"
             />
             <path
               d="M 900 380 L 915 390 L 905 425 L 895 415 Z"
-              fill="rgba(19, 59, 190, 0.22)"
+              fill="rgba(51, 102, 255, 0.22)"
               stroke="rgba(117, 194, 250, 0.35)"
               strokeWidth="0.7"
             />
@@ -296,10 +296,10 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
                  C 737 248, 734 242, 734 236 
                  C 734 230, 738 224, 737 218 
                  Z"
-              fill="#FFDE43"
+              fill="#CC9900"
               stroke="#FFE76E"
               strokeWidth="1.8"
-              filter="drop-shadow(0 0 6px rgba(255, 222, 67, 0.75))"
+              filter="drop-shadow(0 0 6px rgba(204, 153, 0, 0.75))"
             />
           </g>
 
@@ -317,7 +317,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
                   {/* Đường sáng nền mờ tạo chiều sâu */}
                   <path
                     d={flightPath}
-                    stroke={isSelected ? '#FFDE43' : 'rgba(117, 194, 250, 0.25)'}
+                    stroke={isSelected ? '#CC9900' : 'rgba(117, 194, 250, 0.25)'}
                     strokeWidth={isSelected ? '3.5' : '1.5'}
                     fill="none"
                     style={{ transition: 'all 0.3s ease' }}
@@ -331,11 +331,11 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
                     strokeWidth={isSelected ? '2.5' : '1.8'}
                     strokeDasharray={isSelected ? '8 6' : '6 6'}
                     fill="none"
-                    filter={isSelected ? 'drop-shadow(0 0 8px rgba(255, 222, 67, 0.8))' : 'none'}
+                    filter={isSelected ? 'drop-shadow(0 0 8px rgba(204, 153, 0, 0.8))' : 'none'}
                   />
 
                   {/* Hạt Photon năng lượng bay dọc theo đường kết nối */}
-                  <circle r={isSelected ? '4' : '2.8'} fill="#FFDE43">
+                  <circle r={isSelected ? '4' : '2.8'} fill="#CC9900">
                     <animateMotion
                       dur={isSelected ? '3.5s' : '6s'}
                       repeatCount="indefinite"
@@ -354,7 +354,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
           <g className="destination-nodes-group">
             {destinations.map(dest => {
               const isSelected = selectedDestId === dest.id || hoveredDestId === dest.id;
-              const nodeColor = isSelected ? '#FFDE43' : '#75C2FA';
+              const nodeColor = isSelected ? '#CC9900' : '#75C2FA';
 
               return (
                 <g
@@ -399,7 +399,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
                     x={dest.coords.x}
                     y={dest.coords.y - 12}
                     textAnchor="middle"
-                    fill={isSelected ? '#FFDE43' : '#9DD6FB'}
+                    fill={isSelected ? '#CC9900' : '#9DD6FB'}
                     fontSize={isSelected ? '11' : '9.5'}
                     fontWeight="800"
                     style={{
@@ -434,7 +434,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
               cy={VIETNAM_HUB.coords.y}
               r="18"
               fill="none"
-              stroke="#FFDE43"
+              stroke="#CC9900"
               strokeWidth="2"
               className="pulse-node"
             />
@@ -442,14 +442,14 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
               cx={VIETNAM_HUB.coords.x}
               cy={VIETNAM_HUB.coords.y}
               r="9"
-              fill="#FFDE43"
-              filter="drop-shadow(0 0 10px rgba(255, 222, 67, 0.9))"
+              fill="#CC9900"
+              filter="drop-shadow(0 0 10px rgba(204, 153, 0, 0.9))"
             />
             {/* Nhãn VN HUB phát sáng chữ hoa */}
             <text
               x={VIETNAM_HUB.coords.x + 14}
               y={VIETNAM_HUB.coords.y + 4}
-              fill="#FFDE43"
+              fill="#CC9900"
               fontSize="11"
               fontWeight="900"
               style={{
@@ -479,7 +479,7 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
               right: '24px',
               borderColor: 'var(--color-gold)',
               background: 'rgba(7, 21, 69, 0.96)',
-              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(255, 222, 67, 0.35)',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(204, 153, 0, 0.35)',
               zIndex: 10
             }}
           >

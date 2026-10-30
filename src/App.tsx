@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Phone, Sparkles } from 'lucide-react';
+import { Phone, Sparkles, ShieldCheck, Settings, Eye, LogOut } from 'lucide-react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { TrustSection } from './components/TrustSection';
@@ -13,14 +13,37 @@ import { StudentStories } from './components/StudentStories';
 import { NewsSection } from './components/NewsSection';
 import { LeadConsultationForm } from './components/LeadConsultationForm';
 import { Footer } from './components/Footer';
-import { competitions, achievements } from './lib/content';
+import { AdminDashboard } from './components/AdminDashboard';
+import { AdminLoginModal } from './components/AdminLoginModal';
+import { competitions, achievements, defaultSiteSettings } from './lib/content';
+import { api } from './lib/supabase';
+import { SiteSettings } from './types';
 
 export const App: React.FC = () => {
-  const [activeView, setActiveView] = useState<'home' | 'competition-detail'>('home');
+  const [activeView, setActiveView] = useState<'home' | 'competition-detail' | 'admin-dashboard'>('home');
   const [selectedCompCode, setSelectedCompCode] = useState<string>('SVIIF');
-
   const [leadCompetition, setLeadCompetition] = useState('');
   const [sectionTarget, setSectionTarget] = useState('');
+
+  // Admin and Site Settings State
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => {
+    return sessionStorage.getItem('riva_admin_session') === 'true';
+  });
+  const [showAdminLoginModal, setShowAdminLoginModal] = useState(false);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings>(defaultSiteSettings);
+
+  useEffect(() => {
+    loadSettings();
+  }, [activeView]);
+
+  const loadSettings = async () => {
+    try {
+      const s = await api.getSiteSettings();
+      setSiteSettings(s);
+    } catch (e) {
+      console.warn('Failed to load site settings:', e);
+    }
+  };
 
   const scrollToTarget = (id: string) => {
     if (id === 'top') {
@@ -30,11 +53,9 @@ export const App: React.FC = () => {
     const el = document.getElementById(id);
     if (!el) return;
 
-    // Header sticky offset: 74px
-    // For competitions, scroll lower down so both header and cards are in prime view
     let offset = 74;
     if (id === 'competitions') {
-      offset = 20; // Scrolls deeper down so cards are centered and visible without cut-off
+      offset = 20;
     } else if (id === 'about') {
       offset = 60;
     } else if (id === 'process') {
@@ -84,12 +105,88 @@ export const App: React.FC = () => {
     navigateToSection('register-lead');
   };
 
+  const handleAdminLoginSuccess = () => {
+    setIsAdminLoggedIn(true);
+    sessionStorage.setItem('riva_admin_session', 'true');
+    setActiveView('admin-dashboard');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdminLoggedIn(false);
+    sessionStorage.removeItem('riva_admin_session');
+    setActiveView('home');
+  };
+
   const currentCompetition = competitions.find(c => c.code === selectedCompCode) || competitions[0];
 
   return (
     <div className="app-root">
+      {/* Top Admin Quick Bar if Admin is logged in */}
+      {isAdminLoggedIn && (
+        <div style={{
+          background: 'linear-gradient(90deg, #09153d 0%, #10245e 50%, #09153d 100%)',
+          borderBottom: '1px solid rgba(204, 153, 0, 0.4)',
+          padding: '8px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          fontSize: '12px',
+          color: 'white',
+          position: 'sticky',
+          top: 0,
+          zIndex: 1000
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <ShieldCheck size={16} color="var(--color-gold-bright)" />
+            <span style={{ fontWeight: 700 }}>Chế độ Quản Trị Viên RIVA đang hoạt động</span>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {activeView !== 'admin-dashboard' ? (
+              <button 
+                className="btn btn-sm btn-gold" 
+                style={{ padding: '4px 10px', fontSize: '11px', gap: '4px' }}
+                onClick={() => { setActiveView('admin-dashboard'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              >
+                <Settings size={13} />
+                <span>Vào Dashboard Quản Trị</span>
+              </button>
+            ) : (
+              <button 
+                className="btn btn-sm btn-outline" 
+                style={{ padding: '4px 10px', fontSize: '11px', gap: '4px' }}
+                onClick={() => { setActiveView('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              >
+                <Eye size={13} />
+                <span>Xem Website</span>
+              </button>
+            )}
+
+            <button 
+              onClick={handleAdminLogout} 
+              style={{ background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+            >
+              <LogOut size={13} />
+              <span>Đăng xuất</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Landing page navigation */}
-      <Header onNavigate={navigateToSection} />
+      <Header 
+        onNavigate={navigateToSection} 
+        onOpenAdmin={() => {
+          if (isAdminLoggedIn) {
+            setActiveView('admin-dashboard');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            setShowAdminLoginModal(true);
+          }
+        }}
+        siteSettings={siteSettings}
+      />
 
       {/* VIEW 1: HOME LANDING PAGE */}
       {activeView === 'home' && (
@@ -117,8 +214,8 @@ export const App: React.FC = () => {
             onApplyCompetition={handleApplyCompetition}
           />
 
-          {/* About RIVA & Innovation Mentoring (Slide 2 & 8) */}
-          <AboutSection />
+          {/* About RIVA & Innovation Mentoring (Slide 2 & 8) - Newspaper Article Feature */}
+          <AboutSection onConsultClick={() => navigateToSection('register-lead')} />
 
           {/* Global Network & Stories (Slide 5) */}
           <GlobalNetwork />
@@ -132,16 +229,19 @@ export const App: React.FC = () => {
           <StudentStories achievements={achievements} />
 
           {/* News & Updates */}
-          <NewsSection />
+          <NewsSection onConsultClick={() => navigateToSection('register-lead')} />
 
           {/* Lead Consultation Form (Slide 12 & 15) */}
           <LeadConsultationForm selectedCompetition={leadCompetition} />
 
           {/* Mobile Floating Quick Action Bar */}
           <div className="mobile-floating-bar" aria-label="Liên hệ nhanh">
-            <a href="tel:0988000000" className="mobile-floating-btn mobile-floating-phone">
+            <a 
+              href={`tel:${siteSettings.hotline.replace(/[^0-9]/g, '')}`} 
+              className="mobile-floating-btn mobile-floating-phone"
+            >
               <Phone size={16} />
-              <span>Hotline</span>
+              <span>{siteSettings.hotline}</span>
             </a>
             <button 
               onClick={() => navigateToSection('register-lead')} 
@@ -163,8 +263,37 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* VIEW 3: ADMIN DASHBOARD */}
+      {activeView === 'admin-dashboard' && (
+        <AdminDashboard 
+          onBackToHome={() => {
+            setActiveView('home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onLogout={handleAdminLogout}
+        />
+      )}
+
       {/* Universal Footer */}
-      <Footer onNavigate={navigateToSection} />
+      <Footer 
+        onNavigate={navigateToSection} 
+        onOpenAdmin={() => {
+          if (isAdminLoggedIn) {
+            setActiveView('admin-dashboard');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            setShowAdminLoginModal(true);
+          }
+        }}
+        siteSettings={siteSettings}
+      />
+
+      {/* Admin Login Modal */}
+      <AdminLoginModal 
+        isOpen={showAdminLoginModal}
+        onClose={() => setShowAdminLoginModal(false)}
+        onSuccess={handleAdminLoginSuccess}
+      />
     </div>
   );
 };

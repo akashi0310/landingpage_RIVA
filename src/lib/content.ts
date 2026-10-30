@@ -1,4 +1,4 @@
-import type { Competition, Achievement } from '../types';
+import type { Competition, Achievement, SiteSettings, AboutArticleData, NewsArticle } from '../types';
 
 export const competitions: Competition[] = [
   {
@@ -138,3 +138,149 @@ export const achievements: Achievement[] = [
     avatar_url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&auto=format&fit=crop&q=80'
   }
 ];
+
+export const defaultSiteSettings: SiteSettings = {
+  hotline: '0988.234.567',
+  hotline_secondary: '024.3856.9999',
+  email: 'contact@riva.info.vn',
+  email_admissions: 'admissions@riva.info.vn',
+  address_hn: 'Tòa nhà RIVA Innovation, Cầu Giấy, Hà Nội',
+  address_hcm: 'Văn phòng đại diện: Quận 1, TP. Hồ Chí Minh',
+  org_name: 'VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO RIVA',
+  slogan: 'Kết nối tài năng Việt Nam với đấu trường khoa học & sáng tạo quốc tế'
+};
+
+export const defaultAboutArticle: AboutArticleData = {
+  headline: 'KHÔNG CHỈ LÀ TỔ CHỨC THI, MÀ LÀ CẦU NỐI QUỐC TẾ',
+  subheadline: 'HÀNH TRÌNH ĐƯA TRÍ TUỆ VIỆT NAM RA ĐẤU TRƯỜNG KHOA HỌC & SÁNG CHẾ TOÀN CẦU',
+  press_source: 'Phóng sự Chuyên đề • Tạp chí Đổi Mới Sáng Tạo & Khoa Học Trẻ',
+  author: 'Ban Biên Tập RIVA Media & Hội Đồng Cố Vấn',
+  date: 'Tháng 10/2026',
+  lead_paragraph: 'Viện Nghiên Cứu Đổi Mới Sáng Tạo (RIVA) là tổ chức khoa học tiên phong tại Việt Nam đại diện quốc gia kết nối các thế hệ học sinh, sinh viên và nhà nghiên cứu trẻ với các sân chơi sáng chế danh giá nhất hành tinh: SVIIF Thung lũng Silicon (Hoa Kỳ), iENA Nuremberg (Đức), Geneva Inventions (Thụy Sĩ) và IPITEX Bangkok (Thái Lan).',
+  hero_image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&auto=format&fit=crop&q=80',
+  hero_caption: 'Đoàn thí sinh Việt Nam tự hào giương cao cờ Tổ quốc tại Lễ trao giải quốc tế SVIIF Silicon Valley, Hoa Kỳ.',
+  video_url: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=900&auto=format&fit=crop&q=80',
+  video_title: 'Phim tư liệu: Hành trình đoàn Việt Nam tại SVIIF Thung Lũng Silicon',
+  metrics: [
+    { val: '100%', label: 'Visa bảo lãnh đoàn', desc: 'Hỗ trợ thủ tục ngoại giao' },
+    { val: '1-on-1', label: 'Cố vấn chuyên gia', desc: 'Huấn luyện chuẩn quốc tế' },
+    { val: 'Top 1', label: 'Mạng lưới NCKH trẻ VN', desc: 'Đại diện tổ chức IFIA & WIIPA' }
+  ],
+  blocks: [
+    {
+      id: 'ab-1',
+      type: 'subheading',
+      text: '1. Sứ mệnh: Tự tin vươn ra biển lớn khoa học thế giới'
+    },
+    {
+      id: 'ab-2',
+      type: 'paragraph',
+      text: 'Nghiên cứu khoa học không chỉ dành cho các giáo sư trong phòng lab kín, mà bắt đầu từ những trăn trở rất đời thường của học sinh cấp 3, sinh viên đại học. RIVA đồng hành cùng các em từ việc phát hiện vấn đề thực tiễn, định hình phương pháp nghiên cứu, chế tạo mô hình thử nghiệm đến đăng ký bảo hộ sở hữu trí tuệ.'
+    },
+    {
+      id: 'ab-3',
+      type: 'quote',
+      text: 'Chúng tôi không chỉ đưa học sinh đi thi để lấy một tấm huy chương, mà xây dựng cho các em tư duy phản biện, kỹ năng thuyết trình học thuật quốc tế và bản lĩnh của những nhà khoa học tương lai.',
+      authorQuote: 'GS.TS Nguyễn Văn Minh - Hội đồng Cố vấn Khoa học RIVA'
+    },
+    {
+      id: 'ab-4',
+      type: 'image',
+      imageUrl: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=900&auto=format&fit=crop&q=80',
+      imageCaption: 'Buổi tập huấn thuyết trình poster và phản biện đề tài bằng tiếng Anh cùng chuyên gia quốc tế tại Hà Nội.'
+    },
+    {
+      id: 'ab-5',
+      type: 'subheading',
+      text: '2. Hệ sinh thái ươm mầm toàn diện từ A đến Z'
+    },
+    {
+      id: 'ab-6',
+      type: 'paragraph',
+      text: 'Mỗi dự án tham dự cùng RIVA đều được bảo trợ bởi mạng lưới đối tác chính thức gồm IFIA (Hiệp hội Quốc tế các Nhà Phát minh), WIIPA và các trường đại học hàng đầu tại Mỹ và Châu Âu. Nhờ đó, hồ sơ NCKH của thí sinh trở thành điểm tựa vàng khi săn học bổng du học Ivy League và top đại học thế giới.'
+    }
+  ]
+};
+
+export const defaultNewsArticles: NewsArticle[] = [
+  {
+    id: 'news-1',
+    title: 'Đoàn học sinh Việt Nam xuất sắc lập kỷ lục tại SVIIF Thung Lũng Silicon 2026',
+    date: '28/09/2026',
+    category: 'KẾT QUẢ THI ĐẤU',
+    author: 'Ban Tin Tức RIVA Media',
+    cover_image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=900&auto=format&fit=crop&q=80',
+    desc: 'Với 04 đề tài sáng tạo trong lĩnh vực AI và vật liệu mới, đoàn RIVA đã xuất sắc giành trọn 04 Huy chương Vàng và 01 Giải Đặc biệt từ WIPO.',
+    published: true,
+    blocks: [
+      {
+        id: 'n1-1',
+        type: 'subheading',
+        text: 'Cú đúp ngoạn mục tại thánh địa công nghệ Silicon Valley'
+      },
+      {
+        id: 'n1-2',
+        type: 'paragraph',
+        text: 'Vừa qua, tại Trung tâm Hội nghị Santa Clara (California, Hoa Kỳ), Triển lãm Sáng chế Quốc tế Thung lũng Silicon (SVIIF 2026) đã chính thức khép lại. Đoàn học sinh NCKH RIVA đại diện Việt Nam đã tạo nên bất ngờ lớn khi toàn bộ 4 đề tài dự thi đều được Hội đồng Giám khảo Quốc tế trao Huy chương Vàng.'
+      },
+      {
+        id: 'n1-3',
+        type: 'quote',
+        text: 'Chất lượng nghiên cứu và khả năng thuyết trình tiếng Anh tự tin của học sinh Việt Nam thực sự vượt xa kỳ vọng của ban giám khảo quốc tế năm nay.',
+        authorQuote: 'Đại diện Ban Giám Khảo Quốc tế SVIIF 2026'
+      },
+      {
+        id: 'n1-4',
+        type: 'image',
+        imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=900&auto=format&fit=crop&q=80',
+        imageCaption: 'Khoảnh khắc trao giải Đặc biệt từ Tổ chức Sở hữu Trí tuệ Thế giới (WIPO) cho đề tài NCKH Việt Nam.'
+      },
+      {
+        id: 'n1-5',
+        type: 'paragraph',
+        text: 'Thành tích này một lần nữa khẳng định vị thế và uy tín đào tạo cố vấn của Viện RIVA trong việc dẫn dắt các tài năng trẻ tiếp cận đấu trường học thuật thế giới.'
+      }
+    ]
+  },
+  {
+    id: 'news-2',
+    title: 'Khởi động chương trình ươm mầm tài năng NCKH mùa giải 2027 cùng chuyên gia quốc tế',
+    date: '02/10/2026',
+    category: 'ĐÀO TẠO & TẬP HUẤN',
+    author: 'Phòng Tuyển sinh & Cố vấn RIVA',
+    cover_image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=900&auto=format&fit=crop&q=80',
+    desc: 'Hội đồng chuyên môn RIVA chính thức mở đợt tuyển chọn học sinh, sinh viên có đam mê nghiên cứu để đồng hành huấn luyện từ tháng 10.',
+    published: true,
+    blocks: [
+      {
+        id: 'n2-1',
+        type: 'paragraph',
+        text: 'Để chuẩn bị cho chuỗi sự kiện khoa học quốc tế diễn ra trong năm 2027, Viện RIVA chính thức khởi động chu kỳ ươm mầm tài năng NCKH. Học sinh từ lớp 8 đến lớp 12 trên toàn quốc đều có thể đăng ký nộp ý tưởng để được hội đồng cố vấn 1-on-1.'
+      },
+      {
+        id: 'n2-2',
+        type: 'image',
+        imageUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=900&auto=format&fit=crop&q=80',
+        imageCaption: 'Các học viên khóa trước trao đổi trực tiếp đề tài cùng các tiến sĩ nghiên cứu tại Viện.'
+      }
+    ]
+  },
+  {
+    id: 'news-3',
+    title: 'Bí quyết xây dựng đề tài NCKH chuẩn quốc tế và kỹ năng trả lời ban giám khảo nước ngoài',
+    date: '05/10/2026',
+    category: 'CẨM NANG NGHIÊN CỨU',
+    author: 'Hội Đồng Chuyên Môn RIVA',
+    cover_image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=900&auto=format&fit=crop&q=80',
+    desc: 'Chia sẻ từ các quán quân giải Vàng: Làm thế nào để trình bày ý tưởng phức tạp một cách rõ ràng, thuyết phục ban giám khảo quốc tế trong 3 phút.',
+    published: true,
+    blocks: [
+      {
+        id: 'n3-1',
+        type: 'paragraph',
+        text: 'Tranh tài tại các kỳ thi quốc tế đòi hỏi không chỉ đề tài xuất sắc mà còn là nghệ thuật truyền tải thông điệp. Poster chuẩn A0, slide tóm tắt súc tích và phong thái thuyết trình tự tin là chìa khóa để chinh phục giám khảo.'
+      }
+    ]
+  }
+];
+

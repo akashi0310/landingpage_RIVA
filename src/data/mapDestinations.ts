@@ -23,7 +23,7 @@ export const VIETNAM_HUB = {
   coords: { x: 742, y: 226 },
   country: 'Việt Nam',
   flag: '🇻🇳',
-  color: '#FFDE43'
+  color: '#CC9900'
 };
 
 /**
@@ -66,7 +66,7 @@ export const MAP_COMPETITIONS: MapDestination[] = [
     flag: '🇩🇪',
     status: 'upcoming',
     statusLabel: '🟡 Sắp mở đơn',
-    statusColor: '#FFDE43',
+    statusColor: '#CC9900',
     continent: 'europe',
     coords: { x: 508, y: 118 },
     badgePlacement: 'top'
@@ -132,7 +132,7 @@ export const MAP_COMPETITIONS: MapDestination[] = [
     flag: '🇵🇱',
     status: 'upcoming',
     statusLabel: '🟡 Sắp mở đơn',
-    statusColor: '#FFDE43',
+    statusColor: '#CC9900',
     continent: 'europe',
     coords: { x: 532, y: 110 },
     badgePlacement: 'top-right'

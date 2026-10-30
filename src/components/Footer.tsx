@@ -1,17 +1,32 @@
 import React from 'react';
-import { Sparkles, Mail, Phone, MapPin, Globe, Shield, ArrowUp } from 'lucide-react';
+import { Sparkles, Mail, Phone, MapPin, Globe, Shield, ArrowUp, ShieldCheck } from 'lucide-react';
+import { SiteSettings } from '../types';
 
-export const Footer: React.FC<{ onNavigate: (id: string) => void }> = ({ onNavigate }) => {
+interface FooterProps {
+  onNavigate: (id: string) => void;
+  onOpenAdmin?: () => void;
+  siteSettings?: SiteSettings;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenAdmin, siteSettings }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const hotline = siteSettings?.hotline || '0988.234.567';
+  const hotlineSecondary = siteSettings?.hotline_secondary || '024.3856.9999';
+  const email = siteSettings?.email || 'contact@riva.info.vn';
+  const emailAdmissions = siteSettings?.email_admissions || 'admissions@riva.info.vn';
+  const addressHn = siteSettings?.address_hn || 'Tòa nhà RIVA Innovation, Cầu Giấy, Hà Nội';
+  const addressHcm = siteSettings?.address_hcm || 'Văn phòng đại diện: Quận 1, TP. Hồ Chí Minh';
+  const orgName = siteSettings?.org_name || 'VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO';
 
   return (
     <footer onClick={(event) => {
       const link = (event.target as HTMLElement).closest('a[href^="#"]');
       if (link) { event.preventDefault(); onNavigate(link.getAttribute('href')!.slice(1)); }
     }} style={{
-      background: '#020712',
+      background: '#04091e',
       borderTop: '1px solid var(--color-border)',
       padding: '70px 0 30px',
       color: 'var(--color-text-muted)'
@@ -36,7 +51,7 @@ export const Footer: React.FC<{ onNavigate: (id: string) => void }> = ({ onNavig
                     width: '100%',
                     height: '100%',
                     objectFit: 'contain',
-                    filter: 'drop-shadow(0 0 10px rgba(255, 222, 67, 0.4))'
+                    filter: 'drop-shadow(0 0 10px rgba(204, 153, 0, 0.4))'
                   }}
                 />
               </div>
@@ -45,7 +60,7 @@ export const Footer: React.FC<{ onNavigate: (id: string) => void }> = ({ onNavig
                   R I V A
                 </div>
                 <div style={{ fontSize: '10px', color: 'var(--color-gold-bright)', fontWeight: 700, letterSpacing: '0.06em' }}>
-                  VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO
+                  {orgName}
                 </div>
               </div>
             </div>
@@ -96,19 +111,21 @@ export const Footer: React.FC<{ onNavigate: (id: string) => void }> = ({ onNavig
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13px' }}>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <MapPin size={16} color="var(--color-gold-bright)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                <span>Trụ sở chính: Tòa nhà RIVA Innovation, Cầu Giấy, Hà Nội</span>
+                <span>Trụ sở chính: {addressHn}</span>
               </div>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <MapPin size={16} color="#60A5FA" style={{ flexShrink: 0, marginTop: '2px' }} />
-                <span>Văn phòng đại diện: Quận 1, TP. Hồ Chí Minh</span>
+                <span>{addressHcm}</span>
               </div>
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                 <Mail size={16} color="var(--color-gold-bright)" />
-                <span>contact@riva.global • admissions@riva.global</span>
+                <span>{email} • {emailAdmissions}</span>
               </div>
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                 <Phone size={16} color="var(--color-gold-bright)" />
-                <span style={{ color: 'white', fontWeight: 700 }}>0988.xxx.xxx / 024.xxxx.xxxx</span>
+                <span style={{ color: 'white', fontWeight: 700 }}>
+                  {hotline} {hotlineSecondary ? `/ ${hotlineSecondary}` : ''}
+                </span>
               </div>
             </div>
           </div>
@@ -129,9 +146,27 @@ export const Footer: React.FC<{ onNavigate: (id: string) => void }> = ({ onNavig
             © 2026 - 2027 RIVA Innovation Research Institute. Toàn bộ bản quyền được bảo lưu.
           </div>
 
-          <div style={{ display: 'flex', gap: '20px' }}>
-            <a href="#privacy">Chính sách bảo mật dữ liệu</a>
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+            <a href="#privacy">Chính sách bảo mật</a>
             <a href="#terms">Điều khoản sử dụng</a>
+            {onOpenAdmin && (
+              <button 
+                onClick={onOpenAdmin}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--color-text-dim)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  fontSize: '12px'
+                }}
+              >
+                <ShieldCheck size={13} color="var(--color-gold-bright)" />
+                <span>Cổng Quản Trị</span>
+              </button>
+            )}
             <button 
               onClick={scrollToTop} 
               style={{

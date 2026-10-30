@@ -31,7 +31,7 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
       <div className="container">
         <div className="glass-card" style={{
           padding: '36px 32px',
-          background: 'radial-gradient(ellipse at top, rgba(19, 59, 190, 0.35) 0%, rgba(7, 21, 69, 0.92) 100%)',
+          background: 'radial-gradient(ellipse at top, rgba(51, 102, 255, 0.35) 0%, rgba(9, 21, 61, 0.92) 100%)',
           border: '1px solid rgba(117, 194, 250, 0.35)',
           boxShadow: 'var(--shadow-lg)'
         }}>
