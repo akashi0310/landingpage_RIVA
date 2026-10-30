@@ -1,28 +1,87 @@
 import React from 'react';
-import { ShieldCheck, Award, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, ExternalLink } from 'lucide-react';
 
 export const TrustSection: React.FC = () => {
   const partners = [
-    { name: 'IFIA', desc: 'Hiệp hội Quốc tế các Nhà Phát minh', country: 'Thụy Sĩ / Geneva', flag: '🇨🇭' },
-    { name: 'WIIPA', desc: 'Hiệp hội Sở hữu Trí tuệ Thế giới', country: 'Quốc tế', flag: '🌐' },
-    { name: 'SVIIF', desc: 'Silicon Valley Invention Festival', country: 'Hoa Kỳ', flag: '🇺🇸' },
-    { name: 'IPITEX', desc: 'Triển lãm Phát minh Bangkok', country: 'Thái Lan', flag: '🇹🇭' },
-    { name: 'iENA', desc: 'Triển lãm Sáng chế Nuremberg', country: 'Cộng hòa LB Đức', flag: '🇩🇪' },
-    { name: 'GENEVA INVENTIONS', desc: 'Triển lãm Sáng chế Quốc tế Geneva', country: 'Thụy Sĩ', flag: '🇨🇭' },
-    { name: 'KIPA', desc: 'Hiệp hội Thúc đẩy Sáng chế Hàn Quốc', country: 'Hàn Quốc', flag: '🇰🇷' },
-    { name: 'WIPO PARTNER', desc: 'Tổ chức Sở hữu Trí tuệ Thế giới', country: 'Liên Hợp Quốc', flag: '🇺🇳' }
+    { 
+      name: 'IFIA', 
+      desc: 'Hiệp hội Quốc tế các Nhà Phát minh', 
+      country: 'Thụy Sĩ / Geneva', 
+      flag: '🇨🇭',
+      url: 'https://www.ifia.com'
+    },
+    { 
+      name: 'WIIPA', 
+      desc: 'Hiệp hội Sở hữu Trí tuệ Thế giới', 
+      country: 'Quốc tế', 
+      flag: '🌐',
+      url: 'https://www.wiipa.org'
+    },
+    { 
+      name: 'SVIIF', 
+      desc: 'Silicon Valley Invention Festival', 
+      country: 'Hoa Kỳ', 
+      flag: '🇺🇸',
+      url: 'https://www.sviif.com'
+    },
+    { 
+      name: 'IPITEX', 
+      desc: 'Triển lãm Phát minh Bangkok', 
+      country: 'Thái Lan', 
+      flag: '🇹🇭',
+      url: 'https://ipitex.nrct.go.th'
+    },
+    { 
+      name: 'iENA', 
+      desc: 'Triển lãm Sáng chế Nuremberg', 
+      country: 'Cộng hòa LB Đức', 
+      flag: '🇩🇪',
+      url: 'https://www.iena.de/en/'
+    },
+    { 
+      name: 'GENEVA INVENTIONS', 
+      desc: 'Triển lãm Sáng chế Quốc tế Geneva', 
+      country: 'Thụy Sĩ', 
+      flag: '🇨🇭',
+      url: 'https://inventions-geneva.ch/en/'
+    },
+    { 
+      name: 'KIPA', 
+      desc: 'Hiệp hội Thúc đẩy Sáng chế Hàn Quốc', 
+      country: 'Hàn Quốc', 
+      flag: '🇰🇷',
+      url: 'https://www.kipa.org/eng/'
+    },
+    { 
+      name: 'WIPO PARTNER', 
+      desc: 'Tổ chức Sở hữu Trí tuệ Thế giới', 
+      country: 'Liên Hợp Quốc', 
+      flag: '🇺🇳',
+      url: 'https://www.wipo.int'
+    }
   ];
 
   return (
     <section className="trust-strip">
       <div className="container">
-        <div className="trust-title">
-          ĐỐI TÁC CHIẾN LƯỢC & SỰ CÔNG NHẬN QUỐC TẾ
+        <div className="trust-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          <span>ĐỐI TÁC CHIẾN LƯỢC & SỰ CÔNG NHẬN QUỐC TẾ</span>
+          <span style={{ fontSize: '11px', color: 'var(--color-gold-bright)', fontWeight: 600, letterSpacing: 'normal' }}>
+            (Nhấp để xem website chính thức)
+          </span>
         </div>
 
         <div className="partner-logo-row">
           {partners.map((p, idx) => (
-            <div key={idx} className="partner-logo-item">
+            <a 
+              key={idx} 
+              href={p.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="partner-logo-item partner-link-card"
+              title={`Truy cập trang web chính thức của ${p.name}`}
+              style={{ textDecoration: 'none', position: 'relative' }}
+            >
               <div style={{
                 width: '36px',
                 height: '36px',
@@ -32,15 +91,19 @@ export const TrustSection: React.FC = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: '22px',
-                lineHeight: 1
+                lineHeight: 1,
+                flexShrink: 0
               }}>
                 {p.flag}
               </div>
-              <div>
-                <div className="partner-logo-text" style={{ color: 'white' }}>{p.name}</div>
+              <div style={{ flex: 1 }}>
+                <div className="partner-logo-text" style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span>{p.name}</span>
+                  <ExternalLink size={11} color="var(--color-sky)" style={{ opacity: 0.8 }} />
+                </div>
                 <div style={{ fontSize: '10px', color: 'var(--color-text-dim)' }}>{p.desc}</div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
 

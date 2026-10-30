@@ -1036,74 +1036,190 @@ textarea {
 .digital-world-map-wrapper {
   position: relative;
   width: 100%;
-  max-width: 1080px;
+  max-width: 1220px;
   margin: 0 auto;
 }
 
-/* Top Control Bar with Quick Destination Pills */
-.map-control-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding: 0 4px;
+/* 2-Column Dashboard Layout: Cột trái 7 mục, Cột phải Bản đồ thế giới thu gọn */
+.map-dashboard-container {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 22px;
+  align-items: stretch;
 }
 
-.map-control-title {
-  display: inline-flex;
+/* Cột trái: Danh sách 7 điểm đến */
+.map-sidebar-destinations {
+  background: rgba(4, 14, 46, 0.78);
+  border: 1px solid rgba(117, 194, 250, 0.24);
+  border-radius: 20px;
+  padding: 18px 16px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+}
+
+.map-sidebar-header {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(117, 194, 250, 0.16);
+}
+
+.map-sidebar-title {
+  display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.06em;
   color: var(--color-gold);
   text-transform: uppercase;
 }
 
-.map-quick-pills {
+.map-sidebar-subtitle {
+  font-size: 11px;
+  color: var(--color-text-dim);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.map-destination-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+/* Thẻ từng điểm đến trong cột trái */
+.map-dest-card {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.map-pill-btn {
-  background: rgba(7, 21, 69, 0.75);
-  border: 1px solid rgba(117, 194, 250, 0.28);
-  color: var(--color-text-muted);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 6px 12px;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.map-pill-btn:hover {
-  background: rgba(19, 59, 190, 0.35);
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(8, 24, 76, 0.65);
+  border: 1px solid rgba(117, 194, 250, 0.18);
   color: white;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+}
+
+.map-dest-card:hover {
+  background: rgba(19, 59, 190, 0.4);
   border-color: var(--color-sky);
-  transform: translateY(-1px);
+  transform: translateX(4px);
 }
 
-.map-pill-btn.active {
-  background: linear-gradient(135deg, rgba(255, 222, 67, 0.2), rgba(19, 59, 190, 0.45));
+.map-dest-card.active {
+  background: linear-gradient(135deg, rgba(204, 153, 0, 0.24) 0%, rgba(19, 59, 190, 0.55) 100%);
   border-color: var(--color-gold);
-  color: var(--color-gold-bright);
-  box-shadow: 0 0 12px rgba(255, 222, 67, 0.3);
+  box-shadow: 0 0 16px rgba(255, 222, 67, 0.28);
+  transform: translateX(5px);
 }
 
-/* Main Viewport Box */
+.dest-card-flag-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(5, 13, 38, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.dest-card-code {
+  font-size: 9px;
+  font-weight: 900;
+  color: var(--color-gold-bright);
+  text-transform: uppercase;
+}
+
+.dest-card-flag {
+  font-size: 15px;
+  margin-top: 2px;
+}
+
+.dest-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.dest-card-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dest-card-sub {
+  font-size: 11px;
+  color: var(--color-text-dim);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dest-card-status-indicator {
+  flex-shrink: 0;
+}
+
+.status-badge-hub {
+  background: rgba(204, 153, 0, 0.22);
+  color: var(--color-gold-bright);
+  border: 1px solid rgba(204, 153, 0, 0.45);
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-weight: 800;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+}
+
+.status-pill {
+  padding: 3px 7px;
+  border-radius: var(--radius-full);
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-open {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.status-upcoming {
+  background: rgba(204, 153, 0, 0.18);
+  color: #FBBF24;
+  border: 1px solid rgba(204, 153, 0, 0.35);
+}
+
+/* Cột phải: Bản đồ SVG và thông tin */
+.map-canvas-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+/* Main Viewport Box Thu Gọn */
 .digital-map-viewport {
   position: relative;
   width: 100%;
-  height: 450px;
-  border-radius: 24px;
+  height: 480px;
+  border-radius: 20px;
   border: 1px solid rgba(117, 194, 250, 0.35);
   background: radial-gradient(ellipse at 65% 50%, rgba(19, 59, 190, 0.5) 0%, rgba(7, 21, 69, 0.95) 60%, rgba(3, 8, 28, 0.98) 100%);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(240, 242, 192, 0.25);
@@ -1202,6 +1318,21 @@ textarea {
 
 /* Responsive Map Styles */
 @media (max-width: 992px) {
+  .map-dashboard-container {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .map-destination-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 8px;
+  }
+
+  .digital-map-viewport {
+    height: 360px;
+  }
+
   .map-floating-tag {
     padding: 6px 10px;
     gap: 6px;
@@ -1214,39 +1345,13 @@ textarea {
     border-radius: 16px;
   }
 
-  /* Ẩn các thẻ floating HTML trên màn hình nhỏ để tránh che khuất, thay vào đó điều hướng qua Quick Pills và Inspector Drawer */
+  /* Ẩn các thẻ floating HTML trên màn hình nhỏ để tránh che khuất */
   .map-floating-tags-container {
     display: none !important;
   }
 
-  .map-control-bar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .map-control-title {
-    font-size: 11px;
-  }
-
-  .map-quick-pills {
-    width: 100%;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    padding-bottom: 6px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .map-quick-pills::-webkit-scrollbar {
-    display: none;
-  }
-
-  .map-pill-btn {
-    flex-shrink: 0;
-    font-size: 11px;
-    padding: 5px 10px;
+  .map-destination-list {
+    grid-template-columns: 1fr;
   }
 
   .drawer-inner {
@@ -1999,4 +2104,155 @@ textarea {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #2552eb;
+}
+
+/* ====================================================================
+   ALWAYS-VISIBLE FLOATING CONSULTATION BUTTON (GÓC PHẢI MÀN HÌNH)
+   ==================================================================== */
+.floating-consult-container {
+  position: fixed;
+  bottom: 30px;
+  right: 28px;
+  z-index: 998;
+  pointer-events: auto;
+  animation: floatButtonEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes floatButtonEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.floating-consult-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px 10px 12px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #FFDE43 0%, #CC9900 50%, #B38600 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 0 24px rgba(255, 222, 67, 0.45);
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  color: #00004D;
+  outline: none;
+}
+
+.floating-consult-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.75), 0 0 32px rgba(255, 222, 67, 0.7);
+  background: linear-gradient(135deg, #FFE873 0%, #E6B000 50%, #CC9900 100%);
+}
+
+.floating-consult-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Sóng lan tỏa radar hào quang */
+.floating-consult-radar-halo {
+  position: absolute;
+  inset: -4px;
+  border-radius: var(--radius-full);
+  border: 2px solid #FFDE43;
+  opacity: 0.8;
+  animation: radar-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes radar-ping {
+  0% {
+    transform: scale(0.98);
+    opacity: 0.8;
+  }
+  75%, 100% {
+    transform: scale(1.35, 1.6);
+    opacity: 0;
+  }
+}
+
+.floating-consult-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.floating-consult-text-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.floating-consult-title {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #00004D;
+  line-height: 1.15;
+}
+
+.floating-consult-sub {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(0, 0, 77, 0.85);
+  margin-top: 2px;
+}
+
+.floating-consult-arrow {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0, 0, 77, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.floating-consult-btn:hover .floating-consult-arrow {
+  transform: translateX(3px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .floating-consult-container {
+    bottom: 84px;
+    right: 14px;
+  }
+
+  .floating-consult-btn {
+    padding: 8px 14px 8px 10px;
+    gap: 8px;
+  }
+
+  .floating-consult-icon-box {
+    width: 32px;
+    height: 32px;
+  }
+
+  .floating-consult-title {
+    font-size: 12px;
+  }
+
+  .floating-consult-sub {
+    font-size: 9px;
+  }
+
+  .floating-consult-arrow {
+    display: none;
+  }
 }

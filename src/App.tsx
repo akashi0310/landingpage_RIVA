@@ -14,6 +14,7 @@ import { LeadConsultationForm } from './components/LeadConsultationForm';
 import { Footer } from './components/Footer';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminLoginModal } from './components/AdminLoginModal';
+import { FloatingConsultationButton } from './components/FloatingConsultationButton';
 import { competitions, achievements, defaultSiteSettings } from './lib/content';
 import { api } from './lib/supabase';
 import { SiteSettings } from './types';
@@ -401,6 +402,13 @@ export const App: React.FC = () => {
         onClose={handleCloseAdminLogin}
         onSuccess={handleAdminLoginSuccess}
       />
+
+      {/* Nút tư vấn luôn hiện nổi ở góc phải màn hình cho phụ huynh và học sinh */}
+      {activeView !== 'admin-dashboard' && (
+        <FloatingConsultationButton 
+          onConsultClick={() => navigateToSection('register-lead')} 
+        />
+      )}
     </div>
   );
 };

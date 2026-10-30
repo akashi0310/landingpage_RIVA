@@ -60,43 +60,73 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
 
   return (
     <div className="digital-world-map-wrapper">
-      {/* Top Map Action Bar */}
-      <div className="map-control-bar">
-        <div className="map-control-title">
-          <span className="pulse-dot" style={{ color: '#CC9900' }} />
-          <span>MẠNG LƯỚI ĐẤU TRƯỜNG TOÀN CẦU RIVA ({destinations.length} QUỐC GIA & ĐIỂM ĐẾN)</span>
+      <div className="map-dashboard-container">
+        {/* CỘT TRÁI: 7 MỤC ĐIỂM ĐẾN XẾP DỌC */}
+        <div className="map-sidebar-destinations">
+          <div className="map-sidebar-header">
+            <div className="map-sidebar-title">
+              <span className="pulse-dot" style={{ color: '#CC9900' }} />
+              <span>MẠNG LƯỚI ĐIỀU PHỐI (7 ĐIỂM ĐẾN)</span>
+            </div>
+            <p className="map-sidebar-subtitle">
+              Chọn điểm đến để xem đường bay & trạng thái tuyển chọn
+            </p>
+          </div>
+
+          <div className="map-destination-list">
+            {/* 1. Trụ sở Việt Nam */}
+            <button
+              type="button"
+              className={`map-dest-card ${!selectedDestId ? 'active' : ''}`}
+              onClick={() => setSelectedDestId(null)}
+            >
+              <div className="dest-card-flag-badge">
+                <span className="dest-card-code">vn</span>
+                <span className="dest-card-flag">🇻🇳</span>
+              </div>
+              <div className="dest-card-content">
+                <div className="dest-card-name">Trụ sở Việt Nam</div>
+                <div className="dest-card-sub">Trụ sở điều phối & dẫn đoàn</div>
+              </div>
+              <div className="dest-card-status-indicator">
+                <span className="status-badge-hub">HUB GỐC</span>
+              </div>
+            </button>
+
+            {/* 2 -> 7: 6 Đấu trường quốc tế */}
+            {destinations.map(dest => {
+              const isSelected = selectedDestId === dest.id || hoveredDestId === dest.id;
+              return (
+                <button
+                  key={dest.id}
+                  type="button"
+                  className={`map-dest-card ${isSelected ? 'active' : ''}`}
+                  onClick={() => handleDestinationSelect(dest)}
+                  onMouseEnter={() => setHoveredDestId(dest.id)}
+                  onMouseLeave={() => setHoveredDestId(null)}
+                >
+                  <div className="dest-card-flag-badge">
+                    <span className="dest-card-code">{dest.countryCode.toLowerCase()}</span>
+                    <span className="dest-card-flag">{dest.flag}</span>
+                  </div>
+                  <div className="dest-card-content">
+                    <div className="dest-card-name">{dest.shortName}</div>
+                    <div className="dest-card-sub">{dest.city}</div>
+                  </div>
+                  <div className="dest-card-status-indicator">
+                    <span className={`status-pill ${dest.status === 'open' ? 'status-open' : 'status-upcoming'}`}>
+                      {dest.status === 'open' ? '🟢 Mở đơn' : '🟡 Sắp mở'}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Quick Continent/Destination Selector Pills */}
-        <div className="map-quick-pills">
-          <button
-            type="button"
-            className={`map-pill-btn ${!selectedDestId ? 'active' : ''}`}
-            onClick={() => setSelectedDestId(null)}
-          >
-            <span>🇻🇳 Trụ sở Việt Nam</span>
-          </button>
-
-          {destinations.map(dest => {
-            const isSelected = selectedDestId === dest.id || hoveredDestId === dest.id;
-            return (
-              <button
-                key={dest.id}
-                type="button"
-                className={`map-pill-btn ${isSelected ? 'active' : ''}`}
-                onClick={() => handleDestinationSelect(dest)}
-                onMouseEnter={() => setHoveredDestId(dest.id)}
-                onMouseLeave={() => setHoveredDestId(null)}
-              >
-                <span>{dest.flag} {dest.shortName}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* SVG Map Container */}
-      <div className="digital-map-viewport">
+        {/* CỘT PHẢI: BẢN ĐỒ THẾ GIỚI SVG THU GỌN VÀ PANEL CHI TIẾT */}
+        <div className="map-canvas-column">
+          <div className="digital-map-viewport">
         <svg
           className="digital-map-svg-canvas"
           viewBox="0 0 1000 450"
@@ -597,6 +627,8 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
           )}
         </div>
       </div>
+    </div>
+    </div>
     </div>
   );
 };
