@@ -95,47 +95,47 @@ export const competitions: Competition[] = [
 export const achievements: Achievement[] = [
   {
     id: 'ach-1',
-    student_name: 'Nguyễn Minh Quân & Trần Gia Bảo',
-    school: 'THPT Chuyên Hà Nội - Amsterdam',
+    student_name: 'Đoàn SVIIF đoạt giải',
+    school: 'Đoàn đại biểu học sinh THPT Chuyên toàn quốc',
     award: '🥇 Huy chương Vàng (Gold Medal)',
     medal_type: 'gold',
     competition: 'SVIIF Silicon Valley 2026',
     year: 2026,
     project_title: 'Hệ thống AI giám sát và cảnh báo sớm vi nhựa trong nguồn nước mặt đô thị',
-    avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'
+    avatar_url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=500&auto=format&fit=crop&q=80'
   },
   {
     id: 'ach-2',
-    student_name: 'Lê Thùy Dung & Phạm Quốc Anh',
-    school: 'THPT Chuyên Lê Hồng Phong TP.HCM',
+    student_name: 'Đoàn iENA đoạt giải',
+    school: 'Đoàn đại biểu học sinh & sinh viên Việt Nam',
     award: '🥇 Huy chương Vàng & Best International Award',
     medal_type: 'gold',
     competition: 'iENA Nuremberg Đức 2026',
     year: 2026,
     project_title: 'Vật liệu nano sinh học tự phân hủy từ vỏ tôm ứng dụng trong nông nghiệp thông minh',
-    avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80'
+    avatar_url: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&auto=format&fit=crop&q=80'
   },
   {
     id: 'ach-3',
-    student_name: 'Vũ Hoàng Long',
-    school: 'Đại học Bách Khoa Hà Nội',
+    student_name: 'Đoàn IPITEX đoạt giải',
+    school: 'Đoàn nghiên cứu trẻ RIVA Việt Nam',
     award: '🥈 Huy chương Bạc (Silver Medal)',
     medal_type: 'silver',
     competition: 'IPITEX Bangkok 2026',
     year: 2026,
     project_title: 'Thiết bị bay không người lái (UAV) lập bản đồ cứu hộ địa hình sạt lở tự động',
-    avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80'
+    avatar_url: 'https://images.unsplash.com/photo-1531545514256-b1400bc00f31?w=500&auto=format&fit=crop&q=80'
   },
   {
     id: 'ach-4',
-    student_name: 'Đoàn Học Sinh NCKH RIVA Vietnam',
-    school: 'Liên trường THPT Chuyên toàn quốc',
+    student_name: 'Đoàn Geneva Inventions đoạt giải',
+    school: 'Đoàn đại biểu sáng chế quốc gia RIVA',
     award: '🏆 04 Huy chương Vàng & 02 Giải Đặc Biệt WIPO',
     medal_type: 'special',
     competition: 'Geneva Inventions 2026',
     year: 2026,
     project_title: 'Chuỗi 04 đề tài giải pháp xanh và chuyển đổi số y tế cho người cao tuổi',
-    avatar_url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&auto=format&fit=crop&q=80'
+    avatar_url: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=500&auto=format&fit=crop&q=80'
   }
 ];
 
