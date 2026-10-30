@@ -293,19 +293,22 @@ export const defaultShowcaseData: ShowcaseSectionData = {
       id: 'showcase-1',
       title: 'Lễ Trao Giải & Vinh Danh Huy Chương Vàng Quốc Tế',
       imageUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=80',
-      badgeType: 'gold'
+      badgeType: 'gold',
+      articleId: 'news-1'
     },
     {
       id: 'showcase-2',
       title: 'Thuyết Trình Đề Tài Trước Hội Đồng Giám Khảo Quốc Tế',
       imageUrl: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&auto=format&fit=crop&q=80',
-      badgeType: 'sky'
+      badgeType: 'sky',
+      articleId: 'news-2'
     },
     {
       id: 'showcase-3',
       title: 'Đoàn Việt Nam Gặt Hái Thành Tích Vô Địch & Cúp Đặc Biệt',
       imageUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop&q=80',
-      badgeType: 'success'
+      badgeType: 'success',
+      articleId: 'news-3'
     }
   ]
 };

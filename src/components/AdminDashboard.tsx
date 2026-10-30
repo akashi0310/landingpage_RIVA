@@ -234,6 +234,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
   const [editingArticle, setEditingArticle] = useState<NewsArticle | null>(null);
   const [showArticleModal, setShowArticleModal] = useState(false);
   const [previewArticle, setPreviewArticle] = useState<NewsArticle | null>(null);
+  const [showShowcaseTextConfig, setShowShowcaseTextConfig] = useState(false);
+  const [articleSearchQuery, setArticleSearchQuery] = useState('');
+  const [articleCategoryFilter, setArticleCategoryFilter] = useState('all');
 
   // Competition Modal & Editing State
   const [showCompModal, setShowCompModal] = useState(false);
@@ -390,18 +393,173 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
     }
   };
 
-  // --- SAVE NEWS ARTICLE ---
+  // --- LIÊN KẾT BÀI BÁO VỚI VỊ TRÍ ẢNH SÂN KHẤU & TRIỂN LÃM ---
+  const handleAssignArticleToSlot = (slotIdx: number, articleId: string) => {
+    const updatedPhotos = [...showcaseData.photos];
+    while (updatedPhotos.length < 3) {
+      updatedPhotos.push({
+        id: `photo-${updatedPhotos.length + 1}`,
+        title: 'Ảnh Triển Lãm',
+        imageUrl: defaultShowcaseData.photos[updatedPhotos.length]?.imageUrl || '',
+        badgeType: 'gold'
+      });
+    }
+
+    if (!articleId) {
+      // Hủy liên kết bài báo khỏi slot này
+      updatedPhotos[slotIdx] = {
+        ...updatedPhotos[slotIdx],
+        articleId: undefined
+      };
+      const newShowcase = { ...showcaseData, photos: updatedPhotos };
+      setShowcaseData(newShowcase);
+      try {
+        localStorage.setItem('riva_showcase_data', JSON.stringify(newShowcase));
+        window.dispatchEvent(new Event('riva_showcase_updated'));
+      } catch (e) {}
+      showToast(`ℹ️ Đã hủy liên kết bài báo ở Vị trí ${slotIdx + 1}`);
+      return;
+    }
+
+    const targetArticle = newsArticles.find(a => a.id === articleId);
+    if (targetArticle) {
+      // Gỡ bài báo này khỏi slot khác nếu đang gán để tránh trùng
+      updatedPhotos.forEach((p, idx) => {
+        if (idx !== slotIdx && p.articleId === articleId) {
+          updatedPhotos[idx] = { ...p, articleId: undefined };
+        }
+      });
+
+      updatedPhotos[slotIdx] = {
+        ...updatedPhotos[slotIdx],
+        articleId: targetArticle.id,
+        title: targetArticle.title,
+        imageUrl: targetArticle.cover_image || updatedPhotos[slotIdx].imageUrl,
+        badgeType: targetArticle.showcaseBadgeType || updatedPhotos[slotIdx].badgeType || 'gold'
+      };
+      const newShowcase = { ...showcaseData, photos: updatedPhotos };
+      setShowcaseData(newShowcase);
+      try {
+        localStorage.setItem('riva_showcase_data', JSON.stringify(newShowcase));
+        window.dispatchEvent(new Event('riva_showcase_updated'));
+      } catch (e) {}
+      addAuditLog('Liên kết bài báo với Ảnh Sân Khấu', `Vị trí ${slotIdx + 1}: ${targetArticle.title}`);
+      showToast(`✅ Đã liên kết Vị trí ${slotIdx + 1} với bài báo: "${targetArticle.title}"`);
+    }
+  };
+
+  // --- MỞ MODAL SOẠN BÀI BÁO MỚI ---
+  const handleOpenNewArticle = () => {
+    setEditingArticle({
+      id: `news-${Date.now()}`,
+      title: '',
+      category: 'KẾT QUẢ THI ĐẤU',
+      date: new Date().toLocaleDateString('vi-VN'),
+      author: 'Ban Tin Tức RIVA',
+      cover_image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=900&auto=format&fit=crop&q=80',
+      desc: '',
+      published: true,
+      showInShowcase: false,
+      showcaseSlot: 1,
+      showcaseBadgeType: 'gold',
+      blocks: [
+        {
+          id: `b-1`,
+          type: 'paragraph',
+          text: 'Nội dung chi tiết của bài viết...'
+        }
+      ]
+    });
+    setShowArticleModal(true);
+  };
+
+  // --- MỞ MODAL SỬA BÀI BÁO (TỰ ĐỘNG NHẬN DIỆN VỊ TRÍ SÂN KHẤU NẾU CÓ) ---
+  const handleOpenEditArticle = (art: NewsArticle) => {
+    const slotIndex = showcaseData.photos.findIndex(p => p.articleId === art.id || (p.title && p.title === art.title));
+    setEditingArticle({
+      ...art,
+      showInShowcase: slotIndex >= 0 || Boolean(art.showInShowcase),
+      showcaseSlot: slotIndex >= 0 ? slotIndex + 1 : (art.showcaseSlot || 1),
+      showcaseBadgeType: slotIndex >= 0 ? showcaseData.photos[slotIndex].badgeType : (art.showcaseBadgeType || 'gold')
+    });
+    setShowArticleModal(true);
+  };
+
+  // --- SAVE NEWS ARTICLE (ĐỒNG BỘ TỰ ĐỘNG SANG ẢNH SÂN KHẤU VÀ TRIỂN LÃM) ---
   const handleSaveNewsArticle = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingArticle || !editingArticle.title) return;
 
     const isEdit = Boolean(editingArticle.id);
-    const updated = await api.saveNewsArticle(editingArticle);
+    const articleToSave: NewsArticle = { ...editingArticle };
+    const updated = await api.saveNewsArticle(articleToSave);
     setNewsArticles([...updated]);
+
+    // Đồng thời đồng bộ vào ảnh Sân Khấu & Triển Lãm nếu được tick chọn
+    if (articleToSave.showInShowcase) {
+      const slotIndex = Math.max(0, Math.min(2, (articleToSave.showcaseSlot || 1) - 1));
+      const updatedPhotos = [...showcaseData.photos];
+      while (updatedPhotos.length < 3) {
+        updatedPhotos.push({
+          id: `photo-${updatedPhotos.length + 1}`,
+          title: 'Ảnh Triển Lãm',
+          imageUrl: defaultShowcaseData.photos[updatedPhotos.length]?.imageUrl || '',
+          badgeType: 'gold'
+        });
+      }
+
+      // Xóa bài báo này ở các vị trí slot khác (nếu có) để tránh trùng lặp
+      updatedPhotos.forEach((p, idx) => {
+        if (idx !== slotIndex && p.articleId === articleToSave.id) {
+          updatedPhotos[idx] = { ...p, articleId: undefined };
+        }
+      });
+
+      updatedPhotos[slotIndex] = {
+        ...updatedPhotos[slotIndex],
+        id: updatedPhotos[slotIndex]?.id || `photo-${slotIndex + 1}`,
+        title: articleToSave.title,
+        imageUrl: articleToSave.cover_image || updatedPhotos[slotIndex]?.imageUrl,
+        badgeType: articleToSave.showcaseBadgeType || updatedPhotos[slotIndex]?.badgeType || 'gold',
+        articleId: articleToSave.id
+      };
+
+      const newShowcaseData = { ...showcaseData, photos: updatedPhotos };
+      setShowcaseData(newShowcaseData);
+      try {
+        localStorage.setItem('riva_showcase_data', JSON.stringify(newShowcaseData));
+        window.dispatchEvent(new Event('riva_showcase_updated'));
+      } catch (err) {
+        console.error('Error saving showcase data:', err);
+      }
+      addAuditLog(
+        isEdit ? 'Chỉnh sửa bài báo & Đồng bộ Ảnh Sân Khấu' : 'Thêm bài báo & Đồng bộ Ảnh Sân Khấu',
+        `"${articleToSave.title}" → Ghim Vị trí ${slotIndex + 1}`
+      );
+      showToast(`✅ Đã lưu bài viết và đồng bộ lên Ảnh Sân Khấu vị trí ${slotIndex + 1} trên Trang Chủ!`);
+    } else {
+      // Nếu bỏ tick mà trước đó đang gán ở slot nào thì bỏ gán
+      const linkedSlotIndex = showcaseData.photos.findIndex(p => p.articleId === articleToSave.id);
+      if (linkedSlotIndex >= 0) {
+        const updatedPhotos = [...showcaseData.photos];
+        updatedPhotos[linkedSlotIndex] = {
+          ...updatedPhotos[linkedSlotIndex],
+          articleId: undefined
+        };
+        const newShowcaseData = { ...showcaseData, photos: updatedPhotos };
+        setShowcaseData(newShowcaseData);
+        try {
+          localStorage.setItem('riva_showcase_data', JSON.stringify(newShowcaseData));
+          window.dispatchEvent(new Event('riva_showcase_updated'));
+        } catch (err) {}
+      }
+      addAuditLog(isEdit ? 'Chỉnh sửa bài viết tin tức' : 'Thêm bài viết tin tức mới', articleToSave.title);
+      showToast('✅ Đã lưu bài viết và xuất bản thành công!');
+    }
+
+    window.dispatchEvent(new Event('riva_news_updated'));
     setEditingArticle(null);
     setShowArticleModal(false);
-    addAuditLog(isEdit ? 'Chỉnh sửa bài viết tin tức' : 'Thêm bài viết tin tức mới', editingArticle.title);
-    showToast('✅ Đã lưu bài viết và xuất bản thành công!');
   };
 
   // --- DELETE NEWS ARTICLE ---
@@ -410,6 +568,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
     if (confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) {
       const updated = await api.deleteNewsArticle(id);
       setNewsArticles([...updated]);
+
+      // Nếu bài báo này đang liên kết ở Showcase slot nào thì gỡ liên kết
+      const linkedSlot = showcaseData.photos.findIndex(p => p.articleId === id);
+      if (linkedSlot >= 0) {
+        const updatedPhotos = [...showcaseData.photos];
+        updatedPhotos[linkedSlot] = { ...updatedPhotos[linkedSlot], articleId: undefined };
+        const newShowcase = { ...showcaseData, photos: updatedPhotos };
+        setShowcaseData(newShowcase);
+        try {
+          localStorage.setItem('riva_showcase_data', JSON.stringify(newShowcase));
+          window.dispatchEvent(new Event('riva_showcase_updated'));
+        } catch (e) {}
+      }
+
+      window.dispatchEvent(new Event('riva_news_updated'));
       addAuditLog('Xóa bài viết tin tức', target?.title || id);
       showToast('🗑️ Đã xóa bài viết thành công!');
     }
@@ -692,9 +865,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
           <button
             className={`tab-item ${activeTab === 'articles' ? 'active' : ''}`}
             onClick={() => setActiveTab('articles')}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
           >
-            <Newspaper size={15} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-            Bài viết & Tin tức ({newsArticles.length})
+            <Newspaper size={15} />
+            <span>Bài Báo & Ảnh Triển Lãm ({newsArticles.length})</span>
           </button>
 
           <button
@@ -733,15 +907,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 {leads.length + applications.filter(a => a.status === 'under_review' || a.status === 'submitted').length} mới
               </span>
             )}
-          </button>
-
-          <button
-            className={`tab-item ${activeTab === 'showcase' ? 'active' : ''}`}
-            onClick={() => setActiveTab('showcase')}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-          >
-            <ImageIcon size={15} />
-            <span>Ảnh Sân Khấu & Triển Lãm ({showcaseData.photos.length})</span>
           </button>
 
           <button
@@ -1050,111 +1215,479 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
         )}
 
         {/* =========================================================================
-            TAB 2: QUẢN LÝ BÀI VIẾT & TIN TỨC (NEWS ARTICLES MANAGER)
+            TAB 2: QUẢN LÝ BÀI VIẾT & ẢNH SÂN KHẤU TRIỂN LÃM (UNIFIED NEWS & SHOWCASE)
             ========================================================================= */}
         {activeTab === 'articles' && (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            {/* Header giới thiệu tính năng hợp nhất */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '20px' }}>
               <div>
-                <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>
-                  Danh sách bài viết & tin tức báo chí
+                <div className="badge badge-gold" style={{ marginBottom: '8px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <Sparkles size={13} />
+                  <span>HỆ THỐNG BIÊN TẬP HỢP NHẤT: BÀI BÁO & ẢNH SÂN KHẤU</span>
+                </div>
+                <h3 style={{ fontSize: '22px', fontWeight: 900, color: 'white', letterSpacing: '-0.01em' }}>
+                  Quản Lý Bài Báo & 3 Vị Trí Ảnh Sân Khấu Triển Lãm
                 </h3>
-                <p style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>
-                  Cho phép chèn hình ảnh, văn bản, trích dẫn báo chí và hiển thị trực tiếp trên trang chủ.
+                <p style={{ fontSize: '13px', color: 'var(--color-text-light)', marginTop: '4px', maxWidth: '820px', lineHeight: 1.6 }}>
+                  Khi khách truy cập bấm vào bất kỳ bức ảnh nào trong mục <strong>"Ảnh Sân Khấu & Triển Lãm"</strong> ở đầu trang chủ, hệ thống sẽ mở trực tiếp toàn bộ bài báo chi tiết bên trong. Bạn có thể liên kết bài báo ngay tại 3 vị trí bên dưới, hoặc bật tùy chọn ghim khi đang viết/chỉnh sửa bài báo.
                 </p>
               </div>
 
-              <button
-                className="btn btn-gold"
-                onClick={() => {
-                  setEditingArticle({
-                    id: `news-${Date.now()}`,
-                    title: '',
-                    category: 'KẾT QUẢ THI ĐẤU',
-                    date: new Date().toLocaleDateString('vi-VN'),
-                    author: 'Ban Tin Tức RIVA',
-                    cover_image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=900&auto=format&fit=crop&q=80',
-                    desc: '',
-                    published: true,
-                    blocks: [
-                      {
-                        id: `b-1`,
-                        type: 'paragraph',
-                        text: 'Nội dung chi tiết của bài viết...'
-                      }
-                    ]
-                  });
-                  setShowArticleModal(true);
-                }}
-              >
-                <Plus size={16} />
-                <span>Viết bài báo mới</span>
-              </button>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  className="btn btn-gold"
+                  onClick={handleOpenNewArticle}
+                  style={{ gap: '6px' }}
+                >
+                  <Plus size={16} />
+                  <span>Viết bài báo mới</span>
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={() => handleSaveShowcase()}
+                  style={{ gap: '6px', borderColor: 'rgba(204, 153, 0, 0.4)', color: 'var(--color-gold-bright)' }}
+                >
+                  <Save size={16} />
+                  <span>Lưu cấu hình ảnh triển lãm</span>
+                </button>
+              </div>
             </div>
 
-            {/* Articles List Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
-              {newsArticles.map((art) => (
-                <div key={art.id} className="glass-card" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ height: '160px', position: 'relative' }}>
-                    <img
-                      src={art.cover_image}
-                      alt={art.title}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                    <span className="badge badge-gold" style={{ position: 'absolute', top: '10px', left: '10px', fontSize: '10px' }}>
-                      {art.category}
-                    </span>
+            {/* KHU VỰC 1: 3 VỊ TRÍ ẢNH SÂN KHẤU & TRIỂN LÃM TRÊN TRANG CHỦ */}
+            <div className="glass-card" style={{ padding: '24px', border: '1px solid rgba(204, 153, 0, 0.35)', background: 'linear-gradient(180deg, rgba(9, 21, 61, 0.7) 0%, rgba(5, 13, 38, 0.9) 100%)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
+                <div>
+                  <h4 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--color-gold-bright)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <ImageIcon size={20} />
+                    <span>3 Vị Trí Ảnh Sân Khấu & Triển Lãm Trên Trang Chủ</span>
+                  </h4>
+                  <p style={{ fontSize: '12px', color: 'var(--color-text-dim)', marginTop: '2px' }}>
+                    Bấm vào từng vị trí để chọn bài báo liên kết hoặc đổi hình ảnh thực tế sẽ hiển thị trên trang chủ.
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-ghost"
+                    onClick={() => setShowShowcaseTextConfig(!showShowcaseTextConfig)}
+                    style={{ fontSize: '12px', color: 'var(--color-sky-bright)', gap: '6px' }}
+                  >
+                    <Sliders size={13} />
+                    <span>{showShowcaseTextConfig ? 'Đóng cấu hình tiêu đề mục' : 'Sửa tiêu đề mục triển lãm'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline"
+                    onClick={handleResetShowcase}
+                    style={{ fontSize: '12px', gap: '4px' }}
+                    title="Khôi phục lại 3 ảnh mẫu ban đầu"
+                  >
+                    <RotateCcw size={12} />
+                    <span>Mặc định</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Tùy chỉnh Tiêu đề & Giới thiệu Mục Triển Lãm (Collapsible) */}
+              {showShowcaseTextConfig && (
+                <div style={{ padding: '16px', background: 'rgba(0, 0, 0, 0.3)', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.08)', marginBottom: '20px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: 'white', marginBottom: '12px' }}>
+                    Tùy Biến Tiêu Đề & Giới Thiệu Mục Triển Lãm (Showcase Section):
                   </div>
-
-                  <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                    <div>
-                      <div style={{ fontSize: '11px', color: 'var(--color-text-dim)', marginBottom: '6px' }}>
-                        {art.date} • {art.author || 'RIVA Media'}
-                      </div>
-                      <h4 style={{ fontSize: '15px', fontWeight: 800, color: 'white', lineHeight: 1.4, marginBottom: '8px' }}>
-                        {art.title}
-                      </h4>
-                      <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
-                        {art.desc.slice(0, 110)}...
-                      </p>
+                  <div className="grid-2" style={{ gap: '14px', marginBottom: '14px' }}>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label className="form-label" style={{ fontSize: '12px' }}>Tiêu đề lớn tiếng Anh / Quốc tế:</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        value={showcaseData.heading}
+                        onChange={(e) => setShowcaseData({ ...showcaseData, heading: e.target.value })}
+                        placeholder="A TRULY GLOBAL INNOVATION PLATFORM"
+                      />
                     </div>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                      <button
-                        className="btn btn-sm btn-ghost"
-                        style={{ padding: 0, color: 'var(--color-sky)', gap: '4px' }}
-                        onClick={() => setPreviewArticle(art)}
-                      >
-                        <Eye size={13} />
-                        <span>Xem trước</span>
-                      </button>
-
-                      <div style={{ display: 'flex', gap: '6px' }}>
-                        <button
-                          className="btn btn-sm btn-outline"
-                          onClick={() => {
-                            setEditingArticle({ ...art });
-                            setShowArticleModal(true);
-                          }}
-                          title="Chỉnh sửa bài viết"
-                        >
-                          <Edit size={13} />
-                          <span>Sửa</span>
-                        </button>
-                        <button
-                          className="btn btn-sm btn-ghost"
-                          style={{ color: '#ef4444' }}
-                          onClick={() => handleDeleteNewsArticle(art.id)}
-                          title="Xóa bài viết"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label className="form-label" style={{ fontSize: '12px' }}>Nhãn phụ tiếng Việt:</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        value={showcaseData.subheading}
+                        onChange={(e) => setShowcaseData({ ...showcaseData, subheading: e.target.value })}
+                        placeholder="ĐẤU TRƯỜNG KHOA HỌC & SÁNG CHẾ QUỐC TẾ HÀNG ĐẦU"
+                      />
                     </div>
+                  </div>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label" style={{ fontSize: '12px' }}>Đoạn văn giới thiệu ngắn:</label>
+                    <textarea
+                      rows={2}
+                      className="form-textarea"
+                      value={showcaseData.description}
+                      onChange={(e) => setShowcaseData({ ...showcaseData, description: e.target.value })}
+                      placeholder="Mô tả quy mô và sứ mệnh của đoàn RIVA tại các triển lãm..."
+                    />
                   </div>
                 </div>
-              ))}
+              )}
+
+              {/* Grid 3 Slot Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+                {showcaseData.photos.map((photo, pIdx) => {
+                  const linkedArticle = newsArticles.find(a => a.id === photo.articleId || (photo.articleId && a.id.toString() === photo.articleId.toString()));
+                  const slotLabel = pIdx === 0 ? 'VỊ TRÍ 1 (BÊN TRÁI: LỄ TRAO GIẢI)' : pIdx === 1 ? 'VỊ TRÍ 2 (Ở GIỮA: GIAN HÀNG TRIỂN LÃM)' : 'VỊ TRÍ 3 (BÊN PHẢI: ĐOÀN & GIÁM KHẢO)';
+
+                  return (
+                    <div
+                      key={photo.id || pIdx}
+                      style={{
+                        padding: '18px',
+                        background: 'rgba(5, 13, 38, 0.75)',
+                        borderRadius: '12px',
+                        border: linkedArticle ? '1px solid rgba(204, 153, 0, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                        position: 'relative'
+                      }}
+                    >
+                      {/* Slot Header */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span className={`badge ${linkedArticle ? 'badge-gold' : 'badge-blue'}`} style={{ fontWeight: 800, fontSize: '11px' }}>
+                          {slotLabel}
+                        </span>
+                        <select
+                          className="form-select"
+                          style={{ width: 'auto', padding: '3px 8px', fontSize: '11px' }}
+                          value={photo.badgeType}
+                          onChange={(e) => {
+                            const newPhotos = [...showcaseData.photos];
+                            newPhotos[pIdx] = { ...newPhotos[pIdx], badgeType: e.target.value as any };
+                            setShowcaseData({ ...showcaseData, photos: newPhotos });
+                          }}
+                        >
+                          <option value="gold">🏅 Huy chương Vàng</option>
+                          <option value="sky">🌐 Địa cầu Xanh</option>
+                          <option value="success">🛡️ Khiên Bảo Trợ</option>
+                        </select>
+                      </div>
+
+                      {/* Image Upload / Preview */}
+                      <ImageUploadField
+                        label="Hình ảnh thực tế hiển thị trên trang chủ:"
+                        value={photo.imageUrl}
+                        onChange={(val) => {
+                          const newPhotos = [...showcaseData.photos];
+                          newPhotos[pIdx] = { ...newPhotos[pIdx], imageUrl: val };
+                          setShowcaseData({ ...showcaseData, photos: newPhotos });
+                        }}
+                        placeholder="Dán link ảnh hoặc bấm 'Tải từ máy tính'..."
+                        height="150px"
+                      />
+
+                      {/* Dropdown chọn bài báo liên kết */}
+                      <div className="form-group" style={{ marginBottom: 0 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                          <label className="form-label" style={{ fontSize: '12px', marginBottom: 0, fontWeight: 700 }}>
+                            Bài báo viết về nội dung ảnh này: *
+                          </label>
+                          {linkedArticle && (
+                            <span style={{ fontSize: '11px', color: 'var(--color-gold-bright)', fontWeight: 700 }}>
+                              ✓ Đã liên kết
+                            </span>
+                          )}
+                        </div>
+                        <select
+                          className="form-select"
+                          style={{ fontSize: '12px', borderColor: linkedArticle ? 'rgba(204, 153, 0, 0.6)' : undefined }}
+                          value={photo.articleId || ''}
+                          onChange={(e) => handleAssignArticleToSlot(pIdx, e.target.value)}
+                        >
+                          <option value="">-- [Chưa gán bài báo - Khách click chỉ xem ảnh] --</option>
+                          {newsArticles.map((art) => (
+                            <option key={art.id} value={art.id}>
+                              [{art.category}] {art.title}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Box thông tin bài báo đang liên kết */}
+                      {linkedArticle ? (
+                        <div style={{ padding: '10px 12px', background: 'rgba(204, 153, 0, 0.12)', borderRadius: '8px', border: '1px solid rgba(204, 153, 0, 0.3)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <div style={{ fontSize: '11px', color: 'var(--color-gold-bright)', fontWeight: 700 }}>
+                            📖 Bài báo được mở khi khách bấm vào ảnh:
+                          </div>
+                          <div style={{ fontSize: '12px', fontWeight: 800, color: 'white', lineHeight: 1.4 }}>
+                            {linkedArticle.title}
+                          </div>
+                          <div style={{ fontSize: '11px', color: 'var(--color-text-dim)' }}>
+                            {linkedArticle.date} • {linkedArticle.author || 'RIVA Media'}
+                          </div>
+
+                          <div style={{ display: 'flex', gap: '6px', marginTop: '6px', paddingTop: '6px', borderTop: '1px dashed rgba(204, 153, 0, 0.25)' }}>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-gold"
+                              style={{ padding: '3px 8px', fontSize: '11px', gap: '4px', flex: 1, justifyContent: 'center' }}
+                              onClick={() => handleOpenEditArticle(linkedArticle)}
+                            >
+                              <Edit size={12} />
+                              <span>Sửa bài báo này</span>
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-ghost"
+                              style={{ padding: '3px 8px', fontSize: '11px', gap: '4px', color: 'var(--color-sky-bright)' }}
+                              onClick={() => {
+                                const newPhotos = [...showcaseData.photos];
+                                newPhotos[pIdx] = {
+                                  ...newPhotos[pIdx],
+                                  imageUrl: linkedArticle.cover_image,
+                                  title: linkedArticle.title
+                                };
+                                setShowcaseData({ ...showcaseData, photos: newPhotos });
+                                showToast('✅ Đã đồng bộ ảnh bìa và tiêu đề bài báo sang ảnh triển lãm!');
+                              }}
+                              title="Lấy ảnh bìa & tiêu đề của bài báo này cho ô triển lãm"
+                            >
+                              <RefreshCw size={12} />
+                              <span>Đồng bộ ảnh bìa</span>
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ padding: '8px 10px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '6px', border: '1px dashed rgba(255, 255, 255, 0.1)', fontSize: '11px', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                          💡 Mẹo: Hãy chọn 1 bài báo ở dropdown trên để khi khách click vào ảnh này sẽ nhảy vào đọc bài báo chi tiết ngay lập tức!
+                        </div>
+                      )}
+
+                      {/* Tiêu đề chú thích dưới ảnh */}
+                      <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label className="form-label" style={{ fontSize: '12px' }}>
+                          Tiêu đề chú thích dưới ảnh trên trang chủ: *
+                        </label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          value={photo.title}
+                          onChange={(e) => {
+                            const newPhotos = [...showcaseData.photos];
+                            newPhotos[pIdx] = { ...newPhotos[pIdx], title: e.target.value };
+                            setShowcaseData({ ...showcaseData, photos: newPhotos });
+                          }}
+                          placeholder="VD: Lễ Trao Giải & Vinh Danh Huy Chương Vàng..."
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Nút lưu Showcase */}
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                <button
+                  type="button"
+                  className="btn btn-gold"
+                  style={{ minWidth: '300px', justifyContent: 'center', gap: '8px', padding: '12px 24px', fontWeight: 800 }}
+                  onClick={() => handleSaveShowcase()}
+                >
+                  <Save size={16} />
+                  <span>LƯU CẤU HÌNH 3 ẢNH SÂN KHẤU & TRIỂN LÃM</span>
+                </button>
+              </div>
+            </div>
+
+            {/* KHU VỰC 2: DANH SÁCH TẤT CẢ BÀI VIẾT & TIN TỨC BÁO CHÍ */}
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+                <div>
+                  <h4 style={{ fontSize: '18px', fontWeight: 800, color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Newspaper size={20} color="var(--color-sky-bright)" />
+                    <span>Tất Cả Bài Viết & Tin Tức Báo Chí ({newsArticles.length})</span>
+                  </h4>
+                  <p style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+                    Biên tập bài viết, chèn hình ảnh, đoạn văn bản, trích dẫn báo chí và chọn đưa lên mục Sân khấu triển lãm.
+                  </p>
+                </div>
+
+                {/* Search & Category Filter */}
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <div style={{ position: 'relative', width: '220px' }}>
+                    <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-dim)' }} />
+                    <input
+                      type="text"
+                      className="form-input"
+                      style={{ paddingLeft: '32px', fontSize: '12px', padding: '6px 12px 6px 32px' }}
+                      value={articleSearchQuery}
+                      onChange={(e) => setArticleSearchQuery(e.target.value)}
+                      placeholder="Tìm bài viết..."
+                    />
+                  </div>
+
+                  <select
+                    className="form-select"
+                    style={{ fontSize: '12px', padding: '6px 12px', width: 'auto' }}
+                    value={articleCategoryFilter}
+                    onChange={(e) => setArticleCategoryFilter(e.target.value)}
+                  >
+                    <option value="all">Tất cả chuyên mục</option>
+                    <option value="KẾT QUẢ THI ĐẤU">KẾT QUẢ THI ĐẤU</option>
+                    <option value="ĐÀO TẠO & TẬP HUẤN">ĐÀO TẠO & TẬP HUẤN</option>
+                    <option value="CẨM NANG NGHIÊN CỨU">CẨM NANG NGHIÊN CỨU</option>
+                    <option value="HOẠT ĐỘNG QUỐC TẾ">HOẠT ĐỘNG QUỐC TẾ</option>
+                    <option value="TIN TỨC SỰ KIỆN">TIN TỨC SỰ KIỆN</option>
+                  </select>
+
+                  <button
+                    type="button"
+                    className="btn btn-gold btn-sm"
+                    onClick={handleOpenNewArticle}
+                    style={{ gap: '6px' }}
+                  >
+                    <Plus size={14} />
+                    <span>Viết bài mới</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Articles Grid Cards */}
+              {(() => {
+                const filtered = newsArticles.filter(art => {
+                  const matchSearch = !articleSearchQuery || art.title.toLowerCase().includes(articleSearchQuery.toLowerCase()) || art.desc.toLowerCase().includes(articleSearchQuery.toLowerCase());
+                  const matchCat = articleCategoryFilter === 'all' || art.category === articleCategoryFilter;
+                  return matchSearch && matchCat;
+                });
+
+                if (filtered.length === 0) {
+                  return (
+                    <div className="glass-card" style={{ padding: '40px', textAlign: 'center', color: 'var(--color-text-dim)' }}>
+                      Không tìm thấy bài viết nào phù hợp với bộ lọc tìm kiếm.
+                    </div>
+                  );
+                }
+
+                return (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+                    {filtered.map((art) => {
+                      // Kiểm tra xem bài báo này có đang được gán ở slot nào trong showcase không
+                      const showcaseSlotIdx = showcaseData.photos.findIndex(p => p.articleId === art.id || (p.title && p.title === art.title));
+
+                      return (
+                        <div
+                          key={art.id}
+                          className="glass-card"
+                          style={{
+                            overflow: 'hidden',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            border: showcaseSlotIdx >= 0 ? '1px solid rgba(204, 153, 0, 0.45)' : undefined
+                          }}
+                        >
+                          <div style={{ height: '160px', position: 'relative' }}>
+                            <img
+                              src={art.cover_image}
+                              alt={art.title}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                            <span className="badge badge-gold" style={{ position: 'absolute', top: '10px', left: '10px', fontSize: '10px' }}>
+                              {art.category}
+                            </span>
+                            {showcaseSlotIdx >= 0 && (
+                              <span
+                                className="badge badge-gold"
+                                style={{
+                                  position: 'absolute',
+                                  top: '10px',
+                                  right: '10px',
+                                  fontSize: '10px',
+                                  fontWeight: 800,
+                                  background: 'linear-gradient(135deg, #CC9900, #F0C419)',
+                                  color: '#000',
+                                  boxShadow: '0 2px 8px rgba(0,0,0,0.5)'
+                                }}
+                              >
+                                ⭐ Vị trí Sân khấu #{showcaseSlotIdx + 1}
+                              </span>
+                            )}
+                          </div>
+
+                          <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                            <div>
+                              <div style={{ fontSize: '11px', color: 'var(--color-text-dim)', marginBottom: '6px' }}>
+                                {art.date} • {art.author || 'RIVA Media'}
+                              </div>
+                              <h4 style={{ fontSize: '15px', fontWeight: 800, color: 'white', lineHeight: 1.4, marginBottom: '8px' }}>
+                                {art.title}
+                              </h4>
+                              <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
+                                {art.desc.slice(0, 110)}...
+                              </p>
+                            </div>
+
+                            <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                              {/* Quick assign to showcase slot dropdown */}
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', gap: '8px' }}>
+                                <span style={{ fontSize: '11px', color: 'var(--color-text-dim)' }}>Gán vào ảnh Sân khấu:</span>
+                                <select
+                                  className="form-select"
+                                  style={{ width: 'auto', padding: '2px 8px', fontSize: '11px' }}
+                                  value={showcaseSlotIdx >= 0 ? (showcaseSlotIdx + 1).toString() : ''}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (val) {
+                                      handleAssignArticleToSlot(Number(val) - 1, art.id);
+                                    } else if (showcaseSlotIdx >= 0) {
+                                      handleAssignArticleToSlot(showcaseSlotIdx, '');
+                                    }
+                                  }}
+                                >
+                                  <option value="">[Không gán]</option>
+                                  <option value="1">Vị trí 1 (Lễ trao giải)</option>
+                                  <option value="2">Vị trí 2 (Gian hàng)</option>
+                                  <option value="3">Vị trí 3 (Đoàn & Giám khảo)</option>
+                                </select>
+                              </div>
+
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <button
+                                  className="btn btn-sm btn-ghost"
+                                  style={{ padding: 0, color: 'var(--color-sky)', gap: '4px' }}
+                                  onClick={() => setPreviewArticle(art)}
+                                >
+                                  <Eye size={13} />
+                                  <span>Xem trước</span>
+                                </button>
+
+                                <div style={{ display: 'flex', gap: '6px' }}>
+                                  <button
+                                    className="btn btn-sm btn-outline"
+                                    onClick={() => handleOpenEditArticle(art)}
+                                    title="Chỉnh sửa bài viết"
+                                  >
+                                    <Edit size={13} />
+                                    <span>Sửa</span>
+                                  </button>
+                                  <button
+                                    className="btn btn-sm btn-ghost"
+                                    style={{ color: '#ef4444' }}
+                                    onClick={() => handleDeleteNewsArticle(art.id)}
+                                    title="Xóa bài viết"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         )}
@@ -2045,144 +2578,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
           </div>
         )}
 
-        {/* =========================================================================
-            TAB 7: QUẢN LÝ ẢNH SÂN KHẤU & TRIỂN LÃM (SHOWCASE)
-            ========================================================================= */}
-        {activeTab === 'showcase' && (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '14px' }}>
-              <div>
-                <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <ImageIcon size={22} color="var(--color-gold-bright)" />
-                  Quản Lý Ảnh Sân Khấu & Triển Lãm (Showcase)
-                </h3>
-                <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-                  Tùy chỉnh 3 bức ảnh thực tế (Lễ trao giải, thuyết trình, đoàn Việt Nam) và nội dung giới thiệu ở trang chủ.
-                </p>
-              </div>
-
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button type="button" className="btn btn-outline" onClick={handleResetShowcase}>
-                  <RotateCcw size={15} />
-                  <span>Khôi phục mặc định</span>
-                </button>
-                <button type="button" className="btn btn-gold" onClick={() => handleSaveShowcase()}>
-                  <Save size={16} />
-                  <span>Lưu tất cả thay đổi</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Section Text Configuration */}
-            <div className="glass-card" style={{ padding: '24px', marginBottom: '28px' }}>
-              <h4 style={{ fontSize: '16px', fontWeight: 800, color: 'white', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Sliders size={18} color="var(--color-sky-bright)" />
-                Tiêu đề & Giới thiệu Mục Triển Lãm
-              </h4>
-
-              <div className="grid-2" style={{ gap: '16px', marginBottom: '16px' }}>
-                <div className="form-group">
-                  <label className="form-label">Tiêu đề lớn tiếng Anh / Quốc tế *</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={showcaseData.heading}
-                    onChange={(e) => setShowcaseData({ ...showcaseData, heading: e.target.value })}
-                    placeholder="A TRULY GLOBAL INNOVATION PLATFORM"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Nhãn phụ tiếng Việt *</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={showcaseData.subheading}
-                    onChange={(e) => setShowcaseData({ ...showcaseData, subheading: e.target.value })}
-                    placeholder="ĐẤU TRƯỜNG KHOA HỌC & SÁNG CHẾ QUỐC TẾ HÀNG ĐẦU"
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Đoạn văn giới thiệu nền tảng *</label>
-                <textarea
-                  rows={3}
-                  className="form-textarea"
-                  value={showcaseData.description}
-                  onChange={(e) => setShowcaseData({ ...showcaseData, description: e.target.value })}
-                  placeholder="Mô tả quy mô và sứ mệnh của RIVA tại các đấu trường..."
-                />
-              </div>
-            </div>
-
-            {/* 3 Photos Grid Configuration */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', marginBottom: '28px' }}>
-              {showcaseData.photos.map((photo, pIdx) => (
-                <div key={photo.id} className="glass-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span className="badge badge-gold" style={{ fontWeight: 800 }}>
-                      ẢNH THỨ {pIdx + 1}
-                    </span>
-                    <select
-                      className="form-select"
-                      style={{ width: 'auto', padding: '4px 10px', fontSize: '11px' }}
-                      value={photo.badgeType}
-                      onChange={(e) => {
-                        const newPhotos = [...showcaseData.photos];
-                        newPhotos[pIdx] = { ...newPhotos[pIdx], badgeType: e.target.value as any };
-                        setShowcaseData({ ...showcaseData, photos: newPhotos });
-                      }}
-                    >
-                      <option value="gold">Icon: Huy chương Vàng</option>
-                      <option value="sky">Icon: Địa cầu Xanh</option>
-                      <option value="success">Icon: Khiên Bảo Trợ Xanh</option>
-                    </select>
-                  </div>
-
-                  <ImageUploadField
-                    label={`Tải ảnh ${pIdx + 1} từ máy tính hoặc dán URL`}
-                    value={photo.imageUrl}
-                    onChange={(val) => {
-                      const newPhotos = [...showcaseData.photos];
-                      newPhotos[pIdx] = { ...newPhotos[pIdx], imageUrl: val };
-                      setShowcaseData({ ...showcaseData, photos: newPhotos });
-                    }}
-                    placeholder="Dán link ảnh hoặc bấm 'Tải từ máy tính'..."
-                    height="180px"
-                  />
-
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label className="form-label">Tiêu đề chú thích dưới ảnh *</label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      value={photo.title}
-                      onChange={(e) => {
-                        const newPhotos = [...showcaseData.photos];
-                        newPhotos[pIdx] = { ...newPhotos[pIdx], title: e.target.value };
-                        setShowcaseData({ ...showcaseData, photos: newPhotos });
-                      }}
-                      placeholder="VD: Lễ Trao Giải & Vinh Danh Huy Chương Vàng Quốc Tế"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <button
-                type="button"
-                className="btn btn-lg btn-gold"
-                style={{ minWidth: '320px', justifyContent: 'center', gap: '8px', padding: '16px' }}
-                onClick={() => handleSaveShowcase()}
-              >
-                <Save size={18} />
-                <span>LƯU TẤT CẢ THAY ĐỔI ẢNH TRIỂN LÃM</span>
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* =========================================================================
             TAB 8: HÌNH NỀN & VIDEO BACKGROUND ĐẦU TRANG (HERO BANNER)
@@ -2614,6 +3009,62 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                     onChange={(e) => setEditingArticle({ ...editingArticle, desc: e.target.value })}
                     placeholder="Tóm tắt ngắn gọn 2-3 câu về bài viết..."
                   />
+                </div>
+
+                {/* TÙY CHỌN ĐỒNG THỜI ĐƯA BÀI BÁO LÊN MỤC ẢNH SÂN KHẤU & TRIỂN LÃM */}
+                <div style={{
+                  marginBottom: '24px',
+                  padding: '16px 20px',
+                  background: 'rgba(204, 153, 0, 0.08)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(204, 153, 0, 0.35)'
+                }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 700, color: 'var(--color-gold-bright)', fontSize: '15px' }}>
+                    <input
+                      type="checkbox"
+                      style={{ width: '18px', height: '18px', accentColor: '#CC9900' }}
+                      checked={Boolean(editingArticle.showInShowcase)}
+                      onChange={(e) => setEditingArticle({ ...editingArticle, showInShowcase: e.target.checked })}
+                    />
+                    <span>Đồng thời đưa bài báo này lên mục "Ảnh Sân Khấu & Triển Lãm" trên Trang Chủ</span>
+                  </label>
+                  <p style={{ fontSize: '12px', color: 'var(--color-text-light)', marginTop: '6px', marginLeft: '28px', lineHeight: 1.5 }}>
+                    Khi khách truy cập bấm vào bức ảnh này trên trang chủ, hệ thống sẽ mở trực tiếp toàn bộ nội dung bài báo này (ảnh bìa, các khối nội dung, hình ảnh chi tiết và trích dẫn).
+                  </p>
+
+                  {editingArticle.showInShowcase && (
+                    <div className="grid-2" style={{ gap: '16px', marginTop: '16px', marginLeft: '28px', paddingTop: '14px', borderTop: '1px dashed rgba(204, 153, 0, 0.25)' }}>
+                      <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label className="form-label" style={{ fontSize: '12px', color: 'white', fontWeight: 700 }}>
+                          Chọn vị trí hiển thị trên Trang Chủ: *
+                        </label>
+                        <select
+                          className="form-select"
+                          value={editingArticle.showcaseSlot || 1}
+                          onChange={(e) => setEditingArticle({ ...editingArticle, showcaseSlot: Number(e.target.value) })}
+                        >
+                          <option value={1}>Vị trí 1 (Bên trái: Lễ trao giải & Vinh danh quốc tế)</option>
+                          <option value={2}>Vị trí 2 (Ở giữa: Gian hàng triển lãm & Thuyết trình)</option>
+                          <option value={3}>Vị trí 3 (Bên phải: Đoàn Việt Nam & Hội đồng Giám khảo)</option>
+                        </select>
+                      </div>
+
+                      <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label className="form-label" style={{ fontSize: '12px', color: 'white', fontWeight: 700 }}>
+                          Loại biểu tượng / Huy hiệu đi kèm: *
+                        </label>
+                        <select
+                          className="form-select"
+                          value={editingArticle.showcaseBadgeType || 'gold'}
+                          onChange={(e) => setEditingArticle({ ...editingArticle, showcaseBadgeType: e.target.value as any })}
+                        >
+                          <option value="gold">🏅 Icon: Huy chương Vàng (Gold Award)</option>
+                          <option value="sky">🌐 Icon: Địa cầu Quốc Tế (Global Network)</option>
+                          <option value="success">🛡️ Icon: Khiên Bảo Trợ (Official Accreditation)</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Blocks in news article */}

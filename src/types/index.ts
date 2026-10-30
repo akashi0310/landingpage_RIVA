@@ -96,6 +96,9 @@ export interface NewsArticle {
   desc: string;
   blocks?: ArticleBlock[];
   published?: boolean;
+  showInShowcase?: boolean;
+  showcaseSlot?: number; // 1 | 2 | 3
+  showcaseBadgeType?: 'gold' | 'sky' | 'success';
 }
 
 export interface AboutArticleData {
@@ -118,6 +121,7 @@ export interface ShowcasePhoto {
   title: string;
   imageUrl: string;
   badgeType: 'gold' | 'sky' | 'success';
+  articleId?: string; // ID của bài báo viết về nội dung ảnh này
 }
 
 export interface ShowcaseSectionData {

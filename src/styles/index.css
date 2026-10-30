@@ -959,14 +959,15 @@ textarea {
   overflow: hidden;
   border: 1px solid rgba(117, 194, 250, 0.35);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   background: #050d26;
+  cursor: pointer;
 }
 
 .sviif-gallery-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--color-gold);
-  box-shadow: 0 16px 40px rgba(204, 153, 0, 0.35);
+  transform: translateY(-6px);
+  border-color: var(--color-gold-bright);
+  box-shadow: 0 20px 45px rgba(204, 153, 0, 0.4);
 }
 
 .sviif-gallery-img {
@@ -977,7 +978,34 @@ textarea {
 }
 
 .sviif-gallery-card:hover .sviif-gallery-img {
-  transform: scale(1.06);
+  transform: scale(1.07);
+}
+
+.sviif-gallery-read-hint {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(5, 14, 46, 0.88);
+  border: 1px solid var(--color-gold-bright);
+  color: var(--color-gold-bright);
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
+  z-index: 4;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.sviif-gallery-card:hover .sviif-gallery-read-hint {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .sviif-gallery-caption {
@@ -993,6 +1021,7 @@ textarea {
   display: flex;
   align-items: center;
   gap: 8px;
+  z-index: 3;
 }
 
 /* Dedicated Map Network Container */
