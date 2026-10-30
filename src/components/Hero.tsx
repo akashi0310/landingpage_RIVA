@@ -111,11 +111,6 @@ export const Hero: React.FC<HeroProps> = ({
             Kết nối tài năng Việt Nam với đấu trường khoa học & sáng tạo quốc tế
           </div>
 
-          {/* Các đấu trường danh giá & Mùa giải */}
-          <div className="sviif-hero-date">
-            SVIIF (Mỹ) • Geneva (Thụy Sĩ) • iENA (Đức) • IPITEX (Thái Lan) • MÙA GIẢI 2026 – 2027
-          </div>
-
           {/* Action Button Group */}
           <div className="sviif-hero-actions">
             {/* SVIIF Iconic White/Gold Pill Button */}

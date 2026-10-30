@@ -156,7 +156,7 @@ export const defaultAboutArticle: AboutArticleData = {
   press_source: 'Phóng sự Chuyên đề • Tạp chí Đổi Mới Sáng Tạo & Khoa Học Trẻ',
   author: 'Ban Biên Tập RIVA Media & Hội Đồng Cố Vấn',
   date: 'Tháng 10/2026',
-  lead_paragraph: 'VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO VÀ KIỂM ĐỊNH CHẤT LƯỢNG (RIVA) là tổ chức khoa học tiên phong tại Việt Nam đại diện quốc gia kết nối các thế hệ học sinh, sinh viên và nhà nghiên cứu trẻ với các sân chơi sáng chế danh giá nhất hành tinh: SVIIF Thung lũng Silicon (Hoa Kỳ), iENA Nuremberg (Đức), Geneva Inventions (Thụy Sĩ) và IPITEX Bangkok (Thái Lan).',
+  lead_paragraph: 'Viện Nghiên cứu Đổi mới Sáng tạo và Kiểm định Chất lượng (RIVA) kết nối học sinh, sinh viên và nhà nghiên cứu trẻ Việt Nam với các cuộc thi sáng chế quốc tế, hướng đến phát triển năng lực nghiên cứu, thúc đẩy trao đổi tri thức và chuyển hóa ý tưởng thành giải pháp có giá trị thực tiễn.',
   hero_image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&auto=format&fit=crop&q=80',
   hero_caption: 'Đoàn thí sinh Việt Nam tự hào giương cao cờ Tổ quốc tại Lễ trao giải quốc tế SVIIF Silicon Valley, Hoa Kỳ.',
   video_url: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=900&auto=format&fit=crop&q=80',
