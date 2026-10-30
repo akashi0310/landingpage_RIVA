@@ -56,6 +56,7 @@
   --color-danger-bg: rgba(239, 68, 68, 0.16);
 
   --font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Playfair Display', 'Cinzel', Georgia, 'Times New Roman', serif;
   
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -618,93 +619,331 @@ button, input, select, textarea {
   100% { transform: scale(0.95); opacity: 1; }
 }
 
-/* Hero Section */
-.hero-wrapper {
+/* ====================================================================
+   SVIIF-INSPIRED CINEMATIC HERO & GLOBAL PLATFORM SHOWCASE
+   ==================================================================== */
+.sviif-hero-wrapper {
   position: relative;
-  padding: 70px 0 90px;
+  min-height: 88vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
+  background-color: #020614;
 }
 
-.hero-glow-bg {
+/* Background ambient video */
+.sviif-hero-video {
   position: absolute;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 950px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(19, 59, 190, 0.4) 0%, rgba(117, 194, 250, 0.18) 40%, rgba(255, 222, 67, 0.08) 60%, transparent 75%);
-  filter: blur(80px);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.38;
+  z-index: 1;
   pointer-events: none;
+}
+
+/* Background image fallback / poster */
+.sviif-hero-img-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1920&auto=format&fit=crop&q=85');
+  background-size: cover;
+  background-position: center 30%;
+  opacity: 0.35;
   z-index: 0;
 }
 
-.hero-content {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  max-width: 1040px;
-  margin: 0 auto;
+/* Deep cinematic gradient overlay & warm stage spotlight */
+.sviif-hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: 
+    radial-gradient(ellipse at 50% 45%, rgba(2, 6, 20, 0.25) 0%, rgba(2, 6, 20, 0.78) 60%, #020614 100%),
+    linear-gradient(180deg, rgba(2, 6, 20, 0.8) 0%, transparent 25%, transparent 75%, #020614 100%);
+  pointer-events: none;
 }
 
-.hero-tagline {
+/* Watermark gear / crest behind center title (matching SVIIF logo watermark) */
+.sviif-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 440px;
+  height: 440px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none'%3E%3Ccircle cx='100' cy='100' r='75' stroke='%23CC9900' stroke-width='2' stroke-dasharray='6 6' opacity='0.22'/%3E%3Ccircle cx='100' cy='100' r='55' stroke='%23CC9900' stroke-width='1.5' opacity='0.25'/%3E%3Cpolygon points='100,30 118,70 162,72 128,98 140,140 100,116 60,140 72,98 38,72 82,70' stroke='%23CC9900' stroke-width='1.5' fill='none' opacity='0.18'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 2;
+  pointer-events: none;
+  animation: slow-spin 60s linear infinite;
+}
+
+@keyframes slow-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Floating golden ember particle sparks */
+.sviif-embers {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sviif-ember-dot {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f0f2c0 0%, #cc9900 60%, transparent 100%);
+  box-shadow: 0 0 10px #cc9900;
+  animation: float-up infinite ease-in-out;
+  opacity: 0.6;
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(100vh) scale(0.6);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-50px) scale(1.2);
+    opacity: 0;
+  }
+}
+
+.sviif-hero-container {
+  position: relative;
+  z-index: 3;
+  max-width: 1060px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 80px 20px 70px;
+}
+
+/* Top accreditation badge */
+.sviif-hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(240, 242, 192, 0.12);
-  border: 1px solid var(--color-border-gold);
-  padding: 6px 18px;
-  border-radius: var(--radius-full);
-  color: var(--color-gold);
   font-size: 13px;
   font-weight: 800;
-  letter-spacing: 0.04em;
-  margin-bottom: 24px;
-}
-
-.hero-title {
-  font-size: clamp(28px, 4.2vw, 48px);
-  font-weight: 800;
-  line-height: 1.35;
-  margin-bottom: 24px;
+  color: #f0f2c0;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.025em;
-  word-spacing: 0.22em;
+  background: rgba(204, 153, 0, 0.16);
+  border: 1px solid rgba(204, 153, 0, 0.45);
+  padding: 6px 18px;
+  border-radius: 9999px;
+  margin-bottom: 24px;
+  box-shadow: 0 0 20px rgba(204, 153, 0, 0.25);
 }
 
-.hero-title-primary {
-  display: block;
+/* Prestigious SVIIF Gold Title */
+.sviif-hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 4.4vw, 52px);
+  font-weight: 700;
+  color: #cc9900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.25;
+  margin-bottom: 18px;
+  text-shadow: 0 4px 25px rgba(204, 153, 0, 0.5), 0 0 40px rgba(204, 153, 0, 0.25);
+}
+
+/* Bold Clean Sub-header (Like SVIIF: Inventions, Artificial Intelligence & Future Technologies) */
+.sviif-hero-sub {
+  font-size: clamp(17px, 2.2vw, 24px);
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+/* Location info (Like SVIIF: Silicon Valley, California, USA) */
+.sviif-hero-location {
+  font-size: clamp(15px, 1.8vw, 19px);
+  font-weight: 700;
   color: #ffffff;
   letter-spacing: 0.03em;
-  word-spacing: 0.26em;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+  margin-bottom: 8px;
 }
 
-.hero-title-gradient {
-  display: block;
-  background: linear-gradient(135deg, #ffffff 15%, #cc9900 55%, #75c2fa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: 0.025em;
-  word-spacing: 0.22em;
-  margin-top: 6px;
-  text-shadow: 0 0 30px rgba(117, 194, 250, 0.2);
+/* Season & Date (Like SVIIF: August 6-8, 2027) */
+.sviif-hero-date {
+  font-size: clamp(14px, 1.6vw, 18px);
+  font-weight: 700;
+  color: #f0f2c0;
+  letter-spacing: 0.05em;
+  margin-bottom: 34px;
 }
 
-.hero-desc {
-  font-size: clamp(16px, 2vw, 19px);
-  color: var(--color-text-light);
-  max-width: 780px;
-  margin: 0 auto 36px;
-  line-height: 1.7;
-}
-
-.hero-cta-group {
+/* Action Group */
+.sviif-hero-actions {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 50px;
+}
+
+/* SVIIF Iconic White/Gold Pill Button */
+.sviif-btn-pill-primary {
+  background: #ffffff;
+  color: #050d26;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 15px 36px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  box-shadow: 0 4px 25px rgba(255, 255, 255, 0.4);
+  border: 2px solid #ffffff;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sviif-btn-pill-primary:hover {
+  background: #cc9900;
+  color: #ffffff;
+  border-color: #cc9900;
+  box-shadow: 0 0 35px rgba(204, 153, 0, 0.7);
+  transform: translateY(-2px);
+}
+
+/* Secondary Translucent Pill Button */
+.sviif-btn-pill-secondary {
+  background: rgba(30, 75, 195, 0.35);
+  border: 1.5px solid rgba(117, 194, 250, 0.5);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 14px 28px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sviif-btn-pill-secondary:hover {
+  background: rgba(51, 102, 255, 0.55);
+  border-color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(51, 102, 255, 0.45);
+}
+
+/* Section: A Truly Global Invention Festival (Directly matching SVIIF Section 2) */
+.sviif-global-section {
+  padding: 80px 0 90px;
+  background: #020614;
+  position: relative;
+  border-top: 1px solid rgba(117, 194, 250, 0.15);
+}
+
+.sviif-global-heading {
+  font-family: var(--font-serif);
+  font-size: clamp(24px, 3.4vw, 40px);
+  font-weight: 700;
+  color: #cc9900;
+  text-align: center;
+  letter-spacing: 0.06em;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 20px rgba(204, 153, 0, 0.35);
+}
+
+.sviif-global-desc {
+  font-size: clamp(15px, 1.8vw, 17px);
+  color: var(--color-text-light);
+  line-height: 1.8;
+  max-width: 860px;
+  margin: 0 auto 44px;
+  text-align: center;
+}
+
+/* 3-Photo Festival Live Showcase (Matching SVIIF 3 real photos) */
+.sviif-live-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 60px;
+}
+
+@media (max-width: 860px) {
+  .sviif-live-gallery {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.sviif-gallery-card {
+  position: relative;
+  height: 280px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(117, 194, 250, 0.35);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  background: #050d26;
+}
+
+.sviif-gallery-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-gold);
+  box-shadow: 0 16px 40px rgba(204, 153, 0, 0.35);
+}
+
+.sviif-gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.sviif-gallery-card:hover .sviif-gallery-img {
+  transform: scale(1.06);
+}
+
+.sviif-gallery-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 18px 14px;
+  background: linear-gradient(180deg, transparent 0%, rgba(2, 6, 20, 0.95) 100%);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Dedicated Map Network Container */
+.sviif-map-container {
+  margin-top: 40px;
+  padding-top: 20px;
 }
 
 /* ====================================================================
