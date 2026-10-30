@@ -11,7 +11,29 @@ export const NewsSection: React.FC<{ onConsultClick?: () => void }> = ({ onConsu
 
   useEffect(() => {
     loadNews();
+
+    const handlePopState = () => {
+      if (!window.location.hash.startsWith('#article-')) {
+        setSelectedArticle(null);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
+
+  const handleOpenArticle = (item: NewsArticle) => {
+    setSelectedArticle(item);
+    window.history.pushState({ modal: 'article', articleId: item.id }, '', `#article-${item.id}`);
+  };
+
+  const handleCloseArticle = () => {
+    if (window.location.hash.startsWith('#article-')) {
+      window.history.back();
+    } else {
+      setSelectedArticle(null);
+    }
+  };
 
   const loadNews = async () => {
     const list = await api.getNewsArticles();
@@ -82,7 +104,7 @@ export const NewsSection: React.FC<{ onConsultClick?: () => void }> = ({ onConsu
                   <button 
                     className="btn btn-sm btn-ghost" 
                     style={{ padding: 0, color: 'var(--color-sky)', gap: '6px', fontWeight: 700 }}
-                    onClick={() => setSelectedArticle(item)}
+                    onClick={() => handleOpenArticle(item)}
                   >
                     <span>Đọc chi tiết bài báo</span>
                     <ArrowRight size={14} />
@@ -98,7 +120,7 @@ export const NewsSection: React.FC<{ onConsultClick?: () => void }> = ({ onConsu
       {selectedArticle && (
         <ArticleModal 
           isOpen={Boolean(selectedArticle)}
-          onClose={() => setSelectedArticle(null)}
+          onClose={handleCloseArticle}
           title={selectedArticle.title}
           category={selectedArticle.category}
           date={selectedArticle.date}
@@ -106,7 +128,10 @@ export const NewsSection: React.FC<{ onConsultClick?: () => void }> = ({ onConsu
           coverImage={selectedArticle.cover_image}
           leadParagraph={selectedArticle.desc}
           blocks={selectedArticle.blocks || []}
-          onConsultClick={onConsultClick}
+          onConsultClick={() => {
+            handleCloseArticle();
+            if (onConsultClick) onConsultClick();
+          }}
         />
       )}
     </section>

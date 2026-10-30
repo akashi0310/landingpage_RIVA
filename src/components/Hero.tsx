@@ -88,6 +88,43 @@ export const Hero: React.FC<HeroProps> = ({
     };
   }, []);
 
+  // Lắng nghe sự kiện Back trên trình duyệt để đóng modal mà không bị out web
+  useEffect(() => {
+    const handlePopState = () => {
+      const hash = window.location.hash;
+      if (!hash.startsWith('#article-')) {
+        setSelectedArticleForModal(null);
+      }
+      if (hash !== '#video') {
+        setShowVideoModal(false);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleOpenVideoModal = () => {
+    setShowVideoModal(true);
+    window.history.pushState({ modal: 'video', source: 'hero' }, '', '#video');
+  };
+
+  const handleCloseVideoModal = () => {
+    if (window.location.hash === '#video') {
+      window.history.back();
+    } else {
+      setShowVideoModal(false);
+    }
+  };
+
+  const handleCloseArticleModal = () => {
+    if (window.location.hash.startsWith('#article-')) {
+      window.history.back();
+    } else {
+      setSelectedArticleForModal(null);
+    }
+  };
+
   const handlePhotoClick = (photo: ShowcasePhoto) => {
     // 1. Tìm bài báo theo articleId
     let target = photo.articleId ? newsArticles.find(a => a.id === photo.articleId) : undefined;
@@ -139,6 +176,7 @@ export const Hero: React.FC<HeroProps> = ({
     }
 
     setSelectedArticleForModal(target);
+    window.history.pushState({ modal: 'article', articleId: target.id }, '', `#article-${target.id}`);
   };
 
   return (
@@ -260,7 +298,7 @@ export const Hero: React.FC<HeroProps> = ({
             <button
               type="button"
               className="sviif-btn-pill-secondary"
-              onClick={() => setShowVideoModal(true)}
+              onClick={handleOpenVideoModal}
               style={{ background: 'rgba(204, 153, 0, 0.18)', borderColor: 'rgba(204, 153, 0, 0.5)' }}
             >
               <Play size={16} fill="#CC9900" color="#CC9900" />
@@ -394,7 +432,7 @@ export const Hero: React.FC<HeroProps> = ({
           CINEMATIC VIDEO DOCUMENTARY MODAL
           ==================================================================== */}
       {showVideoModal && (
-        <div className="modal-overlay" onClick={() => setShowVideoModal(false)}>
+        <div className="modal-overlay" onClick={handleCloseVideoModal}>
           <div
             className="modal-content"
             style={{ maxWidth: '960px', padding: '24px', background: '#00004D', border: '1px solid rgba(204, 153, 0, 0.45)' }}
@@ -410,7 +448,7 @@ export const Hero: React.FC<HeroProps> = ({
               </div>
               <button
                 type="button"
-                onClick={() => setShowVideoModal(false)}
+                onClick={handleCloseVideoModal}
                 style={{ background: 'none', border: 'none', color: '#9cc1fa', cursor: 'pointer', padding: '4px' }}
                 aria-label="Đóng video"
               >
@@ -438,7 +476,7 @@ export const Hero: React.FC<HeroProps> = ({
                 type="button"
                 className="btn btn-sm btn-gold"
                 onClick={() => {
-                  setShowVideoModal(false);
+                  handleCloseVideoModal();
                   onRegisterClick();
                 }}
               >
@@ -454,7 +492,7 @@ export const Hero: React.FC<HeroProps> = ({
       {selectedArticleForModal && (
         <ArticleModal
           isOpen={Boolean(selectedArticleForModal)}
-          onClose={() => setSelectedArticleForModal(null)}
+          onClose={handleCloseArticleModal}
           title={selectedArticleForModal.title}
           category={selectedArticleForModal.category}
           date={selectedArticleForModal.date}
@@ -462,7 +500,10 @@ export const Hero: React.FC<HeroProps> = ({
           coverImage={selectedArticleForModal.cover_image}
           leadParagraph={selectedArticleForModal.desc}
           blocks={selectedArticleForModal.blocks}
-          onConsultClick={onRegisterClick}
+          onConsultClick={() => {
+            handleCloseArticleModal();
+            onRegisterClick();
+          }}
         />
       )}
     </>

@@ -44,6 +44,83 @@ export const App: React.FC = () => {
     }
   };
 
+  // Đồng bộ URL và sự kiện nút Quay lại (Back ← / Forward →) của Trình duyệt
+  useEffect(() => {
+    // 1. Kiểm tra hash URL ban đầu khi tải trang
+    const initialHash = window.location.hash;
+    if (initialHash.startsWith('#competition-')) {
+      const code = initialHash.replace('#competition-', '').toUpperCase();
+      const comp = competitions.find(c => c.code.toUpperCase() === code);
+      if (comp) {
+        setSelectedCompCode(comp.code);
+        setActiveView('competition-detail');
+        // Tạo sẵn entry trang chủ để nếu người dùng vào thẳng link này rồi bấm Back thì sẽ về trang chủ chứ không out web
+        window.history.replaceState({ view: 'home' }, '', window.location.pathname + window.location.search);
+        window.history.pushState({ view: 'competition-detail', compCode: comp.code }, '', initialHash);
+      } else {
+        window.history.replaceState({ view: 'home' }, '', window.location.pathname + window.location.search);
+      }
+    } else if (initialHash === '#admin') {
+      if (sessionStorage.getItem('riva_admin_session') === 'true') {
+        setActiveView('admin-dashboard');
+        window.history.replaceState({ view: 'home' }, '', window.location.pathname + window.location.search);
+        window.history.pushState({ view: 'admin-dashboard' }, '', initialHash);
+      } else {
+        setActiveView('home');
+        window.history.replaceState({ view: 'home' }, '', window.location.pathname + window.location.search);
+      }
+    } else {
+      window.history.replaceState({ view: 'home' }, '', window.location.pathname + window.location.search + (initialHash || ''));
+      if (initialHash && initialHash !== '#' && initialHash !== '#top' && !initialHash.startsWith('#article-') && initialHash !== '#video') {
+        const id = initialHash.replace('#', '');
+        setTimeout(() => scrollToTarget(id), 120);
+      }
+    }
+
+    // 2. Bắt sự kiện khi người dùng bấm nút Quay lại (Back ←) trên thanh địa chỉ trình duyệt
+    const handlePopState = (e: PopStateEvent) => {
+      const currentHash = window.location.hash;
+      const state = e.state;
+
+      // Đóng modal đăng nhập admin nếu đang mở và hash không còn là #admin-login
+      if (currentHash !== '#admin-login') {
+        setShowAdminLoginModal(false);
+      }
+
+      if (state?.view === 'competition-detail' || currentHash.startsWith('#competition-')) {
+        const code = (state?.compCode || currentHash.replace('#competition-', '')).toUpperCase();
+        const comp = competitions.find(c => c.code.toUpperCase() === code);
+        if (comp) {
+          setSelectedCompCode(comp.code);
+          setActiveView('competition-detail');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } else if (state?.view === 'admin-dashboard' || currentHash === '#admin') {
+        setActiveView('admin-dashboard');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (currentHash.startsWith('#article-') || currentHash === '#video') {
+        // Đang ở modal nội bộ trang chủ, giữ activeView = 'home'
+        setActiveView('home');
+      } else {
+        // Quay trở về trang chủ Landing Page
+        setActiveView('home');
+        if (currentHash && !currentHash.startsWith('#competition-') && currentHash !== '#admin') {
+          const targetId = currentHash.replace('#', '');
+          if (targetId && targetId !== 'top') {
+            setTimeout(() => scrollToTarget(targetId), 60);
+          } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const scrollToTarget = (id: string) => {
     if (id === 'top') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -54,7 +131,7 @@ export const App: React.FC = () => {
 
     let offset = 74;
     if (id === 'competitions') {
-      offset = 20;
+      offset = 80;
     } else if (id === 'about') {
       offset = 60;
     } else if (id === 'process') {
@@ -77,8 +154,10 @@ export const App: React.FC = () => {
     if (activeView !== 'home') {
       setActiveView('home');
       setSectionTarget(id);
+      window.history.pushState({ view: 'home', section: id }, '', `#${id}`);
     } else {
       scrollToTarget(id);
+      window.history.replaceState({ view: 'home', section: id }, '', `#${id}`);
     }
   };
 
@@ -95,6 +174,12 @@ export const App: React.FC = () => {
   const handleSelectCompetition = (code: string) => {
     setSelectedCompCode(code);
     setActiveView('competition-detail');
+    // Lưu lịch sử trình duyệt để nút Back ← quay lại được trang chủ
+    window.history.pushState(
+      { view: 'competition-detail', compCode: code },
+      '',
+      `#competition-${code}`
+    );
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -104,10 +189,25 @@ export const App: React.FC = () => {
     navigateToSection('register-lead');
   };
 
+  const handleOpenAdminLogin = () => {
+    setShowAdminLoginModal(true);
+    window.history.pushState({ modal: 'admin-login' }, '', '#admin-login');
+  };
+
+  const handleCloseAdminLogin = () => {
+    if (window.location.hash === '#admin-login') {
+      window.history.back();
+    } else {
+      setShowAdminLoginModal(false);
+    }
+  };
+
   const handleAdminLoginSuccess = () => {
     setIsAdminLoggedIn(true);
     sessionStorage.setItem('riva_admin_session', 'true');
+    setShowAdminLoginModal(false);
     setActiveView('admin-dashboard');
+    window.history.pushState({ view: 'admin-dashboard' }, '', '#admin');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -115,6 +215,7 @@ export const App: React.FC = () => {
     setIsAdminLoggedIn(false);
     sessionStorage.removeItem('riva_admin_session');
     setActiveView('home');
+    window.history.pushState({ view: 'home' }, '', window.location.pathname + window.location.search);
   };
 
   const currentCompetition = competitions.find(c => c.code === selectedCompCode) || competitions[0];
@@ -181,7 +282,7 @@ export const App: React.FC = () => {
             setActiveView('admin-dashboard');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           } else {
-            setShowAdminLoginModal(true);
+            handleOpenAdminLogin();
           }
         }}
         siteSettings={siteSettings}
@@ -247,11 +348,19 @@ export const App: React.FC = () => {
         </main>
       )}
 
-      {/* VIEW 2: CHI TIẾT CUỘC THI (SVIIF / IPITEX / iENA) */}
+      {/* VIEW 2: CHI TIẾT CUỘC THI (SVIIF / IPITEX / iENA / GENEVA...) */}
       {activeView === 'competition-detail' && currentCompetition && (
         <CompetitionDetailView 
           competition={currentCompetition}
-          onBack={() => setActiveView('home')}
+          onBack={() => {
+            if (window.history.length > 1 && window.location.hash.startsWith('#competition-')) {
+              window.history.back();
+            } else {
+              setActiveView('home');
+              window.history.pushState({ view: 'home' }, '', window.location.pathname + window.location.search);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }}
           onRegister={(code) => handleApplyCompetition(code)}
         />
       )}
@@ -260,8 +369,13 @@ export const App: React.FC = () => {
       {activeView === 'admin-dashboard' && (
         <AdminDashboard 
           onBackToHome={() => {
-            setActiveView('home');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (window.history.length > 1 && window.location.hash === '#admin') {
+              window.history.back();
+            } else {
+              setActiveView('home');
+              window.history.pushState({ view: 'home' }, '', window.location.pathname + window.location.search);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
           }}
           onLogout={handleAdminLogout}
         />
@@ -275,7 +389,7 @@ export const App: React.FC = () => {
             setActiveView('admin-dashboard');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           } else {
-            setShowAdminLoginModal(true);
+            handleOpenAdminLogin();
           }
         }}
         siteSettings={siteSettings}
@@ -284,7 +398,7 @@ export const App: React.FC = () => {
       {/* Admin Login Modal */}
       <AdminLoginModal 
         isOpen={showAdminLoginModal}
-        onClose={() => setShowAdminLoginModal(false)}
+        onClose={handleCloseAdminLogin}
         onSuccess={handleAdminLoginSuccess}
       />
     </div>

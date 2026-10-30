@@ -24,7 +24,29 @@ export const AboutSection: React.FC<{ onConsultClick?: () => void }> = ({ onCons
 
   useEffect(() => {
     loadAboutData();
+
+    const handlePopState = () => {
+      if (window.location.hash !== '#article-about') {
+        setShowFullArticle(false);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
+
+  const handleOpenFullArticle = () => {
+    setShowFullArticle(true);
+    window.history.pushState({ modal: 'about-article' }, '', '#article-about');
+  };
+
+  const handleCloseFullArticle = () => {
+    if (window.location.hash === '#article-about') {
+      window.history.back();
+    } else {
+      setShowFullArticle(false);
+    }
+  };
 
   const loadAboutData = async () => {
     const data = await api.getAboutArticle();
@@ -238,7 +260,7 @@ export const AboutSection: React.FC<{ onConsultClick?: () => void }> = ({ onCons
 
               <button 
                 className="btn btn-sm btn-gold"
-                onClick={() => setShowFullArticle(true)}
+                onClick={handleOpenFullArticle}
                 style={{ gap: '6px' }}
               >
                 <BookOpen size={15} />
@@ -252,7 +274,7 @@ export const AboutSection: React.FC<{ onConsultClick?: () => void }> = ({ onCons
       {/* Full Newspaper Article Reader Modal */}
       <ArticleModal 
         isOpen={showFullArticle}
-        onClose={() => setShowFullArticle(false)}
+        onClose={handleCloseFullArticle}
         title={aboutData.headline}
         category={aboutData.press_source || 'PHÓNG SỰ ĐẶC BIỆT'}
         date={aboutData.date}
@@ -261,7 +283,10 @@ export const AboutSection: React.FC<{ onConsultClick?: () => void }> = ({ onCons
         leadParagraph={aboutData.lead_paragraph}
         pressSource={aboutData.press_source}
         blocks={aboutData.blocks}
-        onConsultClick={onConsultClick}
+        onConsultClick={() => {
+          handleCloseFullArticle();
+          if (onConsultClick) onConsultClick();
+        }}
       />
     </section>
   );
