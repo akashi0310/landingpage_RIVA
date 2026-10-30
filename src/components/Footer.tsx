@@ -19,7 +19,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenAdmin, siteSet
   const emailAdmissions = siteSettings?.email_admissions || 'admissions@riva.info.vn';
   const addressHn = siteSettings?.address_hn || 'Tòa nhà RIVA Innovation, Cầu Giấy, Hà Nội';
   const addressHcm = siteSettings?.address_hcm || 'Văn phòng đại diện: Quận 1, TP. Hồ Chí Minh';
-  const orgName = siteSettings?.org_name || 'VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO';
+  const orgName = siteSettings?.org_name || 'VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO VÀ KIỂM ĐỊNH CHẤT LƯỢNG';
 
   return (
     <footer onClick={(event) => {
@@ -44,9 +44,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenAdmin, siteSet
                 alignItems: 'center',
                 justifyContent: 'center'
               }}>
-                <img 
+                <img
                   src={`${import.meta.env.BASE_URL}logo-riva.png`}
-                  alt="Logo RIVA" 
+                  alt="Logo RIVA"
                   style={{
                     width: '100%',
                     height: '100%',
@@ -66,7 +66,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenAdmin, siteSet
             </div>
 
             <p style={{ fontSize: '13px', lineHeight: 1.7, maxWidth: '340px', marginBottom: '20px' }}>
-              Tổ chức đại diện quốc gia kết nối các tài năng sáng tạo, STEM và nghiên cứu khoa học trẻ Việt Nam 
+              Tổ chức đại diện quốc gia kết nối các tài năng sáng tạo, STEM và nghiên cứu khoa học trẻ Việt Nam
               với các sân chơi học thuật danh giá nhất hành tinh.
             </p>
 
@@ -150,7 +150,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenAdmin, siteSet
             <a href="#privacy">Chính sách bảo mật</a>
             <a href="#terms">Điều khoản sử dụng</a>
             {onOpenAdmin && (
-              <button 
+              <button
                 onClick={onOpenAdmin}
                 style={{
                   background: 'transparent',
@@ -167,8 +167,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenAdmin, siteSet
                 <span>Cổng Quản Trị</span>
               </button>
             )}
-            <button 
-              onClick={scrollToTop} 
+            <button
+              onClick={scrollToTop}
               style={{
                 background: 'rgba(255, 255, 255, 0.05)',
                 border: '1px solid var(--color-border)',

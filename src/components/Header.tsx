@@ -3,11 +3,11 @@ import { Menu, X, Phone, Sparkles, ChevronRight, ShieldCheck } from 'lucide-reac
 import { SiteSettings } from '../types';
 
 const links = [
-  ['about', 'Giới thiệu'], 
-  ['competitions', 'Cuộc thi'], 
+  ['about', 'Giới thiệu'],
+  ['competitions', 'Cuộc thi'],
   ['finder', 'Tìm cơ hội'],
-  ['achievements', 'Thành tích'], 
-  ['process', 'Quy trình'], 
+  ['achievements', 'Thành tích'],
+  ['process', 'Quy trình'],
   ['news', 'Tin tức']
 ];
 
@@ -43,9 +43,9 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin, siteSet
     };
   }, [mobileMenuOpen]);
 
-  const navigate = (id: string) => { 
-    setMobileMenuOpen(false); 
-    onNavigate(id); 
+  const navigate = (id: string) => {
+    setMobileMenuOpen(false);
+    onNavigate(id);
   };
 
   const hotlineNum = siteSettings?.hotline || '0988.234.567';
@@ -113,7 +113,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin, siteSet
               fontWeight: 600,
               marginTop: '3px'
             }}>
-              VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO
+              VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO VÀ KIỂM ĐỊNH CHẤT LƯỢNG
             </div>
           </div>
         </div>
@@ -121,9 +121,9 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin, siteSet
         {/* Desktop Navigation Links */}
         <div className="site-nav-links">
           {links.map(([id, label]) => (
-            <a 
-              key={id} 
-              href={'#' + id} 
+            <a
+              key={id}
+              href={'#' + id}
               onClick={e => { e.preventDefault(); navigate(id); }}
             >
               {label}
@@ -133,15 +133,15 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin, siteSet
 
         {/* Actions & Mobile Toggle */}
         <div className="site-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button 
-            className="btn btn-sm btn-ghost" 
+          <button
+            className="btn btn-sm btn-ghost"
             onClick={onOpenAdmin}
-            style={{ 
-              color: 'var(--color-text-muted)', 
+            style={{
+              color: 'var(--color-text-muted)',
               fontSize: '12px',
               gap: '5px',
               padding: '6px 10px',
-              border: '1px solid rgba(255, 255, 255, 0.1)' 
+              border: '1px solid rgba(255, 255, 255, 0.1)'
             }}
             title="Dành cho Quản trị viên"
           >
@@ -149,19 +149,19 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin, siteSet
             <span>Admin</span>
           </button>
 
-          <a 
-            href="#register-lead" 
-            className="btn btn-sm btn-gold header-cta-btn" 
+          <a
+            href="#register-lead"
+            className="btn btn-sm btn-gold header-cta-btn"
             onClick={e => { e.preventDefault(); navigate('register-lead'); }}
           >
             <span>Nhận tư vấn</span>
           </a>
 
-          <button 
-            className="site-menu-toggle" 
-            aria-label={mobileMenuOpen ? 'Đóng menu' : 'Mở menu'} 
-            aria-expanded={mobileMenuOpen} 
-            aria-controls="mobile-navigation" 
+          <button
+            className="site-menu-toggle"
+            aria-label={mobileMenuOpen ? 'Đóng menu' : 'Mở menu'}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X size={26} color="var(--color-gold-bright)" /> : <Menu size={26} />}
@@ -172,21 +172,21 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin, siteSet
       {/* Mobile Drawer Navigation with backdrop */}
       {mobileMenuOpen && (
         <>
-          <div 
-            className="site-mobile-backdrop" 
-            onClick={() => setMobileMenuOpen(false)} 
-            aria-hidden="true" 
+          <div
+            className="site-mobile-backdrop"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
           />
-          <nav 
-            id="mobile-navigation" 
-            aria-label="Điều hướng trên điện thoại" 
+          <nav
+            id="mobile-navigation"
+            aria-label="Điều hướng trên điện thoại"
             className="site-mobile-nav"
           >
             <div className="mobile-nav-list">
               {links.map(([id, label]) => (
-                <a 
-                  key={id} 
-                  href={'#' + id} 
+                <a
+                  key={id}
+                  href={'#' + id}
                   className="mobile-nav-link"
                   onClick={e => { e.preventDefault(); navigate(id); }}
                 >
@@ -197,9 +197,9 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin, siteSet
             </div>
 
             <div className="mobile-nav-footer">
-              <a 
-                href="#register-lead" 
-                className="btn btn-gold btn-lg" 
+              <a
+                href="#register-lead"
+                className="btn btn-gold btn-lg"
                 style={{ width: '100%', justifyContent: 'center' }}
                 onClick={e => { e.preventDefault(); navigate('register-lead'); }}
               >
@@ -207,16 +207,16 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin, siteSet
                 <span>ĐĂNG KÝ NHẬN TƯ VẤN</span>
               </a>
 
-              <a 
-                href={`tel:${hotlineNum.replace(/[^0-9]/g, '')}`} 
-                className="btn btn-outline" 
+              <a
+                href={`tel:${hotlineNum.replace(/[^0-9]/g, '')}`}
+                className="btn btn-outline"
                 style={{ width: '100%', justifyContent: 'center', marginTop: '10px' }}
               >
                 <Phone size={16} />
                 <span>HOTLINE: {hotlineNum}</span>
               </a>
 
-              <button 
+              <button
                 onClick={() => { setMobileMenuOpen(false); onOpenAdmin(); }}
                 className="btn btn-ghost"
                 style={{ width: '100%', justifyContent: 'center', marginTop: '8px', fontSize: '13px', color: 'var(--color-text-dim)', gap: '6px' }}

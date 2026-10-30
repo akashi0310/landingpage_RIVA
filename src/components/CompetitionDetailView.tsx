@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  ArrowLeft, 
-  Calendar, 
-  MapPin, 
-  Award, 
-  CheckCircle2, 
-  Users, 
-  FileText, 
-  DollarSign, 
-  HelpCircle, 
+import {
+  ArrowLeft,
+  Calendar,
+  MapPin,
+  Award,
+  CheckCircle2,
+  Users,
+  FileText,
+  DollarSign,
+  HelpCircle,
   Sparkles,
   ExternalLink,
   ChevronRight,
@@ -34,8 +34,8 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
       {/* Top Breadcrumb & Back bar */}
       <div style={{ background: 'rgba(3, 10, 23, 0.7)', borderBottom: '1px solid var(--color-border)', padding: '16px 0' }}>
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <button 
-            className="btn btn-sm btn-ghost" 
+          <button
+            className="btn btn-sm btn-ghost"
             onClick={onBack}
             style={{ color: 'var(--color-text-muted)' }}
           >
@@ -67,10 +67,10 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
                 <span style={{ fontSize: '48px', lineHeight: 1 }}>{competition.flag_emoji}</span>
                 <div>
-                  <div style={{ 
-                    fontSize: '14px', 
-                    fontWeight: 800, 
-                    color: 'var(--color-gold-bright)', 
+                  <div style={{
+                    fontSize: '14px',
+                    fontWeight: 800,
+                    color: 'var(--color-gold-bright)',
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase'
                   }}>
@@ -101,7 +101,7 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
 
             {/* Right: Registration Action Card */}
             <div>
-              <button 
+              <button
                 className="btn btn-lg btn-gold"
                 style={{ fontSize: '16px', padding: '16px 36px', boxShadow: '0 8px 30px var(--color-gold-glow)' }}
                 onClick={() => onRegister(competition.code)}
@@ -117,31 +117,31 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
       <div className="container" style={{ marginTop: '36px' }}>
         {/* Tabs Bar */}
         <div className="tabs-header" style={{ marginBottom: '32px' }}>
-          <button 
+          <button
             className={`tab-item ${activeTab === 'overview' ? 'active' : ''}`}
             onClick={() => setActiveTab('overview')}
           >
             TỔNG QUAN
           </button>
-          <button 
+          <button
             className={`tab-item ${activeTab === 'eligibility' ? 'active' : ''}`}
             onClick={() => setActiveTab('eligibility')}
           >
             ĐỐI TƯỢNG THAM GIA
           </button>
-          <button 
+          <button
             className={`tab-item ${activeTab === 'categories' ? 'active' : ''}`}
             onClick={() => setActiveTab('categories')}
           >
             LĨNH VỰC
           </button>
-          <button 
+          <button
             className={`tab-item ${activeTab === 'dossier' ? 'active' : ''}`}
             onClick={() => setActiveTab('dossier')}
           >
             HỒ SƠ
           </button>
-          <button 
+          <button
             className={`tab-item ${activeTab === 'faq' ? 'active' : ''}`}
             onClick={() => setActiveTab('faq')}
           >
@@ -161,8 +161,8 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
                 {competition.description}
               </p>
               <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.8 }}>
-                Đoàn Việt Nam do Viện Nghiên Cứu Đổi Mới Sáng Tạo (RIVA) trực tiếp hướng dẫn và dẫn đoàn đã liên tục 
-                gặt hái nhiều Huy chương Vàng, cúp đặc biệt từ các Hiệp hội Sáng chế quốc tế và nhận được sự đánh giá cao từ 
+                Đoàn Việt Nam do VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO VÀ KIỂM ĐỊNH CHẤT LƯỢNG (RIVA) trực tiếp hướng dẫn và dẫn đoàn đã liên tục
+                gặt hái nhiều Huy chương Vàng, cúp đặc biệt từ các Hiệp hội Sáng chế quốc tế và nhận được sự đánh giá cao từ
                 các giáo sư tại Đại học Stanford, UC Berkeley.
               </p>
 

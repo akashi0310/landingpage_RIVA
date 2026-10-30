@@ -34,7 +34,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
 
   return (
     <div className="modal-overlay" onClick={onClose} style={{ zIndex: 1200 }}>
-      <div 
+      <div
         className="modal-content"
         style={{
           maxWidth: '860px',
@@ -74,7 +74,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
             )}
           </div>
 
-          <button 
+          <button
             onClick={onClose}
             className="btn btn-sm btn-ghost"
             style={{ padding: '6px', borderRadius: '50%', color: 'white' }}
@@ -151,8 +151,8 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
               boxShadow: '0 12px 30px rgba(0, 0, 0, 0.5)',
               border: '1px solid rgba(255, 255, 255, 0.1)'
             }}>
-              <img 
-                src={sanitizeUrl(coverImage)} 
+              <img
+                src={sanitizeUrl(coverImage)}
                 alt={title}
                 style={{ width: '100%', maxHeight: '420px', objectFit: 'cover', display: 'block' }}
               />
@@ -164,7 +164,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
             {blocks.map((block) => {
               if (block.type === 'subheading') {
                 return (
-                  <h3 
+                  <h3
                     key={block.id}
                     style={{
                       fontSize: '20px',
@@ -184,7 +184,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
 
               if (block.type === 'paragraph') {
                 return (
-                  <p 
+                  <p
                     key={block.id}
                     style={{
                       fontSize: '15px',
@@ -200,7 +200,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
 
               if (block.type === 'quote') {
                 return (
-                  <div 
+                  <div
                     key={block.id}
                     style={{
                       margin: '12px 0',
@@ -240,9 +240,9 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
                       border: '1px solid rgba(255, 255, 255, 0.1)',
                       boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)'
                     }}>
-                      <img 
-                        src={sanitizeUrl(block.imageUrl)} 
-                        alt={block.imageCaption || 'Hình ảnh bài viết'} 
+                      <img
+                        src={sanitizeUrl(block.imageUrl)}
+                        alt={block.imageCaption || 'Hình ảnh bài viết'}
                         style={{ width: '100%', maxHeight: '420px', objectFit: 'cover', display: 'block' }}
                       />
                     </div>
@@ -280,14 +280,14 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
           }}>
             <div>
               <div style={{ fontSize: '16px', fontWeight: 800, color: 'white' }}>
-                Đồng hành cùng Viện Nghiên Cứu Đổi Mới Sáng Tạo RIVA
+                Đồng hành cùng VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO VÀ KIỂM ĐỊNH CHẤT LƯỢNG RIVA
               </div>
               <div style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
                 Hỗ trợ 1-on-1 hoàn thiện đề tài NCKH, bảo hộ sở hữu trí tuệ và tranh tài quốc tế.
               </div>
             </div>
 
-            <button 
+            <button
               className="btn btn-gold"
               onClick={() => {
                 onClose();

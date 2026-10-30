@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ShieldCheck, 
-  Layers, 
-  Users, 
-  FileText, 
-  CheckCircle2, 
-  Clock, 
-  XCircle, 
-  Plus, 
-  Download, 
-  Search, 
-  Filter, 
-  Trash2, 
-  Edit, 
+import {
+  ShieldCheck,
+  Layers,
+  Users,
+  FileText,
+  CheckCircle2,
+  Clock,
+  XCircle,
+  Plus,
+  Download,
+  Search,
+  Filter,
+  Trash2,
+  Edit,
   Sparkles,
   ArrowRight,
   TrendingUp,
@@ -46,12 +46,12 @@ import {
   Bell
 } from 'lucide-react';
 import { api } from '../lib/supabase';
-import { 
-  Competition, 
-  Application, 
-  ApplicationStatus, 
-  SiteSettings, 
-  AboutArticleData, 
+import {
+  Competition,
+  Application,
+  ApplicationStatus,
+  SiteSettings,
+  AboutArticleData,
   NewsArticle,
   ArticleBlock,
   Lead
@@ -140,9 +140,9 @@ export const ImageUploadField: React.FC<{
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
         <label className="form-label" style={{ marginBottom: 0 }}>{label}</label>
         <div style={{ display: 'flex', gap: '6px' }}>
-          <button 
-            type="button" 
-            className="btn btn-sm btn-outline" 
+          <button
+            type="button"
+            className="btn btn-sm btn-outline"
             style={{ padding: '3px 8px', fontSize: '11px', gap: '4px', color: 'var(--color-gold-bright)', borderColor: 'rgba(204,153,0,0.4)' }}
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
@@ -152,9 +152,9 @@ export const ImageUploadField: React.FC<{
             <span>{uploading ? 'Đang nén ảnh...' : 'Tải từ máy tính'}</span>
           </button>
           {value && (
-            <button 
-              type="button" 
-              className="btn btn-sm btn-ghost" 
+            <button
+              type="button"
+              className="btn btn-sm btn-ghost"
               style={{ padding: '3px 6px', fontSize: '11px', color: '#ef4444' }}
               onClick={() => onChange('')}
               title="Xóa ảnh"
@@ -164,19 +164,19 @@ export const ImageUploadField: React.FC<{
           )}
         </div>
       </div>
-      <input 
-        type="file" 
-        ref={fileInputRef} 
-        accept="image/*" 
-        style={{ display: 'none' }} 
-        onChange={handleFileChange} 
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
       />
-      <input 
-        type="text" 
-        className="form-input" 
-        value={value} 
-        onChange={(e) => onChange(e.target.value)} 
-        placeholder={placeholder} 
+      <input
+        type="text"
+        className="form-input"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
       />
       {value && (
         <div style={{ marginTop: '8px', borderRadius: '8px', overflow: 'hidden', height, background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}>
@@ -189,7 +189,7 @@ export const ImageUploadField: React.FC<{
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, onLogout }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'articles' | 'about' | 'settings' | 'competitions' | 'applications'>('overview');
-  
+
   // Data states
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
@@ -234,7 +234,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
     try {
       const saved = localStorage.getItem('riva_admin_audit_logs');
       if (saved) return JSON.parse(saved);
-    } catch (e) {}
+    } catch (e) { }
     return [
       { id: '1', action: 'Khởi tạo hệ thống quản trị', detail: 'Hệ thống sẵn sàng vận hành an toàn', timestamp: new Date(Date.now() - 3600000 * 2).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' hôm nay' },
       { id: '2', action: 'Đồng bộ danh mục cuộc thi', detail: 'SVIIF, INTARG, AI-JAM, iENA đã kích hoạt', timestamp: new Date(Date.now() - 3600000).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' hôm nay' }
@@ -252,7 +252,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
       const updated = [newLog, ...prev.slice(0, 29)];
       try {
         localStorage.setItem('riva_admin_audit_logs', JSON.stringify(updated));
-      } catch (e) {}
+      } catch (e) { }
       return updated;
     });
   };
@@ -582,9 +582,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
         }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <img 
+              <img
                 src={`${import.meta.env.BASE_URL}logo-riva.png`}
-                alt="Logo RIVA" 
+                alt="Logo RIVA"
                 style={{ width: '42px', height: '42px', objectFit: 'contain' }}
               />
               <div>
@@ -617,7 +617,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
         {/* 6 Tabs Navigation */}
         <div className="tabs-header" style={{ marginBottom: '28px', overflowX: 'auto', flexWrap: 'nowrap' }}>
-          <button 
+          <button
             className={`tab-item ${activeTab === 'overview' ? 'active' : ''}`}
             onClick={() => setActiveTab('overview')}
           >
@@ -625,7 +625,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
             Tổng quan & Báo cáo
           </button>
 
-          <button 
+          <button
             className={`tab-item ${activeTab === 'articles' ? 'active' : ''}`}
             onClick={() => setActiveTab('articles')}
           >
@@ -633,7 +633,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
             Bài viết & Tin tức ({newsArticles.length})
           </button>
 
-          <button 
+          <button
             className={`tab-item ${activeTab === 'about' ? 'active' : ''}`}
             onClick={() => setActiveTab('about')}
           >
@@ -641,7 +641,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
             Bài báo "Về RIVA"
           </button>
 
-          <button 
+          <button
             className={`tab-item ${activeTab === 'settings' ? 'active' : ''}`}
             onClick={() => setActiveTab('settings')}
           >
@@ -649,7 +649,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
             Hotline & Thông tin liên hệ
           </button>
 
-          <button 
+          <button
             className={`tab-item ${activeTab === 'competitions' ? 'active' : ''}`}
             onClick={() => setActiveTab('competitions')}
           >
@@ -657,7 +657,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
             Quản lý Cuộc thi ({competitions.length})
           </button>
 
-          <button 
+          <button
             className={`tab-item ${activeTab === 'applications' ? 'active' : ''}`}
             onClick={() => setActiveTab('applications')}
             style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
@@ -766,17 +766,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   <line x1="50" y1="180" x2="880" y2="180" stroke="rgba(240,242,192,0.15)" />
 
                   {/* Area */}
-                  <polygon 
-                    points="80,160 160,140 240,148 320,110 400,95 480,120 560,70 640,60 720,40 800,25 800,180 80,180" 
-                    fill="url(#chartGradientNew)" 
+                  <polygon
+                    points="80,160 160,140 240,148 320,110 400,95 480,120 560,70 640,60 720,40 800,25 800,180 80,180"
+                    fill="url(#chartGradientNew)"
                   />
 
                   {/* Line */}
-                  <polyline 
-                    points="80,160 160,140 240,148 320,110 400,95 480,120 560,70 640,60 720,40 800,25" 
-                    fill="none" 
-                    stroke="#75C2FA" 
-                    strokeWidth="3.5" 
+                  <polyline
+                    points="80,160 160,140 240,148 320,110 400,95 480,120 560,70 640,60 720,40 800,25"
+                    fill="none"
+                    stroke="#75C2FA"
+                    strokeWidth="3.5"
                   />
 
                   {/* Data points */}
@@ -830,7 +830,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
-                <div 
+                <div
                   onClick={() => setActiveTab('competitions')}
                   style={{
                     padding: '16px',
@@ -850,7 +850,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   </p>
                 </div>
 
-                <div 
+                <div
                   onClick={() => setActiveTab('about')}
                   style={{
                     padding: '16px',
@@ -870,7 +870,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   </p>
                 </div>
 
-                <div 
+                <div
                   onClick={() => setActiveTab('settings')}
                   style={{
                     padding: '16px',
@@ -890,7 +890,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   </p>
                 </div>
 
-                <div 
+                <div
                   onClick={() => setActiveTab('applications')}
                   style={{
                     padding: '16px',
@@ -933,15 +933,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {auditLogs.slice(0, 6).map((log) => (
-                  <div 
-                    key={log.id} 
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'space-between', 
-                      padding: '12px 16px', 
-                      background: 'rgba(255, 255, 255, 0.02)', 
-                      borderRadius: '8px', 
+                  <div
+                    key={log.id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '12px 16px',
+                      background: 'rgba(255, 255, 255, 0.02)',
+                      borderRadius: '8px',
                       border: '1px solid rgba(255, 255, 255, 0.05)',
                       fontSize: '13px'
                     }}
@@ -982,7 +982,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 </p>
               </div>
 
-              <button 
+              <button
                 className="btn btn-gold"
                 onClick={() => {
                   setEditingArticle({
@@ -1015,9 +1015,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
               {newsArticles.map((art) => (
                 <div key={art.id} className="glass-card" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ height: '160px', position: 'relative' }}>
-                    <img 
-                      src={art.cover_image} 
-                      alt={art.title} 
+                    <img
+                      src={art.cover_image}
+                      alt={art.title}
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                     <span className="badge badge-gold" style={{ position: 'absolute', top: '10px', left: '10px', fontSize: '10px' }}>
@@ -1039,8 +1039,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                      <button 
-                        className="btn btn-sm btn-ghost" 
+                      <button
+                        className="btn btn-sm btn-ghost"
                         style={{ padding: 0, color: 'var(--color-sky)', gap: '4px' }}
                         onClick={() => setPreviewArticle(art)}
                       >
@@ -1049,7 +1049,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                       </button>
 
                       <div style={{ display: 'flex', gap: '6px' }}>
-                        <button 
+                        <button
                           className="btn btn-sm btn-outline"
                           onClick={() => {
                             setEditingArticle({ ...art });
@@ -1060,7 +1060,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                           <Edit size={13} />
                           <span>Sửa</span>
                         </button>
-                        <button 
+                        <button
                           className="btn btn-sm btn-ghost"
                           style={{ color: '#ef4444' }}
                           onClick={() => handleDeleteNewsArticle(art.id)}
@@ -1099,9 +1099,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
               <div className="grid-2" style={{ gap: '20px', marginBottom: '20px' }}>
                 <div className="form-group">
                   <label className="form-label">Tên Chuyên Đề / Nguồn Báo Chí</label>
-                  <input 
-                    type="text" 
-                    className="form-input" 
+                  <input
+                    type="text"
+                    className="form-input"
                     value={aboutArticle.press_source}
                     onChange={(e) => setAboutArticle({ ...aboutArticle, press_source: e.target.value })}
                     placeholder="Phóng sự Chuyên đề • Tạp chí Đổi Mới Sáng Tạo & Khoa Học Trẻ"
@@ -1110,9 +1110,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
                 <div className="form-group">
                   <label className="form-label">Tác Giả / Ban Biên Tập</label>
-                  <input 
-                    type="text" 
-                    className="form-input" 
+                  <input
+                    type="text"
+                    className="form-input"
                     value={aboutArticle.author}
                     onChange={(e) => setAboutArticle({ ...aboutArticle, author: e.target.value })}
                     placeholder="Ban Biên Tập RIVA Media & Hội Đồng Cố Vấn"
@@ -1122,10 +1122,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
               <div className="form-group" style={{ marginBottom: '20px' }}>
                 <label className="form-label">Tiêu Đề Lớn Bài Báo (Headline) *</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   required
-                  className="form-input" 
+                  className="form-input"
                   value={aboutArticle.headline}
                   onChange={(e) => setAboutArticle({ ...aboutArticle, headline: e.target.value })}
                   placeholder="KHÔNG CHỈ LÀ TỔ CHỨC THI, MÀ LÀ CẦU NỐI QUỐC TẾ"
@@ -1135,10 +1135,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
               <div className="form-group" style={{ marginBottom: '20px' }}>
                 <label className="form-label">Lời Dẫn Nhập (Sa-pô Báo Chí) *</label>
-                <textarea 
+                <textarea
                   rows={4}
                   required
-                  className="form-textarea" 
+                  className="form-textarea"
                   value={aboutArticle.lead_paragraph}
                   onChange={(e) => setAboutArticle({ ...aboutArticle, lead_paragraph: e.target.value })}
                   placeholder="Đoạn văn mở đầu tóm tắt ấn tượng về Viện RIVA..."
@@ -1156,18 +1156,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
                 <div className="form-group">
                   <label className="form-label">Chú Thích Ảnh Báo Chí (Caption)</label>
-                  <input 
-                    type="text" 
-                    className="form-input" 
+                  <input
+                    type="text"
+                    className="form-input"
                     value={aboutArticle.hero_caption}
                     onChange={(e) => setAboutArticle({ ...aboutArticle, hero_caption: e.target.value })}
                     placeholder="Đoàn thí sinh Việt Nam tự hào giương cao cờ Tổ quốc..."
                   />
                   <div style={{ marginTop: '16px' }}>
                     <label className="form-label">Tiêu Đề Video Tư Liệu</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
+                    <input
+                      type="text"
+                      className="form-input"
                       value={aboutArticle.video_title}
                       onChange={(e) => setAboutArticle({ ...aboutArticle, video_title: e.target.value })}
                       placeholder="Phim tư liệu: Hành trình đoàn Việt Nam..."
@@ -1212,7 +1212,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                       </div>
 
                       {block.type === 'subheading' && (
-                        <input 
+                        <input
                           type="text"
                           className="form-input"
                           value={block.text || ''}
@@ -1226,7 +1226,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                       )}
 
                       {block.type === 'paragraph' && (
-                        <textarea 
+                        <textarea
                           rows={3}
                           className="form-textarea"
                           value={block.text || ''}
@@ -1241,7 +1241,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
                       {block.type === 'quote' && (
                         <div className="grid-2" style={{ gap: '12px' }}>
-                          <textarea 
+                          <textarea
                             rows={2}
                             className="form-textarea"
                             value={block.text || ''}
@@ -1252,7 +1252,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                             }}
                             placeholder="Lời phát biểu hoặc trích dẫn..."
                           />
-                          <input 
+                          <input
                             type="text"
                             className="form-input"
                             value={block.authorQuote || ''}
@@ -1279,7 +1279,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                             placeholder="Dán link ảnh hoặc bấm 'Tải từ máy tính'..."
                             height="120px"
                           />
-                          <input 
+                          <input
                             type="text"
                             className="form-input"
                             value={block.imageCaption || ''}
@@ -1332,10 +1332,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                     <Phone size={14} color="var(--color-gold-bright)" />
                     <span>Số điện thoại Hotline chính (24/7) *</span>
                   </label>
-                  <input 
-                    type="text" 
-                    required 
-                    className="form-input" 
+                  <input
+                    type="text"
+                    required
+                    className="form-input"
                     value={siteSettings.hotline}
                     onChange={(e) => setSiteSettings({ ...siteSettings, hotline: e.target.value })}
                     placeholder="0988.234.567"
@@ -1350,9 +1350,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                     <Phone size={14} color="var(--color-sky)" />
                     <span>Số điện thoại phụ / Bàn</span>
                   </label>
-                  <input 
-                    type="text" 
-                    className="form-input" 
+                  <input
+                    type="text"
+                    className="form-input"
                     value={siteSettings.hotline_secondary || ''}
                     onChange={(e) => setSiteSettings({ ...siteSettings, hotline_secondary: e.target.value })}
                     placeholder="024.3856.9999"
@@ -1366,10 +1366,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                     <Mail size={14} color="var(--color-gold-bright)" />
                     <span>Email Liên Hệ Chính *</span>
                   </label>
-                  <input 
-                    type="email" 
-                    required 
-                    className="form-input" 
+                  <input
+                    type="email"
+                    required
+                    className="form-input"
                     value={siteSettings.email}
                     onChange={(e) => setSiteSettings({ ...siteSettings, email: e.target.value })}
                     placeholder="contact@riva.info.vn"
@@ -1381,9 +1381,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                     <Mail size={14} color="var(--color-sky)" />
                     <span>Email Ban Tuyển Sinh</span>
                   </label>
-                  <input 
-                    type="email" 
-                    className="form-input" 
+                  <input
+                    type="email"
+                    className="form-input"
                     value={siteSettings.email_admissions || ''}
                     onChange={(e) => setSiteSettings({ ...siteSettings, email_admissions: e.target.value })}
                     placeholder="admissions@riva.info.vn"
@@ -1396,10 +1396,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   <MapPin size={14} color="var(--color-gold-bright)" />
                   <span>Địa Chỉ Trụ Sở Chính (Hà Nội) *</span>
                 </label>
-                <input 
-                  type="text" 
-                  required 
-                  className="form-input" 
+                <input
+                  type="text"
+                  required
+                  className="form-input"
                   value={siteSettings.address_hn}
                   onChange={(e) => setSiteSettings({ ...siteSettings, address_hn: e.target.value })}
                   placeholder="Tòa nhà RIVA Innovation, Cầu Giấy, Hà Nội"
@@ -1411,9 +1411,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   <MapPin size={14} color="var(--color-sky)" />
                   <span>Địa Chỉ Văn Phòng Đại Diện (TP. Hồ Chí Minh)</span>
                 </label>
-                <input 
-                  type="text" 
-                  className="form-input" 
+                <input
+                  type="text"
+                  className="form-input"
                   value={siteSettings.address_hcm}
                   onChange={(e) => setSiteSettings({ ...siteSettings, address_hcm: e.target.value })}
                   placeholder="Văn phòng đại diện: Quận 1, TP. Hồ Chí Minh"
@@ -1422,20 +1422,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
               <div className="form-group" style={{ marginBottom: '20px' }}>
                 <label className="form-label">Tên Cơ Quan / Viện Nghiên Cứu</label>
-                <input 
-                  type="text" 
-                  className="form-input" 
+                <input
+                  type="text"
+                  className="form-input"
                   value={siteSettings.org_name}
                   onChange={(e) => setSiteSettings({ ...siteSettings, org_name: e.target.value })}
-                  placeholder="VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO RIVA"
+                  placeholder="VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO VÀ KIỂM ĐỊNH CHẤT LƯỢNG RIVA"
                 />
               </div>
 
               <div className="form-group" style={{ marginBottom: '28px' }}>
                 <label className="form-label">Slogan Truyền Thông</label>
-                <input 
-                  type="text" 
-                  className="form-input" 
+                <input
+                  type="text"
+                  className="form-input"
                   value={siteSettings.slogan}
                   onChange={(e) => setSiteSettings({ ...siteSettings, slogan: e.target.value })}
                   placeholder="Kết nối tài năng Việt Nam với đấu trường khoa học & sáng tạo quốc tế"
@@ -1487,11 +1487,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                     <Key size={14} color="var(--color-gold-bright)" />
                     <span>Mật khẩu mới (tối thiểu 6 ký tự) *</span>
                   </label>
-                  <input 
-                    type="password" 
-                    required 
+                  <input
+                    type="password"
+                    required
                     minLength={6}
-                    className="form-input" 
+                    className="form-input"
                     value={newAdminPassword}
                     onChange={(e) => setNewAdminPassword(e.target.value)}
                     placeholder="Nhập mật khẩu mới..."
@@ -1503,11 +1503,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                     <Key size={14} color="var(--color-sky)" />
                     <span>Xác nhận lại mật khẩu mới *</span>
                   </label>
-                  <input 
-                    type="password" 
-                    required 
+                  <input
+                    type="password"
+                    required
                     minLength={6}
-                    className="form-input" 
+                    className="form-input"
                     value={confirmAdminPassword}
                     onChange={(e) => setConfirmAdminPassword(e.target.value)}
                     placeholder="Nhập lại mật khẩu mới..."
@@ -1539,9 +1539,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
               <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '16px', lineHeight: 1.6 }}>
                 Dành cho Quản trị viên mới: Trong quá trình trải nghiệm hoặc thử nghiệm, nếu bạn muốn đưa toàn bộ bài viết tin tức, thông tin liên hệ và danh mục cuộc thi về mẫu chuẩn gốc ban đầu của Viện RIVA, hãy nhấn nút khôi phục bên dưới.
               </p>
-              <button 
-                type="button" 
-                className="btn btn-outline" 
+              <button
+                type="button"
+                className="btn btn-outline"
                 style={{ borderColor: 'rgba(239, 68, 68, 0.5)', color: '#f87171', gap: '8px' }}
                 onClick={handleResetToFactoryDefaults}
               >
@@ -1576,9 +1576,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
             {/* Filter and Search Bar */}
             <div style={{ padding: '14px 20px', background: 'rgba(255, 255, 255, 0.02)', borderBottom: '1px solid var(--color-border)', display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ position: 'relative', minWidth: '240px', flex: 1, maxWidth: '380px' }}>
-                <input 
-                  type="text" 
-                  className="form-input" 
+                <input
+                  type="text"
+                  className="form-input"
                   placeholder="Tìm theo tên cuộc thi, mã, quốc gia..."
                   value={compSearchQuery}
                   onChange={(e) => setCompSearchQuery(e.target.value)}
@@ -1588,28 +1588,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
               </div>
 
               <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
-                <button 
+                <button
                   className={`btn btn-sm ${compStatusFilter === 'all' ? 'btn-gold' : 'btn-ghost'}`}
                   style={{ fontSize: '12px', padding: '5px 12px' }}
                   onClick={() => setCompStatusFilter('all')}
                 >
                   Tất cả ({competitions.length})
                 </button>
-                <button 
+                <button
                   className={`btn btn-sm ${compStatusFilter === 'open' ? 'btn-gold' : 'btn-ghost'}`}
                   style={{ fontSize: '12px', padding: '5px 12px' }}
                   onClick={() => setCompStatusFilter('open')}
                 >
                   🟢 Đang mở ({competitions.filter(c => c.status === 'open').length})
                 </button>
-                <button 
+                <button
                   className={`btn btn-sm ${compStatusFilter === 'upcoming' ? 'btn-gold' : 'btn-ghost'}`}
                   style={{ fontSize: '12px', padding: '5px 12px' }}
                   onClick={() => setCompStatusFilter('upcoming')}
                 >
                   🟡 Sắp mở ({competitions.filter(c => c.status === 'upcoming').length})
                 </button>
-                <button 
+                <button
                   className={`btn btn-sm ${compStatusFilter === 'closed' ? 'btn-gold' : 'btn-ghost'}`}
                   style={{ fontSize: '12px', padding: '5px 12px' }}
                   onClick={() => setCompStatusFilter('closed')}
@@ -1635,7 +1635,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   {competitions
                     .filter(c => {
                       const q = compSearchQuery.toLowerCase().trim();
-                      const matchSearch = q === '' || 
+                      const matchSearch = q === '' ||
                         c.title.toLowerCase().includes(q) ||
                         c.code.toLowerCase().includes(q) ||
                         c.country.toLowerCase().includes(q) ||
@@ -1644,55 +1644,55 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                       return matchSearch && matchStatus;
                     })
                     .map((c) => (
-                    <tr key={c.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                      <td style={{ padding: '16px 20px', fontWeight: 700, color: 'white' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span style={{ fontSize: '18px' }}>{c.flag_emoji}</span>
-                          <div>
-                            <div>{c.code} — {c.title}</div>
-                            {c.organizer && <div style={{ fontSize: '11px', color: 'var(--color-text-dim)', fontWeight: 400 }}>BTC: {c.organizer}</div>}
+                      <tr key={c.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                        <td style={{ padding: '16px 20px', fontWeight: 700, color: 'white' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '18px' }}>{c.flag_emoji}</span>
+                            <div>
+                              <div>{c.code} — {c.title}</div>
+                              {c.organizer && <div style={{ fontSize: '11px', color: 'var(--color-text-dim)', fontWeight: 400 }}>BTC: {c.organizer}</div>}
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td style={{ padding: '16px 20px', color: 'var(--color-text-light)' }}>
-                        <div>{c.country}</div>
-                        {c.location && <div style={{ fontSize: '11px', color: 'var(--color-text-dim)' }}>{c.location}</div>}
-                      </td>
-                      <td style={{ padding: '16px 20px', color: 'var(--color-gold-bright)', fontWeight: 600 }}>
-                        <div>{c.deadline}</div>
-                        {c.event_date && <div style={{ fontSize: '11px', color: 'var(--color-sky)' }}>Diễn ra: {c.event_date}</div>}
-                      </td>
-                      <td style={{ padding: '16px 20px', color: 'var(--color-text-muted)' }}>
-                        {c.category}
-                      </td>
-                      <td style={{ padding: '16px 20px' }}>
-                        {c.status === 'open' && <span className="badge badge-open">🟢 Đang mở</span>}
-                        {c.status === 'upcoming' && <span className="badge badge-upcoming">🟡 Sắp mở</span>}
-                        {c.status === 'closed' && <span className="badge badge-closed">🔴 Đã đóng</span>}
-                      </td>
-                      <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-                          <button 
-                            className="btn btn-sm btn-outline" 
-                            style={{ padding: '6px 12px', fontSize: '12px', gap: '4px', color: 'var(--color-gold-bright)', borderColor: 'rgba(204, 153, 0, 0.4)' }}
-                            title="Chỉnh sửa thông tin cuộc thi"
-                            onClick={() => handleOpenEditComp(c)}
-                          >
-                            <Edit size={13} />
-                            <span>Chỉnh sửa</span>
-                          </button>
-                          <button 
-                            className="btn btn-sm btn-ghost" 
-                            style={{ color: '#ef4444', padding: '6px 8px' }}
-                            title="Xóa cuộc thi"
-                            onClick={() => handleDeleteComp(c.id)}
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                        <td style={{ padding: '16px 20px', color: 'var(--color-text-light)' }}>
+                          <div>{c.country}</div>
+                          {c.location && <div style={{ fontSize: '11px', color: 'var(--color-text-dim)' }}>{c.location}</div>}
+                        </td>
+                        <td style={{ padding: '16px 20px', color: 'var(--color-gold-bright)', fontWeight: 600 }}>
+                          <div>{c.deadline}</div>
+                          {c.event_date && <div style={{ fontSize: '11px', color: 'var(--color-sky)' }}>Diễn ra: {c.event_date}</div>}
+                        </td>
+                        <td style={{ padding: '16px 20px', color: 'var(--color-text-muted)' }}>
+                          {c.category}
+                        </td>
+                        <td style={{ padding: '16px 20px' }}>
+                          {c.status === 'open' && <span className="badge badge-open">🟢 Đang mở</span>}
+                          {c.status === 'upcoming' && <span className="badge badge-upcoming">🟡 Sắp mở</span>}
+                          {c.status === 'closed' && <span className="badge badge-closed">🔴 Đã đóng</span>}
+                        </td>
+                        <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                            <button
+                              className="btn btn-sm btn-outline"
+                              style={{ padding: '6px 12px', fontSize: '12px', gap: '4px', color: 'var(--color-gold-bright)', borderColor: 'rgba(204, 153, 0, 0.4)' }}
+                              title="Chỉnh sửa thông tin cuộc thi"
+                              onClick={() => handleOpenEditComp(c)}
+                            >
+                              <Edit size={13} />
+                              <span>Chỉnh sửa</span>
+                            </button>
+                            <button
+                              className="btn btn-sm btn-ghost"
+                              style={{ color: '#ef4444', padding: '6px 8px' }}
+                              title="Xóa cuộc thi"
+                              onClick={() => handleDeleteComp(c.id)}
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
@@ -1716,14 +1716,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
                 <div style={{ display: 'inline-flex', background: 'rgba(255, 255, 255, 0.06)', padding: '3px', borderRadius: '8px' }}>
-                  <button 
+                  <button
                     className={`btn btn-sm ${appSubTab === 'leads' ? 'btn-gold' : 'btn-ghost'}`}
                     style={{ fontSize: '12px', padding: '5px 12px' }}
                     onClick={() => setAppSubTab('leads')}
                   >
                     <span>📋 Đăng ký tư vấn ({leads.length})</span>
                   </button>
-                  <button 
+                  <button
                     className={`btn btn-sm ${appSubTab === 'applications' ? 'btn-gold' : 'btn-ghost'}`}
                     style={{ fontSize: '12px', padding: '5px 12px' }}
                     onClick={() => setAppSubTab('applications')}
@@ -1785,8 +1785,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                           </td>
                           <td style={{ padding: '16px 20px', textAlign: 'right' }}>
                             <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-                              <a 
-                                href={`tel:${lead.phone.replace(/[^0-9]/g, '')}`} 
+                              <a
+                                href={`tel:${lead.phone.replace(/[^0-9]/g, '')}`}
                                 className="btn btn-sm btn-gold"
                                 style={{ padding: '5px 10px', fontSize: '11px', gap: '4px' }}
                                 title="Gọi điện tư vấn"
@@ -1794,8 +1794,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                                 <PhoneCall size={12} />
                                 <span>Gọi ngay</span>
                               </a>
-                              <a 
-                                href={`https://zalo.me/${lead.phone.replace(/[^0-9]/g, '')}`} 
+                              <a
+                                href={`https://zalo.me/${lead.phone.replace(/[^0-9]/g, '')}`}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="btn btn-sm btn-outline"
@@ -1805,7 +1805,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                                 <MessageCircle size={12} />
                                 <span>Zalo</span>
                               </a>
-                              <button 
+                              <button
                                 type="button"
                                 className="btn btn-sm btn-outline"
                                 style={{ padding: '5px 10px', fontSize: '11px', gap: '4px', borderColor: 'rgba(204, 153, 0, 0.4)', color: 'var(--color-gold-bright)' }}
@@ -1831,9 +1831,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 {/* Search & Filter Bar for Applications */}
                 <div style={{ padding: '14px 20px', background: 'rgba(255, 255, 255, 0.02)', borderBottom: '1px solid var(--color-border)', display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ position: 'relative', minWidth: '240px', flex: 1, maxWidth: '380px' }}>
-                    <input 
-                      type="text" 
-                      className="form-input" 
+                    <input
+                      type="text"
+                      className="form-input"
                       placeholder="Tìm theo tên thí sinh, trường, đề tài, cuộc thi..."
                       value={appSearchQuery}
                       onChange={(e) => setAppSearchQuery(e.target.value)}
@@ -1843,35 +1843,35 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   </div>
 
                   <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
-                    <button 
+                    <button
                       className={`btn btn-sm ${appStatusFilter === 'all' ? 'btn-gold' : 'btn-ghost'}`}
                       style={{ fontSize: '12px', padding: '5px 12px' }}
                       onClick={() => setAppStatusFilter('all')}
                     >
                       Tất cả ({applications.length})
                     </button>
-                    <button 
+                    <button
                       className={`btn btn-sm ${appStatusFilter === 'submitted' ? 'btn-gold' : 'btn-ghost'}`}
                       style={{ fontSize: '12px', padding: '5px 12px' }}
                       onClick={() => setAppStatusFilter('submitted')}
                     >
                       🔵 Mới nộp ({applications.filter(a => a.status === 'submitted').length})
                     </button>
-                    <button 
+                    <button
                       className={`btn btn-sm ${appStatusFilter === 'under_review' ? 'btn-gold' : 'btn-ghost'}`}
                       style={{ fontSize: '12px', padding: '5px 12px' }}
                       onClick={() => setAppStatusFilter('under_review')}
                     >
                       🟡 Chờ duyệt ({applications.filter(a => a.status === 'under_review').length})
                     </button>
-                    <button 
+                    <button
                       className={`btn btn-sm ${appStatusFilter === 'approved' ? 'btn-gold' : 'btn-ghost'}`}
                       style={{ fontSize: '12px', padding: '5px 12px' }}
                       onClick={() => setAppStatusFilter('approved')}
                     >
                       🟢 Đã duyệt ({applications.filter(a => a.status === 'approved').length})
                     </button>
-                    <button 
+                    <button
                       className={`btn btn-sm ${appStatusFilter === 'rejected' ? 'btn-gold' : 'btn-ghost'}`}
                       style={{ fontSize: '12px', padding: '5px 12px' }}
                       onClick={() => setAppStatusFilter('rejected')}
@@ -1908,53 +1908,53 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                           return matchSearch && matchStatus;
                         })
                         .map((app) => (
-                        <tr key={app.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                          <td style={{ padding: '16px 20px' }}>
-                            <div style={{ fontWeight: 700, color: 'white' }}>{app.full_name}</div>
-                            <div style={{ fontSize: '11px', color: 'var(--color-text-dim)' }}>{app.email} • {app.phone}</div>
-                          </td>
-                          <td style={{ padding: '16px 20px', color: 'var(--color-text-light)' }}>
-                            {app.school} ({app.city})
-                          </td>
-                          <td style={{ padding: '16px 20px', color: 'var(--color-gold-bright)', fontWeight: 600 }}>
-                            {app.competition_code}
-                          </td>
-                          <td style={{ padding: '16px 20px' }}>
-                            <div style={{ color: 'white', fontWeight: 600, maxWidth: '280px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              {app.project_title}
-                            </div>
-                            <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{app.project_field}</div>
-                          </td>
-                          <td style={{ padding: '16px 20px' }}>
-                            {app.status === 'approved' && <span className="badge badge-open">Đã duyệt</span>}
-                            {app.status === 'under_review' && <span className="badge badge-upcoming">Chờ duyệt</span>}
-                            {app.status === 'submitted' && <span className="badge badge-blue">Mới nộp</span>}
-                            {app.status === 'rejected' && <span className="badge badge-closed">Từ chối</span>}
-                          </td>
-                          <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
-                              <button 
-                                className="btn btn-sm btn-outline" 
-                                style={{ color: '#34d399', borderColor: 'rgba(16, 185, 129, 0.4)' }}
-                                onClick={() => handleStatusChange(app.id, 'approved')}
-                                title="Duyệt hồ sơ"
-                              >
-                                <CheckCircle2 size={14} />
-                                <span>Duyệt</span>
-                              </button>
-                              <button 
-                                className="btn btn-sm btn-outline" 
-                                style={{ color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.4)' }}
-                                onClick={() => handleStatusChange(app.id, 'rejected')}
-                                title="Từ chối"
-                              >
-                                <XCircle size={14} />
-                                <span>Từ chối</span>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
+                          <tr key={app.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                            <td style={{ padding: '16px 20px' }}>
+                              <div style={{ fontWeight: 700, color: 'white' }}>{app.full_name}</div>
+                              <div style={{ fontSize: '11px', color: 'var(--color-text-dim)' }}>{app.email} • {app.phone}</div>
+                            </td>
+                            <td style={{ padding: '16px 20px', color: 'var(--color-text-light)' }}>
+                              {app.school} ({app.city})
+                            </td>
+                            <td style={{ padding: '16px 20px', color: 'var(--color-gold-bright)', fontWeight: 600 }}>
+                              {app.competition_code}
+                            </td>
+                            <td style={{ padding: '16px 20px' }}>
+                              <div style={{ color: 'white', fontWeight: 600, maxWidth: '280px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {app.project_title}
+                              </div>
+                              <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{app.project_field}</div>
+                            </td>
+                            <td style={{ padding: '16px 20px' }}>
+                              {app.status === 'approved' && <span className="badge badge-open">Đã duyệt</span>}
+                              {app.status === 'under_review' && <span className="badge badge-upcoming">Chờ duyệt</span>}
+                              {app.status === 'submitted' && <span className="badge badge-blue">Mới nộp</span>}
+                              {app.status === 'rejected' && <span className="badge badge-closed">Từ chối</span>}
+                            </td>
+                            <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                              <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
+                                <button
+                                  className="btn btn-sm btn-outline"
+                                  style={{ color: '#34d399', borderColor: 'rgba(16, 185, 129, 0.4)' }}
+                                  onClick={() => handleStatusChange(app.id, 'approved')}
+                                  title="Duyệt hồ sơ"
+                                >
+                                  <CheckCircle2 size={14} />
+                                  <span>Duyệt</span>
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-outline"
+                                  style={{ color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.4)' }}
+                                  onClick={() => handleStatusChange(app.id, 'rejected')}
+                                  title="Từ chối"
+                                >
+                                  <XCircle size={14} />
+                                  <span>Từ chối</span>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
@@ -1968,9 +1968,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
             ========================================================================= */}
         {showArticleModal && editingArticle && (
           <div className="modal-overlay" onClick={() => setShowArticleModal(false)}>
-            <div 
-              className="modal-content" 
-              onClick={(e) => e.stopPropagation()} 
+            <div
+              className="modal-content"
+              onClick={(e) => e.stopPropagation()}
               style={{ maxWidth: '820px', maxHeight: '90vh' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid var(--color-border)', paddingBottom: '14px' }}>
@@ -1986,10 +1986,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 <div className="grid-2" style={{ gap: '16px', marginBottom: '16px' }}>
                   <div className="form-group">
                     <label className="form-label">Tiêu đề bài viết *</label>
-                    <input 
-                      type="text" 
-                      required 
-                      className="form-input" 
+                    <input
+                      type="text"
+                      required
+                      className="form-input"
                       value={editingArticle.title}
                       onChange={(e) => setEditingArticle({ ...editingArticle, title: e.target.value })}
                       placeholder="Nhập tiêu đề ấn tượng..."
@@ -1998,7 +1998,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
                   <div className="form-group">
                     <label className="form-label">Chuyên mục bài viết *</label>
-                    <select 
+                    <select
                       className="form-select"
                       value={editingArticle.category}
                       onChange={(e) => setEditingArticle({ ...editingArticle, category: e.target.value })}
@@ -2015,9 +2015,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 <div className="grid-2" style={{ gap: '16px', marginBottom: '16px' }}>
                   <div className="form-group">
                     <label className="form-label">Tác giả / Nguồn tin</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
+                    <input
+                      type="text"
+                      className="form-input"
                       value={editingArticle.author || ''}
                       onChange={(e) => setEditingArticle({ ...editingArticle, author: e.target.value })}
                       placeholder="Ban Tin Tức RIVA Media"
@@ -2026,9 +2026,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
                   <div className="form-group">
                     <label className="form-label">Ngày xuất bản</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
+                    <input
+                      type="text"
+                      className="form-input"
                       value={editingArticle.date}
                       onChange={(e) => setEditingArticle({ ...editingArticle, date: e.target.value })}
                       placeholder="Ví dụ: 30/10/2026"
@@ -2046,10 +2046,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
                 <div className="form-group" style={{ marginBottom: '20px' }}>
                   <label className="form-label">Đoạn tóm tắt (Excerpt) *</label>
-                  <textarea 
+                  <textarea
                     rows={2}
                     required
-                    className="form-textarea" 
+                    className="form-textarea"
                     value={editingArticle.desc}
                     onChange={(e) => setEditingArticle({ ...editingArticle, desc: e.target.value })}
                     placeholder="Tóm tắt ngắn gọn 2-3 câu về bài viết..."
@@ -2085,9 +2085,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                           <span className="badge badge-blue" style={{ fontSize: '10px', textTransform: 'uppercase' }}>
                             {b.type === 'paragraph' ? 'Đoạn văn' : b.type === 'subheading' ? 'Đề mục con' : b.type === 'image' ? 'Ảnh minh họa' : 'Trích dẫn'}
                           </span>
-                          <button 
-                            type="button" 
-                            className="btn btn-sm btn-ghost" 
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-ghost"
                             style={{ color: '#ef4444', padding: '2px' }}
                             onClick={() => {
                               const newBlocks = (editingArticle.blocks || []).filter((_, idx) => idx !== bIdx);
@@ -2099,7 +2099,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                         </div>
 
                         {b.type === 'paragraph' && (
-                          <textarea 
+                          <textarea
                             rows={3}
                             className="form-textarea"
                             value={b.text || ''}
@@ -2113,7 +2113,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                         )}
 
                         {b.type === 'subheading' && (
-                          <input 
+                          <input
                             type="text"
                             className="form-input"
                             value={b.text || ''}
@@ -2139,23 +2139,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                               placeholder="Dán link ảnh hoặc bấm 'Tải từ máy tính'..."
                               height="120px"
                             />
-                            <input 
-                              type="text" 
-                              className="form-input" 
-                              value={b.imageCaption || ''} 
+                            <input
+                              type="text"
+                              className="form-input"
+                              value={b.imageCaption || ''}
                               onChange={(e) => {
                                 const newBlocks = [...(editingArticle.blocks || [])];
                                 newBlocks[bIdx].imageCaption = e.target.value;
                                 setEditingArticle({ ...editingArticle, blocks: newBlocks });
-                              }} 
-                              placeholder="Chú thích ảnh minh họa..." 
+                              }}
+                              placeholder="Chú thích ảnh minh họa..."
                             />
                           </div>
                         )}
 
                         {b.type === 'quote' && (
                           <div className="grid-2" style={{ gap: '10px' }}>
-                            <textarea 
+                            <textarea
                               rows={2}
                               className="form-textarea"
                               value={b.text || ''}
@@ -2166,7 +2166,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                               }}
                               placeholder="Trích dẫn phát biểu..."
                             />
-                            <input 
+                            <input
                               type="text"
                               className="form-input"
                               value={b.authorQuote || ''}
@@ -2216,10 +2216,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 <div className="grid-2" style={{ gap: '14px', marginBottom: '14px' }}>
                   <div className="form-group">
                     <label className="form-label">Mã viết tắt (ví dụ: SVIIF, INTARG) *</label>
-                    <input 
-                      type="text" 
-                      required 
-                      className="form-input" 
+                    <input
+                      type="text"
+                      required
+                      className="form-input"
                       placeholder="SVIIF"
                       value={editingComp.code || ''}
                       onChange={(e) => setEditingComp({ ...editingComp, code: e.target.value })}
@@ -2227,9 +2227,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   </div>
                   <div className="form-group">
                     <label className="form-label">Emoji Quốc kỳ (ví dụ: 🇺🇸, 🇵🇱, 🇲🇾)</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
+                    <input
+                      type="text"
+                      className="form-input"
                       placeholder="🇺🇸"
                       value={editingComp.flag_emoji || ''}
                       onChange={(e) => setEditingComp({ ...editingComp, flag_emoji: e.target.value })}
@@ -2239,10 +2239,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
                 <div className="form-group" style={{ marginBottom: '14px' }}>
                   <label className="form-label">Tên đầy đủ cuộc thi *</label>
-                  <input 
-                    type="text" 
-                    required 
-                    className="form-input" 
+                  <input
+                    type="text"
+                    required
+                    className="form-input"
                     placeholder="SVIIF 2027 - Silicon Valley International Invention Festival"
                     value={editingComp.title || ''}
                     onChange={(e) => setEditingComp({ ...editingComp, title: e.target.value })}
@@ -2252,10 +2252,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 <div className="grid-2" style={{ gap: '14px', marginBottom: '14px' }}>
                   <div className="form-group">
                     <label className="form-label">Quốc gia *</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
-                      className="form-input" 
+                      className="form-input"
                       placeholder="Hoa Kỳ"
                       value={editingComp.country || ''}
                       onChange={(e) => setEditingComp({ ...editingComp, country: e.target.value })}
@@ -2263,9 +2263,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   </div>
                   <div className="form-group">
                     <label className="form-label">Địa điểm tổ chức</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
+                    <input
+                      type="text"
+                      className="form-input"
                       placeholder="Santa Clara Convention Center, California"
                       value={editingComp.location || ''}
                       onChange={(e) => setEditingComp({ ...editingComp, location: e.target.value })}
@@ -2276,10 +2276,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 <div className="grid-2" style={{ gap: '14px', marginBottom: '14px' }}>
                   <div className="form-group">
                     <label className="form-label">Lĩnh vực thi đấu *</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
-                      className="form-input" 
+                      className="form-input"
                       placeholder="STEM, AI & Sáng chế Đổi mới"
                       value={editingComp.category || ''}
                       onChange={(e) => setEditingComp({ ...editingComp, category: e.target.value })}
@@ -2287,7 +2287,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   </div>
                   <div className="form-group">
                     <label className="form-label">Trạng thái tuyển sinh *</label>
-                    <select 
+                    <select
                       className="form-select"
                       value={editingComp.status || 'open'}
                       onChange={(e) => setEditingComp({ ...editingComp, status: e.target.value as any })}
@@ -2302,18 +2302,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 <div className="grid-2" style={{ gap: '14px', marginBottom: '14px' }}>
                   <div className="form-group">
                     <label className="form-label">Hạn chót nhận hồ sơ</label>
-                    <input 
-                      type="date" 
-                      className="form-input" 
+                    <input
+                      type="date"
+                      className="form-input"
                       value={editingComp.deadline || ''}
                       onChange={(e) => setEditingComp({ ...editingComp, deadline: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Thời gian diễn ra sự kiện</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
+                    <input
+                      type="text"
+                      className="form-input"
                       placeholder="Tháng 8/2027"
                       value={editingComp.event_date || ''}
                       onChange={(e) => setEditingComp({ ...editingComp, event_date: e.target.value })}
@@ -2324,9 +2324,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 <div className="grid-2" style={{ gap: '14px', marginBottom: '14px' }}>
                   <div className="form-group">
                     <label className="form-label">Đơn vị tổ chức (Ban tổ chức)</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
+                    <input
+                      type="text"
+                      className="form-input"
                       placeholder="Hiệp hội Sáng chế Quốc tế IFIA"
                       value={editingComp.organizer || ''}
                       onChange={(e) => setEditingComp({ ...editingComp, organizer: e.target.value })}
@@ -2334,9 +2334,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   </div>
                   <div className="form-group">
                     <label className="form-label">Lệ phí / Chính sách hỗ trợ</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
+                    <input
+                      type="text"
+                      className="form-input"
                       placeholder="Hỗ trợ trọn gói đoàn RIVA"
                       value={editingComp.fee || ''}
                       onChange={(e) => setEditingComp({ ...editingComp, fee: e.target.value })}
@@ -2346,9 +2346,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
                 <div className="form-group" style={{ marginBottom: '18px' }}>
                   <label className="form-label">Mô tả tóm tắt cuộc thi</label>
-                  <textarea 
+                  <textarea
                     rows={3}
-                    className="form-textarea" 
+                    className="form-textarea"
                     placeholder="Thông tin giới thiệu về cuộc thi, tiêu chí đánh giá, đối tượng tham gia..."
                     value={editingComp.description || ''}
                     onChange={(e) => setEditingComp({ ...editingComp, description: e.target.value })}
@@ -2390,7 +2390,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px' }}>
                   <div>
                     <div style={{ fontSize: '16px', fontWeight: 700, color: 'white' }}>
-                      {selectedLeadForTemplate.full_name} 
+                      {selectedLeadForTemplate.full_name}
                       <span className="badge badge-gold" style={{ marginLeft: '8px', fontSize: '11px' }}>
                         {selectedLeadForTemplate.role === 'parent' ? 'Phụ huynh' : selectedLeadForTemplate.role === 'student' ? 'Học sinh' : 'Giáo viên'}
                       </span>
@@ -2413,27 +2413,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
               {/* Action Buttons: Call, Zalo, Email */}
               <div style={{ display: 'flex', gap: '10px', marginBottom: '18px', flexWrap: 'wrap' }}>
-                <a 
-                  href={`tel:${selectedLeadForTemplate.phone.replace(/[^0-9]/g, '')}`} 
+                <a
+                  href={`tel:${selectedLeadForTemplate.phone.replace(/[^0-9]/g, '')}`}
                   className="btn btn-gold"
                   style={{ flex: 1, minWidth: '130px', justifyContent: 'center', gap: '6px' }}
                 >
                   <PhoneCall size={15} />
                   <span>Gọi Điện Ngay</span>
                 </a>
-                <a 
-                  href={`https://zalo.me/${selectedLeadForTemplate.phone.replace(/[^0-9]/g, '')}`} 
-                  target="_blank" 
-                  rel="noreferrer" 
+                <a
+                  href={`https://zalo.me/${selectedLeadForTemplate.phone.replace(/[^0-9]/g, '')}`}
+                  target="_blank"
+                  rel="noreferrer"
                   className="btn btn-outline"
                   style={{ flex: 1, minWidth: '130px', justifyContent: 'center', gap: '6px', borderColor: 'rgba(51, 102, 255, 0.4)', color: 'var(--color-sky)' }}
                 >
                   <MessageCircle size={15} />
                   <span>Mở Zalo Chat</span>
                 </a>
-                <a 
+                <a
                   href={`mailto:${selectedLeadForTemplate.email}?subject=${encodeURIComponent(`[Viện RIVA] Tư vấn thông tin tham gia cuộc thi khoa học quốc tế`)}&body=${encodeURIComponent(
-                    `Kính gửi ${selectedLeadForTemplate.role === 'parent' ? 'Quý Phụ huynh' : 'Bạn'} ${selectedLeadForTemplate.full_name},\n\nViện Nghiên cứu Đổi mới Sáng tạo RIVA đã nhận được thông tin đăng ký tư vấn về: ${selectedLeadForTemplate.interest_competition || 'các giải đấu quốc tế'}.\n\nChuyên viên phụ trách học thuật của Viện xin liên hệ để giải đáp chi tiết thể lệ, lộ trình huấn luyện và thủ tục tham dự.\n\nTrân trọng,\nViện Nghiên cứu Đổi mới Sáng tạo RIVA\nHotline: ${siteSettings.hotline}`
+                    `Kính gửi ${selectedLeadForTemplate.role === 'parent' ? 'Quý Phụ huynh' : 'Bạn'} ${selectedLeadForTemplate.full_name},\n\nVIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO VÀ KIỂM ĐỊNH CHẤT LƯỢNG RIVA đã nhận được thông tin đăng ký tư vấn về: ${selectedLeadForTemplate.interest_competition || 'các giải đấu quốc tế'}.\n\nChuyên viên phụ trách học thuật của Viện xin liên hệ để giải đáp chi tiết thể lệ, lộ trình huấn luyện và thủ tục tham dự.\n\nTrân trọng,\nVIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO VÀ KIỂM ĐỊNH CHẤT LƯỢNG RIVA\nHotline: ${siteSettings.hotline}`
                   )}`}
                   className="btn btn-outline"
                   style={{ flex: 1, minWidth: '130px', justifyContent: 'center', gap: '6px' }}
@@ -2449,12 +2449,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   <label className="form-label" style={{ marginBottom: 0 }}>
                     Nội dung tin nhắn mẫu (Dán vào Zalo / SMS / Facebook)
                   </label>
-                  <button 
-                    type="button" 
-                    className="btn btn-sm btn-gold" 
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-gold"
                     style={{ padding: '4px 10px', fontSize: '11px', gap: '4px' }}
                     onClick={() => {
-                      const msg = `Kính gửi ${selectedLeadForTemplate.role === 'parent' ? 'Quý Phụ huynh' : 'Bạn'} ${selectedLeadForTemplate.full_name},\n\nViện Nghiên cứu Đổi mới Sáng tạo RIVA trân trọng cảm ơn bạn đã quan tâm đến chương trình ${selectedLeadForTemplate.interest_competition || 'đào tạo và dự thi quốc tế'}. \n\nEm là đại diện Ban Cố Vấn RIVA xin phép được kết nối để gửi đến Anh/Chị thông tin chi tiết về: \n1. Thể lệ và tiêu chí chấm giải của Ban Tổ chức quốc tế\n2. Lộ trình hoàn thiện đề tài và tập huấn tiếng Anh thuyết trình\n3. Lịch trình đoàn Việt Nam xuất quân\n\nAnh/Chị thuận tiện trao đổi thêm vào khung giờ nào để em hỗ trợ chu đáo nhất ạ? Em cảm ơn!`;
+                      const msg = `Kính gửi ${selectedLeadForTemplate.role === 'parent' ? 'Quý Phụ huynh' : 'Bạn'} ${selectedLeadForTemplate.full_name},\n\nVIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO VÀ KIỂM ĐỊNH CHẤT LƯỢNG RIVA trân trọng cảm ơn bạn đã quan tâm đến chương trình ${selectedLeadForTemplate.interest_competition || 'đào tạo và dự thi quốc tế'}. \n\nEm là đại diện Ban Cố Vấn RIVA xin phép được kết nối để gửi đến Anh/Chị thông tin chi tiết về: \n1. Thể lệ và tiêu chí chấm giải của Ban Tổ chức quốc tế\n2. Lộ trình hoàn thiện đề tài và tập huấn tiếng Anh thuyết trình\n3. Lịch trình đoàn Việt Nam xuất quân\n\nAnh/Chị thuận tiện trao đổi thêm vào khung giờ nào để em hỗ trợ chu đáo nhất ạ? Em cảm ơn!`;
                       navigator.clipboard.writeText(msg);
                       setCopiedTemplate(true);
                       setTimeout(() => setCopiedTemplate(false), 3000);
@@ -2464,12 +2464,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                     <span>{copiedTemplate ? 'Đã sao chép!' : 'Sao chép tin nhắn'}</span>
                   </button>
                 </div>
-                <textarea 
+                <textarea
                   rows={6}
                   readOnly
                   className="form-textarea"
                   style={{ fontSize: '13px', lineHeight: 1.6, background: 'rgba(5, 13, 38, 0.7)' }}
-                  value={`Kính gửi ${selectedLeadForTemplate.role === 'parent' ? 'Quý Phụ huynh' : 'Bạn'} ${selectedLeadForTemplate.full_name},\n\nViện Nghiên cứu Đổi mới Sáng tạo RIVA trân trọng cảm ơn bạn đã quan tâm đến chương trình ${selectedLeadForTemplate.interest_competition || 'đào tạo và dự thi quốc tế'}. \n\nEm là đại diện Ban Cố Vấn RIVA xin phép được kết nối để gửi đến Anh/Chị thông tin chi tiết về: \n1. Thể lệ và tiêu chí chấm giải của Ban Tổ chức quốc tế\n2. Lộ trình hoàn thiện đề tài và tập huấn tiếng Anh thuyết trình\n3. Lịch trình đoàn Việt Nam xuất quân\n\nAnh/Chị thuận tiện trao đổi thêm vào khung giờ nào để em hỗ trợ chu đáo nhất ạ? Em cảm ơn!`}
+                  value={`Kính gửi ${selectedLeadForTemplate.role === 'parent' ? 'Quý Phụ huynh' : 'Bạn'} ${selectedLeadForTemplate.full_name},\n\nVIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO VÀ KIỂM ĐỊNH CHẤT LƯỢNG RIVA trân trọng cảm ơn bạn đã quan tâm đến chương trình ${selectedLeadForTemplate.interest_competition || 'đào tạo và dự thi quốc tế'}. \n\nEm là đại diện Ban Cố Vấn RIVA xin phép được kết nối để gửi đến Anh/Chị thông tin chi tiết về: \n1. Thể lệ và tiêu chí chấm giải của Ban Tổ chức quốc tế\n2. Lộ trình hoàn thiện đề tài và tập huấn tiếng Anh thuyết trình\n3. Lịch trình đoàn Việt Nam xuất quân\n\nAnh/Chị thuận tiện trao đổi thêm vào khung giờ nào để em hỗ trợ chu đáo nhất ạ? Em cảm ơn!`}
                 />
               </div>
 
@@ -2484,7 +2484,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
         {/* Live Preview Modal for News Article */}
         {previewArticle && (
-          <ArticleModal 
+          <ArticleModal
             isOpen={Boolean(previewArticle)}
             onClose={() => setPreviewArticle(null)}
             title={previewArticle.title}
