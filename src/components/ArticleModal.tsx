@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Calendar, User, Newspaper, Quote, Share2, ArrowRight, Sparkles } from 'lucide-react';
 import { ArticleBlock } from '../types';
+import { sanitizeUrl } from '../lib/security';
 
 interface ArticleModalProps {
   isOpen: boolean;
@@ -151,7 +152,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
               border: '1px solid rgba(255, 255, 255, 0.1)'
             }}>
               <img 
-                src={coverImage} 
+                src={sanitizeUrl(coverImage)} 
                 alt={title}
                 style={{ width: '100%', maxHeight: '420px', objectFit: 'cover', display: 'block' }}
               />
@@ -240,7 +241,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
                       boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)'
                     }}>
                       <img 
-                        src={block.imageUrl} 
+                        src={sanitizeUrl(block.imageUrl)} 
                         alt={block.imageCaption || 'Hình ảnh bài viết'} 
                         style={{ width: '100%', maxHeight: '420px', objectFit: 'cover', display: 'block' }}
                       />

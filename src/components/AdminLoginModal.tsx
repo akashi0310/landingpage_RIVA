@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { X, ShieldCheck, Lock, Sparkles, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, ShieldCheck, Lock, ArrowRight, AlertTriangle, Eye, EyeOff } from 'lucide-react';
+import { verifyAdminPassword, getLoginLockoutStatus } from '../lib/security';
 
 interface AdminLoginModalProps {
   isOpen: boolean;
@@ -10,23 +11,69 @@ interface AdminLoginModalProps {
 export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [lockoutSeconds, setLockoutSeconds] = useState(0);
+
+  // Check lockout status upon open and setup countdown timer
+  useEffect(() => {
+    if (!isOpen) {
+      setPassword('');
+      setError('');
+      return;
+    }
+
+    const checkLockout = () => {
+      const status = getLoginLockoutStatus();
+      if (status.isLocked) {
+        setLockoutSeconds(status.remainingSeconds);
+      } else {
+        setLockoutSeconds(0);
+      }
+    };
+
+    checkLockout();
+    const interval = setInterval(() => {
+      setLockoutSeconds(prev => {
+        if (prev <= 1) {
+          checkLockout();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Default admin password or simple check
-    if (password === 'admin' || password === '123456' || password === 'riva2027' || password.trim() === '') {
-      onSuccess();
-      onClose();
-    } else {
-      setError('Mật khẩu không đúng. Gợi ý: admin hoặc 123456');
-    }
-  };
+    if (lockoutSeconds > 0 || isSubmitting) return;
 
-  const handleInstantLogin = () => {
-    onSuccess();
-    onClose();
+    setError('');
+    setIsSubmitting(true);
+
+    try {
+      const result = await verifyAdminPassword(password);
+      if (result.success) {
+        setPassword('');
+        setError('');
+        onSuccess();
+        onClose();
+      } else {
+        setError(result.error || 'Mật khẩu quản trị không đúng!');
+        const status = getLoginLockoutStatus();
+        if (status.isLocked) {
+          setLockoutSeconds(status.remainingSeconds);
+        }
+      }
+    } catch (err) {
+      setError('Đã xảy ra lỗi khi kiểm tra bảo mật.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -34,7 +81,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClos
       <div 
         className="modal-content"
         style={{
-          maxWidth: '420px',
+          maxWidth: '430px',
           padding: '32px 28px',
           background: 'radial-gradient(ellipse at top, #0e205c 0%, #050d26 100%)',
           border: '1px solid rgba(204, 153, 0, 0.45)',
@@ -54,6 +101,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClos
             color: 'var(--color-text-muted)',
             cursor: 'pointer'
           }}
+          aria-label="Đóng"
         >
           <X size={18} />
         </button>
@@ -78,49 +126,95 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClos
             Cổng Quản Trị RIVA
           </h3>
           <p style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
-            Xác thực quyền quản trị viên để cập nhật bài viết, hotline và hồ sơ tuyển sinh
+            Xác thực bảo mật dành riêng cho Quản trị viên Viện RIVA
           </p>
         </div>
 
-        {error && (
-          <div style={{ padding: '8px 12px', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', borderRadius: '8px', color: '#f87171', fontSize: '12px', marginBottom: '14px', textAlign: 'center' }}>
+        {lockoutSeconds > 0 ? (
+          <div style={{
+            padding: '16px',
+            background: 'rgba(239, 68, 68, 0.15)',
+            border: '1px solid #ef4444',
+            borderRadius: '10px',
+            color: '#f87171',
+            fontSize: '13px',
+            marginBottom: '16px',
+            textAlign: 'center'
+          }}>
+            <AlertTriangle size={24} style={{ margin: '0 auto 8px', display: 'block' }} />
+            <div style={{ fontWeight: 700, marginBottom: '4px' }}>Tạm khóa cổng quản trị</div>
+            <div>Nhập sai nhiều lần. Vui lòng đợi <strong>{lockoutSeconds}s</strong> trước khi thử lại.</div>
+          </div>
+        ) : error ? (
+          <div style={{
+            padding: '10px 14px',
+            background: 'rgba(239, 68, 68, 0.15)',
+            border: '1px solid #ef4444',
+            borderRadius: '8px',
+            color: '#f87171',
+            fontSize: '12px',
+            marginBottom: '16px',
+            textAlign: 'center',
+            lineHeight: 1.5
+          }}>
             {error}
           </div>
-        )}
+        ) : null}
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group" style={{ marginBottom: '16px' }}>
-            <label className="form-label">Mật khẩu Quản trị</label>
+          <div className="form-group" style={{ marginBottom: '18px' }}>
+            <label className="form-label">Mật khẩu Quản trị viên</label>
             <div style={{ position: 'relative' }}>
               <input 
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 className="form-input"
-                placeholder="Nhập mật khẩu (hoặc để trống)..."
+                placeholder="Nhập mật khẩu quản trị..."
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={lockoutSeconds > 0 || isSubmitting}
                 autoFocus
-                style={{ paddingLeft: '38px' }}
+                style={{ paddingLeft: '38px', paddingRight: '40px' }}
               />
               <Lock size={16} color="var(--color-text-dim)" style={{ position: 'absolute', left: '12px', top: '13px' }} />
+              
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '12px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--color-text-dim)',
+                  cursor: 'pointer'
+                }}
+                tabIndex={-1}
+                aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            <div style={{ fontSize: '11px', color: 'var(--color-text-dim)', marginTop: '6px' }}>
+              Mật khẩu mặc định khởi tạo: <code>RIVA@2027</code> (hoặc <code>riva2027</code>)
             </div>
           </div>
 
-          <button type="submit" className="btn btn-gold" style={{ width: '100%', justifyContent: 'center', padding: '12px' }}>
-            <span>Đăng nhập Quản Trị</span>
+          <button 
+            type="submit" 
+            className="btn btn-gold" 
+            style={{ width: '100%', justifyContent: 'center', padding: '12px', opacity: lockoutSeconds > 0 ? 0.6 : 1 }}
+            disabled={lockoutSeconds > 0 || isSubmitting}
+          >
+            <span>{isSubmitting ? 'Đang xác thực...' : 'Đăng nhập Quản Trị'}</span>
             <ArrowRight size={16} />
           </button>
         </form>
 
         <div style={{ textAlign: 'center', marginTop: '16px', paddingTop: '14px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-          <button 
-            type="button" 
-            onClick={handleInstantLogin}
-            className="btn btn-sm btn-ghost"
-            style={{ color: 'var(--color-sky)', fontSize: '12px', gap: '4px' }}
-          >
-            <Sparkles size={13} />
-            <span>Vào nhanh với quyền Admin (Bỏ qua mật khẩu)</span>
-          </button>
+          <span style={{ fontSize: '11px', color: 'var(--color-text-dim)' }}>
+            🔒 Mã hóa SHA-256 an toàn & Bảo vệ chống tấn công Brute-force
+          </span>
         </div>
       </div>
     </div>

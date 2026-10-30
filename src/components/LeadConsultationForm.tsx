@@ -13,6 +13,7 @@ import {
 import confetti from 'canvas-confetti';
 import { submitLead } from '../lib/leads';
 import { Lead } from '../types';
+import { sanitizeText } from '../lib/security';
 
 export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = ({ selectedCompetition }) => {
   const [formData, setFormData] = useState<Lead>({
@@ -58,12 +59,45 @@ export const LeadConsultationForm: React.FC<{ selectedCompetition?: string }> = 
     setError('');
 
     try {
-      const payload = JSON.stringify(formData);
+      const cleanedFullName = sanitizeText(formData.full_name);
+      const cleanedEmail = sanitizeText(formData.email).toLowerCase();
+      const cleanedPhone = sanitizeText(formData.phone).trim();
+      const cleanedSchool = sanitizeText(formData.school || '');
+      const cleanedMessage = sanitizeText(formData.message || '');
+
+      // Validate phone number: must have 8 to 15 digits
+      const digitsOnly = cleanedPhone.replace(/\D/g, '');
+      if (digitsOnly.length < 8 || digitsOnly.length > 15) {
+        setError('Số điện thoại không đúng định dạng (vui lòng nhập 9 - 11 chữ số)!');
+        setLoading(false);
+        submitting.current = false;
+        return;
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(cleanedEmail)) {
+        setError('Địa chỉ email không hợp lệ. Vui lòng kiểm tra lại!');
+        setLoading(false);
+        submitting.current = false;
+        return;
+      }
+
+      const cleanedLead: Lead = {
+        ...formData,
+        full_name: cleanedFullName,
+        email: cleanedEmail,
+        phone: cleanedPhone,
+        school: cleanedSchool,
+        message: cleanedMessage
+      };
+
+      const payload = JSON.stringify(cleanedLead);
       if (!request.current.id || request.current.payload !== payload) {
         request.current = { id: crypto.randomUUID(), payload };
       }
       
-      await submitLead(formData, request.current.id, website);
+      await submitLead(cleanedLead, request.current.id, website);
       request.current = { id: '', payload: '' };
       
       setSuccess(true);

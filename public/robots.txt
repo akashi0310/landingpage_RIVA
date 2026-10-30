@@ -1,0 +1,7 @@
+# robots.txt for https://riva.info.vn
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://riva.info.vn/sitemap.xml

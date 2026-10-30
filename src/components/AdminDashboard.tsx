@@ -28,7 +28,9 @@ import {
   Settings as SettingsIcon,
   RefreshCw,
   LogOut,
-  Sliders
+  Sliders,
+  Lock,
+  Key
 } from 'lucide-react';
 import { api } from '../lib/supabase';
 import { 
@@ -42,6 +44,7 @@ import {
 } from '../types';
 import { defaultSiteSettings, defaultAboutArticle, defaultNewsArticles } from '../lib/content';
 import { ArticleModal } from './ArticleModal';
+import { setAdminPassword, sanitizeUrl } from '../lib/security';
 
 interface AdminDashboardProps {
   onBackToHome: () => void;
@@ -57,6 +60,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(defaultSiteSettings);
   const [aboutArticle, setAboutArticle] = useState<AboutArticleData>(defaultAboutArticle);
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>(defaultNewsArticles);
+
+  // Admin PIN / Password management state
+  const [newAdminPassword, setNewAdminPassword] = useState('');
+  const [confirmAdminPassword, setConfirmAdminPassword] = useState('');
+  const [passwordChangeMessage, setPasswordChangeMessage] = useState('');
+  const [passwordChangeError, setPasswordChangeError] = useState('');
 
   // Status feedback toast
   const [toastMessage, setToastMessage] = useState<string>('');
@@ -115,6 +124,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
     e.preventDefault();
     await api.saveSiteSettings(siteSettings);
     showToast('✅ Đã lưu cấu hình thông tin liên hệ và số điện thoại thành công!');
+  };
+
+  // --- CHANGE ADMIN PASSWORD ---
+  const handleChangeAdminPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordChangeError('');
+    setPasswordChangeMessage('');
+
+    if (newAdminPassword !== confirmAdminPassword) {
+      setPasswordChangeError('Xác nhận mật khẩu mới không khớp! Vui lòng nhập lại.');
+      return;
+    }
+
+    const res = await setAdminPassword(newAdminPassword);
+    if (res.success) {
+      setPasswordChangeMessage(res.message);
+      setNewAdminPassword('');
+      setConfirmAdminPassword('');
+      showToast('🔑 Đã cập nhật mật khẩu quản trị viên mới thành công!');
+    } else {
+      setPasswordChangeError(res.message);
+    }
   };
 
   // --- SAVE ABOUT ARTICLE ---
@@ -1009,6 +1040,79 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 <button type="submit" className="btn btn-gold" style={{ padding: '12px 28px', gap: '8px' }}>
                   <Save size={16} />
                   <span>Lưu thay đổi thông tin liên hệ</span>
+                </button>
+              </div>
+            </form>
+
+            {/* Divider & Admin PIN Change Section */}
+            <div style={{
+              margin: '36px 0 24px',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+              paddingTop: '24px'
+            }}>
+              <div className="badge badge-gold" style={{ marginBottom: '8px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <Lock size={13} />
+                BẢO MẬT HỆ THỐNG
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: 900, color: 'white', marginTop: '4px' }}>
+                Đổi Mật Khẩu Quản Trị Viên (Admin PIN)
+              </h3>
+              <p style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>
+                Thiết lập mật khẩu riêng để bảo vệ trang quản trị RIVA. Mật khẩu được mã hóa an toàn bằng thuật toán SHA-256 trên thiết bị của bạn.
+              </p>
+            </div>
+
+            {passwordChangeMessage && (
+              <div style={{ padding: '12px 16px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid #10b981', borderRadius: '10px', color: '#6ee7b7', fontSize: '13px', marginBottom: '18px' }}>
+                {passwordChangeMessage}
+              </div>
+            )}
+
+            {passwordChangeError && (
+              <div style={{ padding: '12px 16px', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', borderRadius: '10px', color: '#fca5a5', fontSize: '13px', marginBottom: '18px' }}>
+                {passwordChangeError}
+              </div>
+            )}
+
+            <form onSubmit={handleChangeAdminPassword}>
+              <div className="grid-2" style={{ gap: '18px', marginBottom: '20px' }}>
+                <div className="form-group">
+                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Key size={14} color="var(--color-gold-bright)" />
+                    <span>Mật khẩu mới (tối thiểu 6 ký tự) *</span>
+                  </label>
+                  <input 
+                    type="password" 
+                    required 
+                    minLength={6}
+                    className="form-input" 
+                    value={newAdminPassword}
+                    onChange={(e) => setNewAdminPassword(e.target.value)}
+                    placeholder="Nhập mật khẩu mới..."
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Key size={14} color="var(--color-sky)" />
+                    <span>Xác nhận lại mật khẩu mới *</span>
+                  </label>
+                  <input 
+                    type="password" 
+                    required 
+                    minLength={6}
+                    className="form-input" 
+                    value={confirmAdminPassword}
+                    onChange={(e) => setConfirmAdminPassword(e.target.value)}
+                    placeholder="Nhập lại mật khẩu mới..."
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                <button type="submit" className="btn btn-gold" style={{ padding: '10px 24px', gap: '8px' }}>
+                  <Lock size={15} />
+                  <span>Cập nhật mật khẩu mới</span>
                 </button>
               </div>
             </form>
