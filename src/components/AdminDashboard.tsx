@@ -30,7 +30,14 @@ import {
   LogOut,
   Sliders,
   Lock,
-  Key
+  Key,
+  X,
+  ExternalLink,
+  RotateCcw,
+  HelpCircle,
+  PhoneCall,
+  MessageCircle,
+  Globe
 } from 'lucide-react';
 import { api } from '../lib/supabase';
 import { 
@@ -40,7 +47,8 @@ import {
   SiteSettings, 
   AboutArticleData, 
   NewsArticle,
-  ArticleBlock 
+  ArticleBlock,
+  Lead
 } from '../types';
 import { defaultSiteSettings, defaultAboutArticle, defaultNewsArticles } from '../lib/content';
 import { ArticleModal } from './ArticleModal';
@@ -57,9 +65,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
   // Data states
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
+  const [leads, setLeads] = useState<Lead[]>([]);
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(defaultSiteSettings);
   const [aboutArticle, setAboutArticle] = useState<AboutArticleData>(defaultAboutArticle);
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>(defaultNewsArticles);
+
+  // Sub-tabs & filter states
+  const [appSubTab, setAppSubTab] = useState<'leads' | 'applications'>('leads');
+  const [compSearchQuery, setCompSearchQuery] = useState('');
+  const [compStatusFilter, setCompStatusFilter] = useState<'all' | 'open' | 'upcoming' | 'closed'>('all');
 
   // Admin PIN / Password management state
   const [newAdminPassword, setNewAdminPassword] = useState('');
@@ -75,21 +89,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
   const [showArticleModal, setShowArticleModal] = useState(false);
   const [previewArticle, setPreviewArticle] = useState<NewsArticle | null>(null);
 
-  // New Competition Modal
-  const [showAddCompModal, setShowAddCompModal] = useState(false);
-  const [newComp, setNewComp] = useState<Partial<Competition>>({
-    code: '',
-    title: '',
-    country: '',
-    country_code: '',
-    flag_emoji: '🌐',
-    location: '',
-    category: 'STEM & Sáng chế',
-    status: 'open',
-    deadline: '2027-06-30',
-    event_date: 'Tháng 8/2027',
-    description: ''
-  });
+  // Competition Modal & Editing State
+  const [showCompModal, setShowCompModal] = useState(false);
+  const [editingComp, setEditingComp] = useState<Partial<Competition> | null>(null);
 
   useEffect(() => {
     loadAllData();
@@ -102,18 +104,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
   const loadAllData = async () => {
     try {
-      const [comps, apps, settings, about, news] = await Promise.all([
+      const [comps, apps, settings, about, news, leadList] = await Promise.all([
         api.getCompetitions(),
         api.getApplications(),
         api.getSiteSettings(),
         api.getAboutArticle(),
-        api.getNewsArticles()
+        api.getNewsArticles(),
+        api.getLeads()
       ]);
       setCompetitions(comps);
       setApplications(apps);
       setSiteSettings(settings);
       setAboutArticle(about);
       setNewsArticles(news);
+      setLeads(leadList);
     } catch (err) {
       console.error('Error loading admin data:', err);
     }
@@ -232,34 +236,106 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
     }
   };
 
-  // --- ADD COMPETITION ---
-  const handleAddCompSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newComp.code || !newComp.title) return;
+  // --- OPEN ADD COMPETITION MODAL ---
+  const handleOpenAddComp = () => {
+    setEditingComp({
+      id: '',
+      code: '',
+      title: '',
+      country: '',
+      country_code: 'US',
+      flag_emoji: '🌐',
+      location: '',
+      category: 'STEM & Sáng chế Đổi mới',
+      status: 'open',
+      deadline: '2027-06-30',
+      event_date: 'Tháng 8/2027',
+      fee: 'Hỗ trợ trọn gói đoàn RIVA',
+      organizer: '',
+      description: ''
+    });
+    setShowCompModal(true);
+  };
 
+  // --- OPEN EDIT COMPETITION MODAL ---
+  const handleOpenEditComp = (comp: Competition) => {
+    setEditingComp({ ...comp });
+    setShowCompModal(true);
+  };
+
+  // --- SAVE / UPDATE COMPETITION ---
+  const handleSaveCompSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingComp || !editingComp.code || !editingComp.title) return;
+
+    const isEdit = Boolean(editingComp.id);
     const fullComp: Competition = {
-      id: `comp-${Date.now()}`,
-      code: newComp.code.toUpperCase(),
-      title: newComp.title,
-      country: newComp.country || 'Quốc tế',
-      country_code: newComp.country_code || 'US',
-      flag_emoji: newComp.flag_emoji || '🌐',
-      location: newComp.location || 'Địa điểm tổ chức',
-      category: newComp.category || 'STEM & Sáng chế',
-      status: (newComp.status as any) || 'open',
-      deadline: newComp.deadline || '2027-06-30',
-      event_date: newComp.event_date || 'Tháng 8/2027',
-      description: newComp.description || 'Thông tin cuộc thi mới'
+      id: editingComp.id || `comp-${Date.now()}`,
+      code: editingComp.code.toUpperCase().trim(),
+      title: editingComp.title.trim(),
+      country: editingComp.country?.trim() || 'Quốc tế',
+      country_code: editingComp.country_code?.trim() || 'US',
+      flag_emoji: editingComp.flag_emoji?.trim() || '🌐',
+      location: editingComp.location?.trim() || 'Địa điểm tổ chức',
+      category: editingComp.category?.trim() || 'STEM & Sáng chế',
+      status: editingComp.status || 'open',
+      deadline: editingComp.deadline || '2027-06-30',
+      event_date: editingComp.event_date || 'Tháng 8/2027',
+      fee: editingComp.fee?.trim() || 'Hỗ trợ trọn gói đoàn RIVA',
+      organizer: editingComp.organizer?.trim() || '',
+      description: editingComp.description?.trim() || '',
+      requirements: editingComp.requirements,
+      timeline: editingComp.timeline
     };
 
     const updated = await api.saveCompetition(fullComp);
     setCompetitions([...updated]);
-    setShowAddCompModal(false);
-    showToast('✅ Đã thêm cuộc thi mới thành công!');
+    setShowCompModal(false);
+    setEditingComp(null);
+    showToast(isEdit ? '✅ Đã cập nhật thông tin cuộc thi thành công!' : '✅ Đã thêm cuộc thi mới thành công!');
   };
 
-  // --- EXPORT CSV ---
+  // --- RESET TO FACTORY DEFAULTS ---
+  const handleResetToFactoryDefaults = async () => {
+    if (confirm('⚠️ BẠN CÓ CHẮC CHẮN MUỐN KHÔI PHỤC DỮ LIỆU GỐC?\nToàn bộ bài viết, thông tin liên hệ và cuộc thi sẽ trở về dữ liệu mẫu chuẩn ban đầu của Viện RIVA.')) {
+      localStorage.removeItem('riva_competitions');
+      localStorage.removeItem('riva_site_settings');
+      localStorage.removeItem('riva_about_article');
+      localStorage.removeItem('riva_news_articles');
+      await loadAllData();
+      showToast('🔄 Đã khôi phục dữ liệu gốc mẫu thành công!');
+    }
+  };
+
+  // --- EXPORT CSV (LEADS OR APPLICATIONS) ---
   const handleExportCSV = () => {
+    if (appSubTab === 'leads') {
+      const headers = ['Họ tên', 'Vai trò', 'Số điện thoại', 'Email', 'Trường / Lớp', 'Cuộc thi quan tâm', 'Lĩnh vực', 'Lời nhắn / Đề tài', 'Thời gian gửi'];
+      const rows = leads.map(l => [
+        `"${l.full_name}"`,
+        `"${l.role === 'parent' ? 'Phụ huynh' : l.role === 'student' ? 'Học sinh' : 'Giáo viên'}"`,
+        `"${l.phone}"`,
+        `"${l.email}"`,
+        `"${l.school || ''}"`,
+        `"${l.interest_competition || ''}"`,
+        `"${l.interest_field || ''}"`,
+        `"${(l.message || '').replace(/"/g, '""')}"`,
+        `"${l.created_at || new Date().toISOString()}"`
+      ]);
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `danh_sach_tu_van_leads_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('📥 Đã xuất file CSV danh sách tư vấn phụ huynh / học sinh!');
+      return;
+    }
+
     const headers = ['ID', 'Họ tên', 'Trường', 'Email', 'SĐT', 'Cuộc thi', 'Tên đề tài', 'Trạng thái', 'Ngày nộp'];
     const rows = applications.map(a => [
       a.id,
@@ -282,7 +358,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('📥 Đã tải xuống file CSV báo cáo!');
+    showToast('📥 Đã tải xuống file CSV báo cáo hồ sơ dự thi!');
   };
 
   const approvedCount = applications.filter(a => a.status === 'approved').length + 321;
@@ -548,6 +624,108 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                     </text>
                   ))}
                 </svg>
+              </div>
+            </div>
+
+            {/* Quick Action Guide for New Admin */}
+            <div className="glass-card" style={{ padding: '24px 28px', marginBottom: '28px', border: '1px solid rgba(204, 153, 0, 0.35)', background: 'radial-gradient(ellipse at top left, rgba(51, 102, 255, 0.12) 0%, rgba(9, 21, 61, 0.8) 100%)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(204, 153, 0, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-gold-bright)' }}>
+                    <HelpCircle size={20} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '17px', fontWeight: 800, color: 'white', margin: 0 }}>
+                      Hướng dẫn nhanh cho Quản trị viên mới
+                    </h3>
+                    <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: 0 }}>
+                      Chọn nhanh tác vụ quản trị thường dùng bên dưới:
+                    </p>
+                  </div>
+                </div>
+                <span className="badge badge-gold">Trợ giúp 1-Click</span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
+                <div 
+                  onClick={() => setActiveTab('competitions')}
+                  style={{
+                    padding: '16px',
+                    borderRadius: '12px',
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <Layers size={16} color="var(--color-gold-bright)" />
+                    <span style={{ fontWeight: 700, color: 'white', fontSize: '13px' }}>1. Quản lý Cuộc thi</span>
+                  </div>
+                  <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', margin: 0, lineHeight: 1.5 }}>
+                    Thêm giải đấu mới, chỉnh sửa hạn nộp, cập nhật trạng thái Đang mở / Sắp mở.
+                  </p>
+                </div>
+
+                <div 
+                  onClick={() => setActiveTab('about')}
+                  style={{
+                    padding: '16px',
+                    borderRadius: '12px',
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <FileText size={16} color="var(--color-sky)" />
+                    <span style={{ fontWeight: 700, color: 'white', fontSize: '13px' }}>2. Bài báo "Về RIVA"</span>
+                  </div>
+                  <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', margin: 0, lineHeight: 1.5 }}>
+                    Tùy biến bài báo phóng sự trên trang chủ với hình ảnh, video và phát biểu cố vấn.
+                  </p>
+                </div>
+
+                <div 
+                  onClick={() => setActiveTab('settings')}
+                  style={{
+                    padding: '16px',
+                    borderRadius: '12px',
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <Phone size={16} color="#34d399" />
+                    <span style={{ fontWeight: 700, color: 'white', fontSize: '13px' }}>3. Hotline & Liên hệ</span>
+                  </div>
+                  <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', margin: 0, lineHeight: 1.5 }}>
+                    Thay đổi số điện thoại 24/7, email tuyển sinh, địa chỉ văn phòng Hà Nội & TP.HCM.
+                  </p>
+                </div>
+
+                <div 
+                  onClick={() => setActiveTab('applications')}
+                  style={{
+                    padding: '16px',
+                    borderRadius: '12px',
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <Users size={16} color="#f59e0b" />
+                    <span style={{ fontWeight: 700, color: 'white', fontSize: '13px' }}>4. Duyệt Hồ sơ & Leads</span>
+                  </div>
+                  <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', margin: 0, lineHeight: 1.5 }}>
+                    Xem phụ huynh gửi đăng ký từ trang web, gọi điện Zalo tư vấn và xuất file Excel.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -1116,6 +1294,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 </button>
               </div>
             </form>
+
+            {/* Factory Reset Section */}
+            <div style={{
+              margin: '36px 0 10px',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+              paddingTop: '24px'
+            }}>
+              <div className="badge badge-closed" style={{ marginBottom: '8px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <RotateCcw size={13} />
+                VÙNG KHÔI PHỤC DỮ LIỆU
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: 900, color: 'white', marginTop: '4px' }}>
+                Khôi Phục Dữ Liệu Gốc Mẫu Viện RIVA
+              </h3>
+              <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '16px', lineHeight: 1.6 }}>
+                Dành cho Quản trị viên mới: Trong quá trình trải nghiệm hoặc thử nghiệm, nếu bạn muốn đưa toàn bộ bài viết tin tức, thông tin liên hệ và danh mục cuộc thi về mẫu chuẩn gốc ban đầu của Viện RIVA, hãy nhấn nút khôi phục bên dưới.
+              </p>
+              <button 
+                type="button" 
+                className="btn btn-outline" 
+                style={{ borderColor: 'rgba(239, 68, 68, 0.5)', color: '#f87171', gap: '8px' }}
+                onClick={handleResetToFactoryDefaults}
+              >
+                <RotateCcw size={15} />
+                <span>Khôi phục dữ liệu chuẩn gốc ban đầu</span>
+              </button>
+            </div>
           </div>
         )}
 
@@ -1124,20 +1329,66 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
             ========================================================================= */}
         {activeTab === 'competitions' && (
           <div className="glass-card" style={{ overflow: 'hidden' }}>
-            <div style={{ padding: '20px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+            <div style={{ padding: '20px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
               <div>
                 <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>
-                  Danh mục cuộc thi quốc tế
+                  Danh mục cuộc thi quốc tế ({competitions.length})
                 </h3>
                 <div style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
-                  Tự động đồng bộ với bản đồ thế giới và danh sách cơ hội mở
+                  Chỉnh sửa tên cuộc thi, hạn nộp hồ sơ, quốc gia hoặc cập nhật trạng thái mở đơn trực tiếp lên trang chủ
                 </div>
               </div>
 
-              <button className="btn btn-gold" onClick={() => setShowAddCompModal(true)}>
+              <button className="btn btn-gold" onClick={handleOpenAddComp} style={{ gap: '6px' }}>
                 <Plus size={16} />
                 <span>Thêm cuộc thi mới</span>
               </button>
+            </div>
+
+            {/* Filter and Search Bar */}
+            <div style={{ padding: '14px 20px', background: 'rgba(255, 255, 255, 0.02)', borderBottom: '1px solid var(--color-border)', display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ position: 'relative', minWidth: '240px', flex: 1, maxWidth: '380px' }}>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  placeholder="Tìm theo tên cuộc thi, mã, quốc gia..."
+                  value={compSearchQuery}
+                  onChange={(e) => setCompSearchQuery(e.target.value)}
+                  style={{ paddingLeft: '36px', height: '36px', fontSize: '12px' }}
+                />
+                <Search size={14} color="var(--color-text-dim)" style={{ position: 'absolute', left: '12px', top: '11px' }} />
+              </div>
+
+              <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <button 
+                  className={`btn btn-sm ${compStatusFilter === 'all' ? 'btn-gold' : 'btn-ghost'}`}
+                  style={{ fontSize: '12px', padding: '5px 12px' }}
+                  onClick={() => setCompStatusFilter('all')}
+                >
+                  Tất cả ({competitions.length})
+                </button>
+                <button 
+                  className={`btn btn-sm ${compStatusFilter === 'open' ? 'btn-gold' : 'btn-ghost'}`}
+                  style={{ fontSize: '12px', padding: '5px 12px' }}
+                  onClick={() => setCompStatusFilter('open')}
+                >
+                  🟢 Đang mở ({competitions.filter(c => c.status === 'open').length})
+                </button>
+                <button 
+                  className={`btn btn-sm ${compStatusFilter === 'upcoming' ? 'btn-gold' : 'btn-ghost'}`}
+                  style={{ fontSize: '12px', padding: '5px 12px' }}
+                  onClick={() => setCompStatusFilter('upcoming')}
+                >
+                  🟡 Sắp mở ({competitions.filter(c => c.status === 'upcoming').length})
+                </button>
+                <button 
+                  className={`btn btn-sm ${compStatusFilter === 'closed' ? 'btn-gold' : 'btn-ghost'}`}
+                  style={{ fontSize: '12px', padding: '5px 12px' }}
+                  onClick={() => setCompStatusFilter('closed')}
+                >
+                  🔴 Đã đóng ({competitions.filter(c => c.status === 'closed').length})
+                </button>
+              </div>
             </div>
 
             <div style={{ overflowX: 'auto' }}>
@@ -1145,7 +1396,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 <thead>
                   <tr style={{ background: 'rgba(255, 255, 255, 0.04)', color: 'var(--color-text-dim)', borderBottom: '1px solid var(--color-border)' }}>
                     <th style={{ padding: '14px 20px' }}>Tên cuộc thi</th>
-                    <th style={{ padding: '14px 20px' }}>Quốc gia</th>
+                    <th style={{ padding: '14px 20px' }}>Quốc gia & Địa điểm</th>
                     <th style={{ padding: '14px 20px' }}>Hạn đăng ký</th>
                     <th style={{ padding: '14px 20px' }}>Lĩnh vực</th>
                     <th style={{ padding: '14px 20px' }}>Trạng thái</th>
@@ -1153,37 +1404,64 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   </tr>
                 </thead>
                 <tbody>
-                  {competitions.map((c) => (
+                  {competitions
+                    .filter(c => {
+                      const q = compSearchQuery.toLowerCase().trim();
+                      const matchSearch = q === '' || 
+                        c.title.toLowerCase().includes(q) ||
+                        c.code.toLowerCase().includes(q) ||
+                        c.country.toLowerCase().includes(q) ||
+                        c.category.toLowerCase().includes(q);
+                      const matchStatus = compStatusFilter === 'all' || c.status === compStatusFilter;
+                      return matchSearch && matchStatus;
+                    })
+                    .map((c) => (
                     <tr key={c.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
                       <td style={{ padding: '16px 20px', fontWeight: 700, color: 'white' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span>{c.flag_emoji}</span>
-                          <span>{c.code} — {c.title}</span>
+                          <span style={{ fontSize: '18px' }}>{c.flag_emoji}</span>
+                          <div>
+                            <div>{c.code} — {c.title}</div>
+                            {c.organizer && <div style={{ fontSize: '11px', color: 'var(--color-text-dim)', fontWeight: 400 }}>BTC: {c.organizer}</div>}
+                          </div>
                         </div>
                       </td>
                       <td style={{ padding: '16px 20px', color: 'var(--color-text-light)' }}>
-                        {c.country}
+                        <div>{c.country}</div>
+                        {c.location && <div style={{ fontSize: '11px', color: 'var(--color-text-dim)' }}>{c.location}</div>}
                       </td>
                       <td style={{ padding: '16px 20px', color: 'var(--color-gold-bright)', fontWeight: 600 }}>
-                        {c.deadline}
+                        <div>{c.deadline}</div>
+                        {c.event_date && <div style={{ fontSize: '11px', color: 'var(--color-sky)' }}>Diễn ra: {c.event_date}</div>}
                       </td>
                       <td style={{ padding: '16px 20px', color: 'var(--color-text-muted)' }}>
                         {c.category}
                       </td>
                       <td style={{ padding: '16px 20px' }}>
-                        {c.status === 'open' && <span className="badge badge-open">Đang mở</span>}
-                        {c.status === 'upcoming' && <span className="badge badge-upcoming">Sắp mở</span>}
-                        {c.status === 'closed' && <span className="badge badge-closed">Đã đóng</span>}
+                        {c.status === 'open' && <span className="badge badge-open">🟢 Đang mở</span>}
+                        {c.status === 'upcoming' && <span className="badge badge-upcoming">🟡 Sắp mở</span>}
+                        {c.status === 'closed' && <span className="badge badge-closed">🔴 Đã đóng</span>}
                       </td>
                       <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                        <button 
-                          className="btn btn-sm btn-ghost" 
-                          style={{ color: '#ef4444', padding: '6px' }}
-                          title="Xóa"
-                          onClick={() => handleDeleteComp(c.id)}
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                          <button 
+                            className="btn btn-sm btn-outline" 
+                            style={{ padding: '6px 12px', fontSize: '12px', gap: '4px', color: 'var(--color-gold-bright)', borderColor: 'rgba(204, 153, 0, 0.4)' }}
+                            title="Chỉnh sửa thông tin cuộc thi"
+                            onClick={() => handleOpenEditComp(c)}
+                          >
+                            <Edit size={13} />
+                            <span>Chỉnh sửa</span>
+                          </button>
+                          <button 
+                            className="btn btn-sm btn-ghost" 
+                            style={{ color: '#ef4444', padding: '6px 8px' }}
+                            title="Xóa cuộc thi"
+                            onClick={() => handleDeleteComp(c.id)}
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -1194,90 +1472,188 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
         )}
 
         {/* =========================================================================
-            TAB 6: DUYỆT HỒ SƠ ĐĂNG KÝ (APPLICATIONS QUEUE)
+            TAB 6: DUYỆT HỒ SƠ ĐĂNG KÝ & LEADS TƯ VẤN (APPLICATIONS & LEADS)
             ========================================================================= */}
         {activeTab === 'applications' && (
           <div className="glass-card" style={{ overflow: 'hidden' }}>
-            <div style={{ padding: '20px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+            <div style={{ padding: '20px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
               <div>
                 <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>
-                  Hồ sơ thí sinh đăng ký dự thi
+                  {appSubTab === 'leads' ? `Hồ sơ Phụ huynh & Thí sinh Đăng ký Tư vấn (${leads.length})` : `Hồ sơ Đăng ký Đề tài Dự thi Chính thức (${applications.length})`}
                 </h3>
                 <div style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
-                  Thẩm định đề tài và phê duyệt danh sách chính thức
+                  {appSubTab === 'leads' ? 'Dữ liệu trực tiếp từ biểu mẫu Landing Page, đồng bộ theo thời gian thực' : 'Thẩm định hồ sơ chính thức và phê duyệt danh sách đoàn'}
                 </div>
               </div>
 
-              <button className="btn btn-sm btn-outline" onClick={handleExportCSV}>
-                <Download size={14} />
-                <span>Xuất file Excel / CSV</span>
-              </button>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <div style={{ display: 'inline-flex', background: 'rgba(255, 255, 255, 0.06)', padding: '3px', borderRadius: '8px' }}>
+                  <button 
+                    className={`btn btn-sm ${appSubTab === 'leads' ? 'btn-gold' : 'btn-ghost'}`}
+                    style={{ fontSize: '12px', padding: '5px 12px' }}
+                    onClick={() => setAppSubTab('leads')}
+                  >
+                    <span>📋 Đăng ký tư vấn ({leads.length})</span>
+                  </button>
+                  <button 
+                    className={`btn btn-sm ${appSubTab === 'applications' ? 'btn-gold' : 'btn-ghost'}`}
+                    style={{ fontSize: '12px', padding: '5px 12px' }}
+                    onClick={() => setAppSubTab('applications')}
+                  >
+                    <span>🎓 Hồ sơ dự thi ({applications.length})</span>
+                  </button>
+                </div>
+
+                <button className="btn btn-sm btn-outline" onClick={handleExportCSV} style={{ gap: '6px' }}>
+                  <Download size={14} />
+                  <span>Xuất CSV ({appSubTab === 'leads' ? 'Tư vấn' : 'Dự thi'})</span>
+                </button>
+              </div>
             </div>
 
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
-                <thead>
-                  <tr style={{ background: 'rgba(255, 255, 255, 0.04)', color: 'var(--color-text-dim)', borderBottom: '1px solid var(--color-border)' }}>
-                    <th style={{ padding: '14px 20px' }}>Thí sinh</th>
-                    <th style={{ padding: '14px 20px' }}>Đơn vị / Trường</th>
-                    <th style={{ padding: '14px 20px' }}>Cuộc thi</th>
-                    <th style={{ padding: '14px 20px' }}>Đề tài nghiên cứu</th>
-                    <th style={{ padding: '14px 20px' }}>Trạng thái</th>
-                    <th style={{ padding: '14px 20px', textAlign: 'right' }}>Xét duyệt</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {applications.map((app) => (
-                    <tr key={app.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                      <td style={{ padding: '16px 20px' }}>
-                        <div style={{ fontWeight: 700, color: 'white' }}>{app.full_name}</div>
-                        <div style={{ fontSize: '11px', color: 'var(--color-text-dim)' }}>{app.email} • {app.phone}</div>
-                      </td>
-                      <td style={{ padding: '16px 20px', color: 'var(--color-text-light)' }}>
-                        {app.school} ({app.city})
-                      </td>
-                      <td style={{ padding: '16px 20px', color: 'var(--color-gold-bright)', fontWeight: 600 }}>
-                        {app.competition_code}
-                      </td>
-                      <td style={{ padding: '16px 20px' }}>
-                        <div style={{ color: 'white', fontWeight: 600, maxWidth: '280px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {app.project_title}
-                        </div>
-                        <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{app.project_field}</div>
-                      </td>
-                      <td style={{ padding: '16px 20px' }}>
-                        {app.status === 'approved' && <span className="badge badge-open">Đã duyệt</span>}
-                        {app.status === 'under_review' && <span className="badge badge-upcoming">Chờ duyệt</span>}
-                        {app.status === 'submitted' && <span className="badge badge-blue">Mới nộp</span>}
-                        {app.status === 'rejected' && <span className="badge badge-closed">Từ chối</span>}
-                      </td>
-                      <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                        <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
-                          <button 
-                            className="btn btn-sm btn-outline" 
-                            style={{ color: '#34d399', borderColor: 'rgba(16, 185, 129, 0.4)' }}
-                            onClick={() => handleStatusChange(app.id, 'approved')}
-                            title="Duyệt hồ sơ"
-                          >
-                            <CheckCircle2 size={14} />
-                            <span>Duyệt</span>
-                          </button>
-                          <button 
-                            className="btn btn-sm btn-outline" 
-                            style={{ color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.4)' }}
-                            onClick={() => handleStatusChange(app.id, 'rejected')}
-                            title="Từ chối"
-                          >
-                            <XCircle size={14} />
-                            <span>Từ chối</span>
-                          </button>
-                        </div>
-                      </td>
+            {/* Sub-tab 1: Leads Queue */}
+            {appSubTab === 'leads' && (
+              <div style={{ overflowX: 'auto' }}>
+                {leads.length === 0 ? (
+                  <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+                    Chưa có hồ sơ đăng ký tư vấn mới. Khi phụ huynh/học sinh gửi form trên trang chủ, thông tin sẽ xuất hiện ngay tại đây!
+                  </div>
+                ) : (
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+                    <thead>
+                      <tr style={{ background: 'rgba(255, 255, 255, 0.04)', color: 'var(--color-text-dim)', borderBottom: '1px solid var(--color-border)' }}>
+                        <th style={{ padding: '14px 20px' }}>Họ tên & Vai trò</th>
+                        <th style={{ padding: '14px 20px' }}>Số điện thoại & Email</th>
+                        <th style={{ padding: '14px 20px' }}>Trường học / Lớp</th>
+                        <th style={{ padding: '14px 20px' }}>Cuộc thi & Lĩnh vực</th>
+                        <th style={{ padding: '14px 20px' }}>Nguyện vọng / Ghi chú</th>
+                        <th style={{ padding: '14px 20px', textAlign: 'right' }}>Thao tác nhanh</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {leads.map((lead, idx) => (
+                        <tr key={lead.id || idx} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                          <td style={{ padding: '16px 20px' }}>
+                            <div style={{ fontWeight: 700, color: 'white' }}>{lead.full_name}</div>
+                            <span className="badge badge-gold" style={{ fontSize: '10px', marginTop: '4px' }}>
+                              {lead.role === 'parent' ? 'Phụ huynh' : lead.role === 'student' ? 'Học sinh' : 'Giáo viên'}
+                            </span>
+                          </td>
+                          <td style={{ padding: '16px 20px' }}>
+                            <div style={{ color: 'var(--color-gold-bright)', fontWeight: 600 }}>{lead.phone}</div>
+                            <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{lead.email}</div>
+                          </td>
+                          <td style={{ padding: '16px 20px', color: 'var(--color-text-light)' }}>
+                            {lead.school || 'Chưa cung cấp'}
+                          </td>
+                          <td style={{ padding: '16px 20px' }}>
+                            <div style={{ color: '#60A5FA', fontWeight: 600 }}>{lead.interest_competition || 'Tư vấn chung'}</div>
+                            {lead.interest_field && <div style={{ fontSize: '11px', color: 'var(--color-text-dim)' }}>{lead.interest_field}</div>}
+                          </td>
+                          <td style={{ padding: '16px 20px', maxWidth: '240px' }}>
+                            <div style={{ fontSize: '12px', color: 'var(--color-text-light)', lineHeight: 1.5, maxHeight: '60px', overflowY: 'auto' }}>
+                              {lead.message || '—'}
+                            </div>
+                          </td>
+                          <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
+                              <a 
+                                href={`tel:${lead.phone.replace(/[^0-9]/g, '')}`} 
+                                className="btn btn-sm btn-gold"
+                                style={{ padding: '5px 10px', fontSize: '11px', gap: '4px' }}
+                                title="Gọi điện tư vấn"
+                              >
+                                <PhoneCall size={12} />
+                                <span>Gọi ngay</span>
+                              </a>
+                              <a 
+                                href={`https://zalo.me/${lead.phone.replace(/[^0-9]/g, '')}`} 
+                                target="_blank"
+                                rel="noreferrer"
+                                className="btn btn-sm btn-outline"
+                                style={{ padding: '5px 10px', fontSize: '11px', gap: '4px', borderColor: 'rgba(51, 102, 255, 0.4)', color: 'var(--color-sky)' }}
+                                title="Mở Zalo tư vấn"
+                              >
+                                <MessageCircle size={12} />
+                                <span>Zalo</span>
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            )}
+
+            {/* Sub-tab 2: Formal Applications Queue */}
+            {appSubTab === 'applications' && (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+                  <thead>
+                    <tr style={{ background: 'rgba(255, 255, 255, 0.04)', color: 'var(--color-text-dim)', borderBottom: '1px solid var(--color-border)' }}>
+                      <th style={{ padding: '14px 20px' }}>Thí sinh</th>
+                      <th style={{ padding: '14px 20px' }}>Đơn vị / Trường</th>
+                      <th style={{ padding: '14px 20px' }}>Cuộc thi</th>
+                      <th style={{ padding: '14px 20px' }}>Đề tài nghiên cứu</th>
+                      <th style={{ padding: '14px 20px' }}>Trạng thái</th>
+                      <th style={{ padding: '14px 20px', textAlign: 'right' }}>Xét duyệt</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {applications.map((app) => (
+                      <tr key={app.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                        <td style={{ padding: '16px 20px' }}>
+                          <div style={{ fontWeight: 700, color: 'white' }}>{app.full_name}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--color-text-dim)' }}>{app.email} • {app.phone}</div>
+                        </td>
+                        <td style={{ padding: '16px 20px', color: 'var(--color-text-light)' }}>
+                          {app.school} ({app.city})
+                        </td>
+                        <td style={{ padding: '16px 20px', color: 'var(--color-gold-bright)', fontWeight: 600 }}>
+                          {app.competition_code}
+                        </td>
+                        <td style={{ padding: '16px 20px' }}>
+                          <div style={{ color: 'white', fontWeight: 600, maxWidth: '280px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {app.project_title}
+                          </div>
+                          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{app.project_field}</div>
+                        </td>
+                        <td style={{ padding: '16px 20px' }}>
+                          {app.status === 'approved' && <span className="badge badge-open">Đã duyệt</span>}
+                          {app.status === 'under_review' && <span className="badge badge-upcoming">Chờ duyệt</span>}
+                          {app.status === 'submitted' && <span className="badge badge-blue">Mới nộp</span>}
+                          {app.status === 'rejected' && <span className="badge badge-closed">Từ chối</span>}
+                        </td>
+                        <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                          <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
+                            <button 
+                              className="btn btn-sm btn-outline" 
+                              style={{ color: '#34d399', borderColor: 'rgba(16, 185, 129, 0.4)' }}
+                              onClick={() => handleStatusChange(app.id, 'approved')}
+                              title="Duyệt hồ sơ"
+                            >
+                              <CheckCircle2 size={14} />
+                              <span>Duyệt</span>
+                            </button>
+                            <button 
+                              className="btn btn-sm btn-outline" 
+                              style={{ color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.4)' }}
+                              onClick={() => handleStatusChange(app.id, 'rejected')}
+                              title="Từ chối"
+                            >
+                              <XCircle size={14} />
+                              <span>Từ chối</span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 
@@ -1524,89 +1900,170 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
           </div>
         )}
 
-        {/* Modal: Add New Competition */}
-        {showAddCompModal && (
-          <div className="modal-overlay" onClick={() => setShowAddCompModal(false)}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '580px' }}>
-              <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '16px', color: 'white' }}>
-                Thêm cuộc thi quốc tế mới
-              </h3>
-              <form onSubmit={handleAddCompSubmit}>
-                <div className="grid-2" style={{ gap: '14px' }}>
+        {/* Modal: Add or Edit Competition */}
+        {showCompModal && editingComp && (
+          <div className="modal-overlay" onClick={() => setShowCompModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '640px', maxHeight: '90vh' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', borderBottom: '1px solid var(--color-border)', paddingBottom: '12px' }}>
+                <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {editingComp.id ? <Edit size={20} color="var(--color-gold-bright)" /> : <Plus size={20} color="var(--color-gold-bright)" />}
+                  <span>{editingComp.id ? 'Chỉnh sửa thông tin cuộc thi' : 'Thêm cuộc thi quốc tế mới'}</span>
+                </h3>
+                <button type="button" className="btn btn-sm btn-ghost" onClick={() => setShowCompModal(false)}>
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveCompSubmit}>
+                <div className="grid-2" style={{ gap: '14px', marginBottom: '14px' }}>
                   <div className="form-group">
-                    <label className="form-label">Mã viết tắt (ví dụ: SVIIF) *</label>
+                    <label className="form-label">Mã viết tắt (ví dụ: SVIIF, INTARG) *</label>
                     <input 
                       type="text" 
                       required 
                       className="form-input" 
                       placeholder="SVIIF"
-                      value={newComp.code}
-                      onChange={(e) => setNewComp({ ...newComp, code: e.target.value })}
+                      value={editingComp.code || ''}
+                      onChange={(e) => setEditingComp({ ...editingComp, code: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Emoji Quốc kỳ (ví dụ: 🇺🇸)</label>
+                    <label className="form-label">Emoji Quốc kỳ (ví dụ: 🇺🇸, 🇵🇱, 🇲🇾)</label>
                     <input 
                       type="text" 
                       className="form-input" 
                       placeholder="🇺🇸"
-                      value={newComp.flag_emoji}
-                      onChange={(e) => setNewComp({ ...newComp, flag_emoji: e.target.value })}
+                      value={editingComp.flag_emoji || ''}
+                      onChange={(e) => setEditingComp({ ...editingComp, flag_emoji: e.target.value })}
                     />
                   </div>
                 </div>
 
-                <div className="form-group">
+                <div className="form-group" style={{ marginBottom: '14px' }}>
                   <label className="form-label">Tên đầy đủ cuộc thi *</label>
                   <input 
                     type="text" 
                     required 
                     className="form-input" 
                     placeholder="SVIIF 2027 - Silicon Valley International Invention Festival"
-                    value={newComp.title}
-                    onChange={(e) => setNewComp({ ...newComp, title: e.target.value })}
+                    value={editingComp.title || ''}
+                    onChange={(e) => setEditingComp({ ...editingComp, title: e.target.value })}
                   />
                 </div>
 
-                <div className="grid-2" style={{ gap: '14px' }}>
+                <div className="grid-2" style={{ gap: '14px', marginBottom: '14px' }}>
                   <div className="form-group">
-                    <label className="form-label">Quốc gia</label>
+                    <label className="form-label">Quốc gia *</label>
                     <input 
                       type="text" 
+                      required
                       className="form-input" 
                       placeholder="Hoa Kỳ"
-                      value={newComp.country}
-                      onChange={(e) => setNewComp({ ...newComp, country: e.target.value })}
+                      value={editingComp.country || ''}
+                      onChange={(e) => setEditingComp({ ...editingComp, country: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Hạn nộp hồ sơ</label>
+                    <label className="form-label">Địa điểm tổ chức</label>
                     <input 
-                      type="date" 
+                      type="text" 
                       className="form-input" 
-                      value={newComp.deadline}
-                      onChange={(e) => setNewComp({ ...newComp, deadline: e.target.value })}
+                      placeholder="Santa Clara Convention Center, California"
+                      value={editingComp.location || ''}
+                      onChange={(e) => setEditingComp({ ...editingComp, location: e.target.value })}
                     />
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">Mô tả ngắn gọn</label>
+                <div className="grid-2" style={{ gap: '14px', marginBottom: '14px' }}>
+                  <div className="form-group">
+                    <label className="form-label">Lĩnh vực thi đấu *</label>
+                    <input 
+                      type="text" 
+                      required
+                      className="form-input" 
+                      placeholder="STEM, AI & Sáng chế Đổi mới"
+                      value={editingComp.category || ''}
+                      onChange={(e) => setEditingComp({ ...editingComp, category: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Trạng thái tuyển sinh *</label>
+                    <select 
+                      className="form-select"
+                      value={editingComp.status || 'open'}
+                      onChange={(e) => setEditingComp({ ...editingComp, status: e.target.value as any })}
+                    >
+                      <option value="open">🟢 Đang mở nhận hồ sơ (Open)</option>
+                      <option value="upcoming">🟡 Sắp mở đăng ký (Upcoming)</option>
+                      <option value="closed">🔴 Đã đóng đơn (Closed)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid-2" style={{ gap: '14px', marginBottom: '14px' }}>
+                  <div className="form-group">
+                    <label className="form-label">Hạn chót nhận hồ sơ</label>
+                    <input 
+                      type="date" 
+                      className="form-input" 
+                      value={editingComp.deadline || ''}
+                      onChange={(e) => setEditingComp({ ...editingComp, deadline: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Thời gian diễn ra sự kiện</label>
+                    <input 
+                      type="text" 
+                      className="form-input" 
+                      placeholder="Tháng 8/2027"
+                      value={editingComp.event_date || ''}
+                      onChange={(e) => setEditingComp({ ...editingComp, event_date: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid-2" style={{ gap: '14px', marginBottom: '14px' }}>
+                  <div className="form-group">
+                    <label className="form-label">Đơn vị tổ chức (Ban tổ chức)</label>
+                    <input 
+                      type="text" 
+                      className="form-input" 
+                      placeholder="Hiệp hội Sáng chế Quốc tế IFIA"
+                      value={editingComp.organizer || ''}
+                      onChange={(e) => setEditingComp({ ...editingComp, organizer: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Lệ phí / Chính sách hỗ trợ</label>
+                    <input 
+                      type="text" 
+                      className="form-input" 
+                      placeholder="Hỗ trợ trọn gói đoàn RIVA"
+                      value={editingComp.fee || ''}
+                      onChange={(e) => setEditingComp({ ...editingComp, fee: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group" style={{ marginBottom: '18px' }}>
+                  <label className="form-label">Mô tả tóm tắt cuộc thi</label>
                   <textarea 
                     rows={3}
                     className="form-textarea" 
-                    placeholder="Thông tin giới thiệu về cuộc thi..."
-                    value={newComp.description}
-                    onChange={(e) => setNewComp({ ...newComp, description: e.target.value })}
+                    placeholder="Thông tin giới thiệu về cuộc thi, tiêu chí đánh giá, đối tượng tham gia..."
+                    value={editingComp.description || ''}
+                    onChange={(e) => setEditingComp({ ...editingComp, description: e.target.value })}
                   />
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
-                  <button type="button" className="btn btn-ghost" onClick={() => setShowAddCompModal(false)}>
-                    Hủy
+                  <button type="button" className="btn btn-ghost" onClick={() => setShowCompModal(false)}>
+                    Hủy bỏ
                   </button>
-                  <button type="submit" className="btn btn-gold">
-                    Lưu và Công bố
+                  <button type="submit" className="btn btn-gold" style={{ gap: '6px' }}>
+                    <Save size={16} />
+                    <span>{editingComp.id ? 'Lưu cập nhật cuộc thi' : 'Lưu và Công bố cuộc thi'}</span>
                   </button>
                 </div>
               </form>

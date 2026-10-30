@@ -296,6 +296,26 @@ export const api = {
     return { success: true, message: 'Đăng ký tư vấn thành công! Chuyên viên RIVA sẽ liên hệ trong 24h.' };
   },
 
+  async getLeads(): Promise<Lead[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
+        if (!error && data && data.length > 0) return data as Lead[];
+      } catch (err) {
+        console.warn('Supabase leads fetch failed:', err);
+      }
+    }
+    const local = getStorageItem<Lead[]>('riva_leads', []);
+    const backup = getStorageItem<Lead[]>('RIVA_PENDING_LEADS_BACKUP', []);
+    const merged = [...local];
+    backup.forEach(b => {
+      if (!merged.some(m => m.phone === b.phone && m.full_name === b.full_name)) {
+        merged.push(b);
+      }
+    });
+    return merged;
+  },
+
   // 3. Applications
   async getApplications(): Promise<Application[]> {
     if (isSupabaseConfigured && supabase) {
