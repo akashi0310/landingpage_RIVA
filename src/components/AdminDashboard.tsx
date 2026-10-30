@@ -37,7 +37,13 @@ import {
   HelpCircle,
   PhoneCall,
   MessageCircle,
-  Globe
+  Globe,
+  Upload,
+  Copy,
+  Check,
+  Activity,
+  Send,
+  Bell
 } from 'lucide-react';
 import { api } from '../lib/supabase';
 import { 
@@ -58,6 +64,128 @@ interface AdminDashboardProps {
   onBackToHome: () => void;
   onLogout?: () => void;
 }
+
+export interface AuditLogItem {
+  id: string;
+  action: string;
+  detail?: string;
+  timestamp: string;
+}
+
+/** Nén ảnh tự động bằng HTML5 Canvas client-side để giữ dung lượng nhẹ (<150KB) mà chất lượng vẫn sắc nét */
+export const compressAndReadImage = (file: File, maxWidth = 1200, quality = 0.82): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) {
+      reject(new Error('Vui lòng chọn tệp hình ảnh (.jpg, .png, .webp...)'));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(e.target?.result as string);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        const compressed = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressed);
+      };
+      img.onerror = () => resolve(e.target?.result as string);
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = (err) => reject(err);
+    reader.readAsDataURL(file);
+  });
+};
+
+/** Component ô chọn ảnh: Cho phép nhập URL hoặc Tải trực tiếp từ máy tính */
+export const ImageUploadField: React.FC<{
+  label: string;
+  value: string;
+  onChange: (val: string) => void;
+  placeholder?: string;
+  height?: string;
+}> = ({ label, value, onChange, placeholder = 'Dán link ảnh hoặc tải từ máy...', height = '120px' }) => {
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploading(true);
+      const dataUrl = await compressAndReadImage(file);
+      onChange(dataUrl);
+    } catch (err: any) {
+      alert(err.message || 'Lỗi khi đọc file ảnh');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  return (
+    <div className="form-group" style={{ marginBottom: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+        <label className="form-label" style={{ marginBottom: 0 }}>{label}</label>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <button 
+            type="button" 
+            className="btn btn-sm btn-outline" 
+            style={{ padding: '3px 8px', fontSize: '11px', gap: '4px', color: 'var(--color-gold-bright)', borderColor: 'rgba(204,153,0,0.4)' }}
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            title="Tải ảnh từ máy tính / điện thoại"
+          >
+            <Upload size={12} />
+            <span>{uploading ? 'Đang nén ảnh...' : 'Tải từ máy tính'}</span>
+          </button>
+          {value && (
+            <button 
+              type="button" 
+              className="btn btn-sm btn-ghost" 
+              style={{ padding: '3px 6px', fontSize: '11px', color: '#ef4444' }}
+              onClick={() => onChange('')}
+              title="Xóa ảnh"
+            >
+              <Trash2 size={12} />
+            </button>
+          )}
+        </div>
+      </div>
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        accept="image/*" 
+        style={{ display: 'none' }} 
+        onChange={handleFileChange} 
+      />
+      <input 
+        type="text" 
+        className="form-input" 
+        value={value} 
+        onChange={(e) => onChange(e.target.value)} 
+        placeholder={placeholder} 
+      />
+      {value && (
+        <div style={{ marginTop: '8px', borderRadius: '8px', overflow: 'hidden', height, background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <img src={value} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, onLogout }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'articles' | 'about' | 'settings' | 'competitions' | 'applications'>('overview');
@@ -93,6 +221,42 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
   const [showCompModal, setShowCompModal] = useState(false);
   const [editingComp, setEditingComp] = useState<Partial<Competition> | null>(null);
 
+  // Quick Response Template Modal for Leads
+  const [selectedLeadForTemplate, setSelectedLeadForTemplate] = useState<Lead | null>(null);
+  const [copiedTemplate, setCopiedTemplate] = useState(false);
+
+  // Applications Filter & Search
+  const [appSearchQuery, setAppSearchQuery] = useState('');
+  const [appStatusFilter, setAppStatusFilter] = useState<'all' | 'submitted' | 'under_review' | 'approved' | 'rejected'>('all');
+
+  // Audit Logs (Nhật ký thao tác của Quản trị viên)
+  const [auditLogs, setAuditLogs] = useState<AuditLogItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('riva_admin_audit_logs');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return [
+      { id: '1', action: 'Khởi tạo hệ thống quản trị', detail: 'Hệ thống sẵn sàng vận hành an toàn', timestamp: new Date(Date.now() - 3600000 * 2).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' hôm nay' },
+      { id: '2', action: 'Đồng bộ danh mục cuộc thi', detail: 'SVIIF, INTARG, AI-JAM, iENA đã kích hoạt', timestamp: new Date(Date.now() - 3600000).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' hôm nay' }
+    ];
+  });
+
+  const addAuditLog = (action: string, detail?: string) => {
+    const newLog: AuditLogItem = {
+      id: `log-${Date.now()}`,
+      action,
+      detail,
+      timestamp: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' hôm nay'
+    };
+    setAuditLogs(prev => {
+      const updated = [newLog, ...prev.slice(0, 29)];
+      try {
+        localStorage.setItem('riva_admin_audit_logs', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
   useEffect(() => {
     loadAllData();
   }, []);
@@ -127,6 +291,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     await api.saveSiteSettings(siteSettings);
+    addAuditLog('Cập nhật Hotline & Thông tin liên hệ', `${siteSettings.hotline} • ${siteSettings.email}`);
     showToast('✅ Đã lưu cấu hình thông tin liên hệ và số điện thoại thành công!');
   };
 
@@ -146,6 +311,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
       setPasswordChangeMessage(res.message);
       setNewAdminPassword('');
       setConfirmAdminPassword('');
+      addAuditLog('Đổi mật khẩu Quản trị viên (Admin PIN)', 'Cập nhật mã băm SHA-256 an toàn');
       showToast('🔑 Đã cập nhật mật khẩu quản trị viên mới thành công!');
     } else {
       setPasswordChangeError(res.message);
@@ -156,6 +322,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
   const handleSaveAboutArticle = async (e: React.FormEvent) => {
     e.preventDefault();
     await api.saveAboutArticle(aboutArticle);
+    addAuditLog('Xuất bản bài báo phóng sự "Về RIVA"', aboutArticle.headline);
     showToast('✅ Đã cập nhật bài báo phóng sự "Về RIVA" trên trang chủ!');
   };
 
@@ -164,18 +331,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
     e.preventDefault();
     if (!editingArticle || !editingArticle.title) return;
 
+    const isEdit = Boolean(editingArticle.id);
     const updated = await api.saveNewsArticle(editingArticle);
     setNewsArticles([...updated]);
     setEditingArticle(null);
     setShowArticleModal(false);
+    addAuditLog(isEdit ? 'Chỉnh sửa bài viết tin tức' : 'Thêm bài viết tin tức mới', editingArticle.title);
     showToast('✅ Đã lưu bài viết và xuất bản thành công!');
   };
 
   // --- DELETE NEWS ARTICLE ---
   const handleDeleteNewsArticle = async (id: string) => {
+    const target = newsArticles.find(n => n.id === id);
     if (confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) {
       const updated = await api.deleteNewsArticle(id);
       setNewsArticles([...updated]);
+      addAuditLog('Xóa bài viết tin tức', target?.title || id);
       showToast('🗑️ Đã xóa bài viết thành công!');
     }
   };
@@ -222,16 +393,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
   // --- STATUS CHANGE FOR APPLICATION ---
   const handleStatusChange = async (appId: string, newStatus: ApplicationStatus) => {
+    const target = applications.find(a => a.id === appId);
     const updated = await api.updateApplicationStatus(appId, newStatus);
     setApplications([...updated]);
+    addAuditLog(`Chuyển trạng thái hồ sơ`, `${target?.full_name || 'Hồ sơ'} -> ${newStatus}`);
     showToast(`✅ Đã cập nhật trạng thái hồ sơ sang: ${newStatus}`);
   };
 
   // --- DELETE COMPETITION ---
   const handleDeleteComp = async (id: string) => {
+    const target = competitions.find(c => c.id === id);
     if (confirm('Bạn có chắc muốn xóa cuộc thi này?')) {
       const updated = await api.deleteCompetition(id);
       setCompetitions([...updated]);
+      addAuditLog('Xóa cuộc thi khỏi danh mục', target ? `${target.code} - ${target.title}` : id);
       showToast('🗑️ Đã xóa cuộc thi!');
     }
   };
@@ -292,6 +467,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
     setCompetitions([...updated]);
     setShowCompModal(false);
     setEditingComp(null);
+    addAuditLog(isEdit ? `Cập nhật cuộc thi: ${fullComp.code}` : `Thêm cuộc thi mới: ${fullComp.code}`, fullComp.title);
     showToast(isEdit ? '✅ Đã cập nhật thông tin cuộc thi thành công!' : '✅ Đã thêm cuộc thi mới thành công!');
   };
 
@@ -303,6 +479,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
       localStorage.removeItem('riva_about_article');
       localStorage.removeItem('riva_news_articles');
       await loadAllData();
+      addAuditLog('Khôi phục toàn bộ dữ liệu gốc', 'Dữ liệu chuẩn Viện RIVA');
       showToast('🔄 Đã khôi phục dữ liệu gốc mẫu thành công!');
     }
   };
@@ -483,9 +660,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
           <button 
             className={`tab-item ${activeTab === 'applications' ? 'active' : ''}`}
             onClick={() => setActiveTab('applications')}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
           >
-            <Users size={15} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-            Duyệt Hồ sơ ({applications.length})
+            <Users size={15} />
+            <span>Hồ sơ & Đăng ký</span>
+            {(leads.length > 0 || applications.filter(a => a.status === 'under_review' || a.status === 'submitted').length > 0) && (
+              <span className="badge badge-gold" style={{ fontSize: '10px', padding: '2px 7px', fontWeight: 800 }}>
+                {leads.length + applications.filter(a => a.status === 'under_review' || a.status === 'submitted').length} mới
+              </span>
+            )}
           </button>
         </div>
 
@@ -728,6 +911,59 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                 </div>
               </div>
             </div>
+
+            {/* System Audit Activity Log */}
+            <div className="glass-card" style={{ padding: '24px 28px', marginBottom: '28px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(51, 102, 255, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-sky)' }}>
+                    <Activity size={20} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '17px', fontWeight: 800, color: 'white', margin: 0 }}>
+                      Nhật ký hoạt động hệ thống (System Audit Log)
+                    </h3>
+                    <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: 0 }}>
+                      Lịch sử các thao tác cập nhật bài viết, hotline, phê duyệt và chỉnh sửa cuộc thi gần nhất:
+                    </p>
+                  </div>
+                </div>
+                <span className="badge badge-blue">Ghi nhận thời gian thực</span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {auditLogs.slice(0, 6).map((log) => (
+                  <div 
+                    key={log.id} 
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between', 
+                      padding: '12px 16px', 
+                      background: 'rgba(255, 255, 255, 0.02)', 
+                      borderRadius: '8px', 
+                      border: '1px solid rgba(255, 255, 255, 0.05)',
+                      fontSize: '13px'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--color-gold-bright)', display: 'inline-block' }} />
+                      <div>
+                        <span style={{ fontWeight: 700, color: 'white' }}>{log.action}</span>
+                        {log.detail && (
+                          <span style={{ color: 'var(--color-text-dim)', marginLeft: '8px', fontSize: '12px' }}>
+                            — {log.detail}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>
+                      {log.timestamp}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
@@ -910,21 +1146,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
               </div>
 
               <div className="grid-2" style={{ gap: '20px', marginBottom: '24px' }}>
-                <div className="form-group">
-                  <label className="form-label">Link Hình Ảnh Phóng Sự Chính (Hero Image URL)</label>
-                  <input 
-                    type="url" 
-                    className="form-input" 
-                    value={aboutArticle.hero_image}
-                    onChange={(e) => setAboutArticle({ ...aboutArticle, hero_image: e.target.value })}
-                    placeholder="https://..."
-                  />
-                  {aboutArticle.hero_image && (
-                    <div style={{ marginTop: '8px', borderRadius: '8px', overflow: 'hidden', height: '120px' }}>
-                      <img src={aboutArticle.hero_image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                  )}
-                </div>
+                <ImageUploadField
+                  label="Hình Ảnh Phóng Sự Chính (Hero Image)"
+                  value={aboutArticle.hero_image}
+                  onChange={(val) => setAboutArticle({ ...aboutArticle, hero_image: val })}
+                  placeholder="Dán link ảnh hoặc bấm 'Tải từ máy tính'..."
+                  height="140px"
+                />
 
                 <div className="form-group">
                   <label className="form-label">Chú Thích Ảnh Báo Chí (Caption)</label>
@@ -1039,17 +1267,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                       )}
 
                       {block.type === 'image' && (
-                        <div className="grid-2" style={{ gap: '12px' }}>
-                          <input 
-                            type="url"
-                            className="form-input"
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          <ImageUploadField
+                            label="Ảnh minh họa khối nội dung"
                             value={block.imageUrl || ''}
-                            onChange={(e) => {
+                            onChange={(val) => {
                               const newBlocks = [...aboutArticle.blocks];
-                              newBlocks[idx].imageUrl = e.target.value;
+                              newBlocks[idx].imageUrl = val;
                               setAboutArticle({ ...aboutArticle, blocks: newBlocks });
                             }}
-                            placeholder="Link ảnh minh họa..."
+                            placeholder="Dán link ảnh hoặc bấm 'Tải từ máy tính'..."
+                            height="120px"
                           />
                           <input 
                             type="text"
@@ -1060,7 +1288,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                               newBlocks[idx].imageCaption = e.target.value;
                               setAboutArticle({ ...aboutArticle, blocks: newBlocks });
                             }}
-                            placeholder="Chú thích ảnh..."
+                            placeholder="Chú thích ảnh minh họa..."
                           />
                         </div>
                       )}
@@ -1556,7 +1784,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                             </div>
                           </td>
                           <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
+                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
                               <a 
                                 href={`tel:${lead.phone.replace(/[^0-9]/g, '')}`} 
                                 className="btn btn-sm btn-gold"
@@ -1577,6 +1805,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                                 <MessageCircle size={12} />
                                 <span>Zalo</span>
                               </a>
+                              <button 
+                                type="button"
+                                className="btn btn-sm btn-outline"
+                                style={{ padding: '5px 10px', fontSize: '11px', gap: '4px', borderColor: 'rgba(204, 153, 0, 0.4)', color: 'var(--color-gold-bright)' }}
+                                onClick={() => setSelectedLeadForTemplate(lead)}
+                                title="Mở kịch bản tin nhắn tư vấn phụ huynh / học sinh"
+                              >
+                                <Send size={11} />
+                                <span>Mẫu tư vấn</span>
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -1589,69 +1827,137 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
 
             {/* Sub-tab 2: Formal Applications Queue */}
             {appSubTab === 'applications' && (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
-                  <thead>
-                    <tr style={{ background: 'rgba(255, 255, 255, 0.04)', color: 'var(--color-text-dim)', borderBottom: '1px solid var(--color-border)' }}>
-                      <th style={{ padding: '14px 20px' }}>Thí sinh</th>
-                      <th style={{ padding: '14px 20px' }}>Đơn vị / Trường</th>
-                      <th style={{ padding: '14px 20px' }}>Cuộc thi</th>
-                      <th style={{ padding: '14px 20px' }}>Đề tài nghiên cứu</th>
-                      <th style={{ padding: '14px 20px' }}>Trạng thái</th>
-                      <th style={{ padding: '14px 20px', textAlign: 'right' }}>Xét duyệt</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {applications.map((app) => (
-                      <tr key={app.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                        <td style={{ padding: '16px 20px' }}>
-                          <div style={{ fontWeight: 700, color: 'white' }}>{app.full_name}</div>
-                          <div style={{ fontSize: '11px', color: 'var(--color-text-dim)' }}>{app.email} • {app.phone}</div>
-                        </td>
-                        <td style={{ padding: '16px 20px', color: 'var(--color-text-light)' }}>
-                          {app.school} ({app.city})
-                        </td>
-                        <td style={{ padding: '16px 20px', color: 'var(--color-gold-bright)', fontWeight: 600 }}>
-                          {app.competition_code}
-                        </td>
-                        <td style={{ padding: '16px 20px' }}>
-                          <div style={{ color: 'white', fontWeight: 600, maxWidth: '280px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {app.project_title}
-                          </div>
-                          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{app.project_field}</div>
-                        </td>
-                        <td style={{ padding: '16px 20px' }}>
-                          {app.status === 'approved' && <span className="badge badge-open">Đã duyệt</span>}
-                          {app.status === 'under_review' && <span className="badge badge-upcoming">Chờ duyệt</span>}
-                          {app.status === 'submitted' && <span className="badge badge-blue">Mới nộp</span>}
-                          {app.status === 'rejected' && <span className="badge badge-closed">Từ chối</span>}
-                        </td>
-                        <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                          <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
-                            <button 
-                              className="btn btn-sm btn-outline" 
-                              style={{ color: '#34d399', borderColor: 'rgba(16, 185, 129, 0.4)' }}
-                              onClick={() => handleStatusChange(app.id, 'approved')}
-                              title="Duyệt hồ sơ"
-                            >
-                              <CheckCircle2 size={14} />
-                              <span>Duyệt</span>
-                            </button>
-                            <button 
-                              className="btn btn-sm btn-outline" 
-                              style={{ color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.4)' }}
-                              onClick={() => handleStatusChange(app.id, 'rejected')}
-                              title="Từ chối"
-                            >
-                              <XCircle size={14} />
-                              <span>Từ chối</span>
-                            </button>
-                          </div>
-                        </td>
+              <div>
+                {/* Search & Filter Bar for Applications */}
+                <div style={{ padding: '14px 20px', background: 'rgba(255, 255, 255, 0.02)', borderBottom: '1px solid var(--color-border)', display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ position: 'relative', minWidth: '240px', flex: 1, maxWidth: '380px' }}>
+                    <input 
+                      type="text" 
+                      className="form-input" 
+                      placeholder="Tìm theo tên thí sinh, trường, đề tài, cuộc thi..."
+                      value={appSearchQuery}
+                      onChange={(e) => setAppSearchQuery(e.target.value)}
+                      style={{ paddingLeft: '36px', height: '36px', fontSize: '12px' }}
+                    />
+                    <Search size={14} color="var(--color-text-dim)" style={{ position: 'absolute', left: '12px', top: '11px' }} />
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <button 
+                      className={`btn btn-sm ${appStatusFilter === 'all' ? 'btn-gold' : 'btn-ghost'}`}
+                      style={{ fontSize: '12px', padding: '5px 12px' }}
+                      onClick={() => setAppStatusFilter('all')}
+                    >
+                      Tất cả ({applications.length})
+                    </button>
+                    <button 
+                      className={`btn btn-sm ${appStatusFilter === 'submitted' ? 'btn-gold' : 'btn-ghost'}`}
+                      style={{ fontSize: '12px', padding: '5px 12px' }}
+                      onClick={() => setAppStatusFilter('submitted')}
+                    >
+                      🔵 Mới nộp ({applications.filter(a => a.status === 'submitted').length})
+                    </button>
+                    <button 
+                      className={`btn btn-sm ${appStatusFilter === 'under_review' ? 'btn-gold' : 'btn-ghost'}`}
+                      style={{ fontSize: '12px', padding: '5px 12px' }}
+                      onClick={() => setAppStatusFilter('under_review')}
+                    >
+                      🟡 Chờ duyệt ({applications.filter(a => a.status === 'under_review').length})
+                    </button>
+                    <button 
+                      className={`btn btn-sm ${appStatusFilter === 'approved' ? 'btn-gold' : 'btn-ghost'}`}
+                      style={{ fontSize: '12px', padding: '5px 12px' }}
+                      onClick={() => setAppStatusFilter('approved')}
+                    >
+                      🟢 Đã duyệt ({applications.filter(a => a.status === 'approved').length})
+                    </button>
+                    <button 
+                      className={`btn btn-sm ${appStatusFilter === 'rejected' ? 'btn-gold' : 'btn-ghost'}`}
+                      style={{ fontSize: '12px', padding: '5px 12px' }}
+                      onClick={() => setAppStatusFilter('rejected')}
+                    >
+                      🔴 Từ chối ({applications.filter(a => a.status === 'rejected').length})
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+                    <thead>
+                      <tr style={{ background: 'rgba(255, 255, 255, 0.04)', color: 'var(--color-text-dim)', borderBottom: '1px solid var(--color-border)' }}>
+                        <th style={{ padding: '14px 20px' }}>Thí sinh</th>
+                        <th style={{ padding: '14px 20px' }}>Đơn vị / Trường</th>
+                        <th style={{ padding: '14px 20px' }}>Cuộc thi</th>
+                        <th style={{ padding: '14px 20px' }}>Đề tài nghiên cứu</th>
+                        <th style={{ padding: '14px 20px' }}>Trạng thái</th>
+                        <th style={{ padding: '14px 20px', textAlign: 'right' }}>Xét duyệt</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {applications
+                        .filter(app => {
+                          const q = appSearchQuery.toLowerCase().trim();
+                          const matchSearch = q === '' ||
+                            app.full_name.toLowerCase().includes(q) ||
+                            app.school.toLowerCase().includes(q) ||
+                            app.email.toLowerCase().includes(q) ||
+                            app.phone.toLowerCase().includes(q) ||
+                            app.competition_code.toLowerCase().includes(q) ||
+                            app.project_title.toLowerCase().includes(q);
+                          const matchStatus = appStatusFilter === 'all' || app.status === appStatusFilter;
+                          return matchSearch && matchStatus;
+                        })
+                        .map((app) => (
+                        <tr key={app.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                          <td style={{ padding: '16px 20px' }}>
+                            <div style={{ fontWeight: 700, color: 'white' }}>{app.full_name}</div>
+                            <div style={{ fontSize: '11px', color: 'var(--color-text-dim)' }}>{app.email} • {app.phone}</div>
+                          </td>
+                          <td style={{ padding: '16px 20px', color: 'var(--color-text-light)' }}>
+                            {app.school} ({app.city})
+                          </td>
+                          <td style={{ padding: '16px 20px', color: 'var(--color-gold-bright)', fontWeight: 600 }}>
+                            {app.competition_code}
+                          </td>
+                          <td style={{ padding: '16px 20px' }}>
+                            <div style={{ color: 'white', fontWeight: 600, maxWidth: '280px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {app.project_title}
+                            </div>
+                            <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{app.project_field}</div>
+                          </td>
+                          <td style={{ padding: '16px 20px' }}>
+                            {app.status === 'approved' && <span className="badge badge-open">Đã duyệt</span>}
+                            {app.status === 'under_review' && <span className="badge badge-upcoming">Chờ duyệt</span>}
+                            {app.status === 'submitted' && <span className="badge badge-blue">Mới nộp</span>}
+                            {app.status === 'rejected' && <span className="badge badge-closed">Từ chối</span>}
+                          </td>
+                          <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
+                              <button 
+                                className="btn btn-sm btn-outline" 
+                                style={{ color: '#34d399', borderColor: 'rgba(16, 185, 129, 0.4)' }}
+                                onClick={() => handleStatusChange(app.id, 'approved')}
+                                title="Duyệt hồ sơ"
+                              >
+                                <CheckCircle2 size={14} />
+                                <span>Duyệt</span>
+                              </button>
+                              <button 
+                                className="btn btn-sm btn-outline" 
+                                style={{ color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.4)' }}
+                                onClick={() => handleStatusChange(app.id, 'rejected')}
+                                title="Từ chối"
+                              >
+                                <XCircle size={14} />
+                                <span>Từ chối</span>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>
@@ -1730,21 +2036,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   </div>
                 </div>
 
-                <div className="form-group" style={{ marginBottom: '16px' }}>
-                  <label className="form-label">Ảnh bìa bài viết (Cover Image URL)</label>
-                  <input 
-                    type="url" 
-                    className="form-input" 
-                    value={editingArticle.cover_image}
-                    onChange={(e) => setEditingArticle({ ...editingArticle, cover_image: e.target.value })}
-                    placeholder="https://..."
-                  />
-                  {editingArticle.cover_image && (
-                    <div style={{ marginTop: '8px', height: '110px', borderRadius: '8px', overflow: 'hidden' }}>
-                      <img src={editingArticle.cover_image} alt="Cover Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                  )}
-                </div>
+                <ImageUploadField
+                  label="Ảnh bìa bài viết (Cover Image)"
+                  value={editingArticle.cover_image}
+                  onChange={(val) => setEditingArticle({ ...editingArticle, cover_image: val })}
+                  placeholder="Dán link ảnh hoặc bấm 'Tải từ máy tính'..."
+                  height="120px"
+                />
 
                 <div className="form-group" style={{ marginBottom: '20px' }}>
                   <label className="form-label">Đoạn tóm tắt (Excerpt) *</label>
@@ -1829,28 +2127,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                         )}
 
                         {b.type === 'image' && (
-                          <div className="grid-2" style={{ gap: '10px' }}>
-                            <input 
-                              type="url"
-                              className="form-input"
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <ImageUploadField
+                              label="Ảnh minh họa khối nội dung"
                               value={b.imageUrl || ''}
-                              onChange={(e) => {
+                              onChange={(val) => {
                                 const newBlocks = [...(editingArticle.blocks || [])];
-                                newBlocks[bIdx].imageUrl = e.target.value;
+                                newBlocks[bIdx].imageUrl = val;
                                 setEditingArticle({ ...editingArticle, blocks: newBlocks });
                               }}
-                              placeholder="URL ảnh minh họa..."
+                              placeholder="Dán link ảnh hoặc bấm 'Tải từ máy tính'..."
+                              height="120px"
                             />
                             <input 
-                              type="text"
-                              className="form-input"
-                              value={b.imageCaption || ''}
+                              type="text" 
+                              className="form-input" 
+                              value={b.imageCaption || ''} 
                               onChange={(e) => {
                                 const newBlocks = [...(editingArticle.blocks || [])];
                                 newBlocks[bIdx].imageCaption = e.target.value;
                                 setEditingArticle({ ...editingArticle, blocks: newBlocks });
-                              }}
-                              placeholder="Chú thích ảnh..."
+                              }} 
+                              placeholder="Chú thích ảnh minh họa..." 
                             />
                           </div>
                         )}
@@ -2067,6 +2365,119 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal: Mẫu phản hồi & kịch bản tư vấn nhanh 1 chạm */}
+        {selectedLeadForTemplate && (
+          <div className="modal-overlay" onClick={() => setSelectedLeadForTemplate(null)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '640px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', borderBottom: '1px solid var(--color-border)', paddingBottom: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <MessageCircle size={20} color="var(--color-gold-bright)" />
+                  <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>
+                    Kịch Bản Tư Vấn Phụ Huynh / Học Sinh
+                  </h3>
+                </div>
+                <button type="button" className="btn btn-sm btn-ghost" onClick={() => setSelectedLeadForTemplate(null)}>
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Lead Summary Info */}
+              <div style={{ padding: '14px 16px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.08)', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px' }}>
+                  <div>
+                    <div style={{ fontSize: '16px', fontWeight: 700, color: 'white' }}>
+                      {selectedLeadForTemplate.full_name} 
+                      <span className="badge badge-gold" style={{ marginLeft: '8px', fontSize: '11px' }}>
+                        {selectedLeadForTemplate.role === 'parent' ? 'Phụ huynh' : selectedLeadForTemplate.role === 'student' ? 'Học sinh' : 'Giáo viên'}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--color-text-dim)', marginTop: '4px' }}>
+                      {selectedLeadForTemplate.school && `Trường: ${selectedLeadForTemplate.school} • `}
+                      Quan tâm: <span style={{ color: '#60A5FA', fontWeight: 600 }}>{selectedLeadForTemplate.interest_competition || 'Tư vấn cuộc thi chung'}</span>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ color: 'var(--color-gold-bright)', fontWeight: 700, fontSize: '14px' }}>
+                      {selectedLeadForTemplate.phone}
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+                      {selectedLeadForTemplate.email}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons: Call, Zalo, Email */}
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '18px', flexWrap: 'wrap' }}>
+                <a 
+                  href={`tel:${selectedLeadForTemplate.phone.replace(/[^0-9]/g, '')}`} 
+                  className="btn btn-gold"
+                  style={{ flex: 1, minWidth: '130px', justifyContent: 'center', gap: '6px' }}
+                >
+                  <PhoneCall size={15} />
+                  <span>Gọi Điện Ngay</span>
+                </a>
+                <a 
+                  href={`https://zalo.me/${selectedLeadForTemplate.phone.replace(/[^0-9]/g, '')}`} 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="btn btn-outline"
+                  style={{ flex: 1, minWidth: '130px', justifyContent: 'center', gap: '6px', borderColor: 'rgba(51, 102, 255, 0.4)', color: 'var(--color-sky)' }}
+                >
+                  <MessageCircle size={15} />
+                  <span>Mở Zalo Chat</span>
+                </a>
+                <a 
+                  href={`mailto:${selectedLeadForTemplate.email}?subject=${encodeURIComponent(`[Viện RIVA] Tư vấn thông tin tham gia cuộc thi khoa học quốc tế`)}&body=${encodeURIComponent(
+                    `Kính gửi ${selectedLeadForTemplate.role === 'parent' ? 'Quý Phụ huynh' : 'Bạn'} ${selectedLeadForTemplate.full_name},\n\nViện Nghiên cứu Đổi mới Sáng tạo RIVA đã nhận được thông tin đăng ký tư vấn về: ${selectedLeadForTemplate.interest_competition || 'các giải đấu quốc tế'}.\n\nChuyên viên phụ trách học thuật của Viện xin liên hệ để giải đáp chi tiết thể lệ, lộ trình huấn luyện và thủ tục tham dự.\n\nTrân trọng,\nViện Nghiên cứu Đổi mới Sáng tạo RIVA\nHotline: ${siteSettings.hotline}`
+                  )}`}
+                  className="btn btn-outline"
+                  style={{ flex: 1, minWidth: '130px', justifyContent: 'center', gap: '6px' }}
+                >
+                  <Mail size={15} />
+                  <span>Gửi Email</span>
+                </a>
+              </div>
+
+              {/* Ready-to-copy message text */}
+              <div className="form-group" style={{ marginBottom: '14px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  <label className="form-label" style={{ marginBottom: 0 }}>
+                    Nội dung tin nhắn mẫu (Dán vào Zalo / SMS / Facebook)
+                  </label>
+                  <button 
+                    type="button" 
+                    className="btn btn-sm btn-gold" 
+                    style={{ padding: '4px 10px', fontSize: '11px', gap: '4px' }}
+                    onClick={() => {
+                      const msg = `Kính gửi ${selectedLeadForTemplate.role === 'parent' ? 'Quý Phụ huynh' : 'Bạn'} ${selectedLeadForTemplate.full_name},\n\nViện Nghiên cứu Đổi mới Sáng tạo RIVA trân trọng cảm ơn bạn đã quan tâm đến chương trình ${selectedLeadForTemplate.interest_competition || 'đào tạo và dự thi quốc tế'}. \n\nEm là đại diện Ban Cố Vấn RIVA xin phép được kết nối để gửi đến Anh/Chị thông tin chi tiết về: \n1. Thể lệ và tiêu chí chấm giải của Ban Tổ chức quốc tế\n2. Lộ trình hoàn thiện đề tài và tập huấn tiếng Anh thuyết trình\n3. Lịch trình đoàn Việt Nam xuất quân\n\nAnh/Chị thuận tiện trao đổi thêm vào khung giờ nào để em hỗ trợ chu đáo nhất ạ? Em cảm ơn!`;
+                      navigator.clipboard.writeText(msg);
+                      setCopiedTemplate(true);
+                      setTimeout(() => setCopiedTemplate(false), 3000);
+                    }}
+                  >
+                    {copiedTemplate ? <Check size={12} /> : <Copy size={12} />}
+                    <span>{copiedTemplate ? 'Đã sao chép!' : 'Sao chép tin nhắn'}</span>
+                  </button>
+                </div>
+                <textarea 
+                  rows={6}
+                  readOnly
+                  className="form-textarea"
+                  style={{ fontSize: '13px', lineHeight: 1.6, background: 'rgba(5, 13, 38, 0.7)' }}
+                  value={`Kính gửi ${selectedLeadForTemplate.role === 'parent' ? 'Quý Phụ huynh' : 'Bạn'} ${selectedLeadForTemplate.full_name},\n\nViện Nghiên cứu Đổi mới Sáng tạo RIVA trân trọng cảm ơn bạn đã quan tâm đến chương trình ${selectedLeadForTemplate.interest_competition || 'đào tạo và dự thi quốc tế'}. \n\nEm là đại diện Ban Cố Vấn RIVA xin phép được kết nối để gửi đến Anh/Chị thông tin chi tiết về: \n1. Thể lệ và tiêu chí chấm giải của Ban Tổ chức quốc tế\n2. Lộ trình hoàn thiện đề tài và tập huấn tiếng Anh thuyết trình\n3. Lịch trình đoàn Việt Nam xuất quân\n\nAnh/Chị thuận tiện trao đổi thêm vào khung giờ nào để em hỗ trợ chu đáo nhất ạ? Em cảm ơn!`}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button type="button" className="btn btn-ghost" onClick={() => setSelectedLeadForTemplate(null)}>
+                  Đóng cửa sổ
+                </button>
+              </div>
             </div>
           </div>
         )}
