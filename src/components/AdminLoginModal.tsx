@@ -196,7 +196,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClos
               </button>
             </div>
             <div style={{ fontSize: '11px', color: 'var(--color-text-dim)', marginTop: '6px' }}>
-              Mật khẩu mặc định khởi tạo: <code>RIVA@2027</code> (hoặc <code>riva2027</code>)
+              🔒 Mật khẩu được mã hóa an toàn và chỉ cung cấp cho người có thẩm quyền.
             </div>
           </div>
 

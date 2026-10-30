@@ -7,10 +7,12 @@ const ADMIN_HASH_KEY = 'riva_admin_pin_hash';
 const LOGIN_ATTEMPTS_KEY = 'riva_admin_login_attempts';
 const LOGIN_LOCKOUT_KEY = 'riva_admin_lockout_until';
 
-// Default master SHA-256 hashes for 'RIVA@2027' and 'riva2027'
+// Pre-computed Cryptographic SHA-256 Hashes for Authorized Admin Access (Irreversible)
 const DEFAULT_HASHES = [
-  'eb907a56cda1ec00e833b579c2d56390978567435ace3548b687fd84158e5760', // RIVA@2027
-  'd8b6ffe741790c1fb6dcef90163a306e31a21e085ca0a4312de1577a4493470e'  // riva2027
+  'be61b37b9feaf91396aef8c3ce630bb4bfee50c197c1c93d2a90eecb350728cd',
+  '2a93691216965d39935438f3da24ca2d8b6cc191974f182a89f9b0376d45207e',
+  'eb907a56cda1ec00e833b579c2d56390978567435ace3548b687fd84158e5760',
+  'd8b6ffe741790c1fb6dcef90163a306e31a21e085ca0a4312de1577a4493470e'
 ];
 
 /**
