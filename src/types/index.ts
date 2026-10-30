@@ -127,6 +127,20 @@ export interface ShowcaseSectionData {
   photos: ShowcasePhoto[];
 }
 
+export interface HeroBannerData {
+  bg_image: string;
+  bg_video?: string;
+  enable_video: boolean;
+  bg_opacity: number;
+  enable_embers?: boolean;
+  enable_watermark?: boolean;
+  badge_text?: string;
+  title?: string;
+  subtitle?: string;
+  location_slogan?: string;
+  primary_btn_text?: string;
+}
+
 export type ActiveView = 
   | 'home' 
   | 'competition-detail' 

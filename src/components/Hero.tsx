@@ -14,8 +14,8 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { InteractiveWorldMap } from './InteractiveWorldMap';
-import { defaultShowcaseData } from '../lib/content';
-import { ShowcaseSectionData } from '../types';
+import { defaultShowcaseData, defaultHeroData } from '../lib/content';
+import { ShowcaseSectionData, HeroBannerData } from '../types';
 
 interface HeroProps {
   onExploreClick: () => void;
@@ -37,6 +37,14 @@ export const Hero: React.FC<HeroProps> = ({
     return defaultShowcaseData;
   });
 
+  const [heroData, setHeroData] = useState<HeroBannerData>(() => {
+    try {
+      const saved = localStorage.getItem('riva_hero_data');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return defaultHeroData;
+  });
+
   useEffect(() => {
     const handleUpdate = () => {
       try {
@@ -44,11 +52,21 @@ export const Hero: React.FC<HeroProps> = ({
         if (saved) setShowcaseData(JSON.parse(saved));
       } catch (e) {}
     };
+    const handleHeroUpdate = () => {
+      try {
+        const saved = localStorage.getItem('riva_hero_data');
+        if (saved) setHeroData(JSON.parse(saved));
+      } catch (e) {}
+    };
     window.addEventListener('riva_showcase_updated', handleUpdate);
+    window.addEventListener('riva_hero_updated', handleHeroUpdate);
     window.addEventListener('storage', handleUpdate);
+    window.addEventListener('storage', handleHeroUpdate);
     return () => {
       window.removeEventListener('riva_showcase_updated', handleUpdate);
+      window.removeEventListener('riva_hero_updated', handleHeroUpdate);
       window.removeEventListener('storage', handleUpdate);
+      window.removeEventListener('storage', handleHeroUpdate);
     };
   }, []);
 
@@ -59,80 +77,91 @@ export const Hero: React.FC<HeroProps> = ({
           ==================================================================== */}
       <section className="sviif-hero-wrapper" id="hero-cinematic">
         {/* High-res image fallback / poster for instant loading */}
-        <div className="sviif-hero-img-fallback" />
+        <div
+          className="sviif-hero-img-fallback"
+          style={{
+            backgroundImage: `url('${heroData.bg_image || defaultHeroData.bg_image}')`,
+            opacity: heroData.bg_opacity ?? 0.35
+          }}
+        />
 
         {/* Ambient video background */}
-        <video
-          className="sviif-hero-video"
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1920&auto=format&fit=crop&q=85"
-        >
-          <source
-            src="https://assets.mixkit.co/videos/preview/mixkit-global-technological-network-animated-loop-41584-large.mp4"
-            type="video/mp4"
-          />
-        </video>
+        {heroData.enable_video && heroData.bg_video && (
+          <video
+            className="sviif-hero-video"
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster={heroData.bg_image || defaultHeroData.bg_image}
+            style={{ opacity: (heroData.bg_opacity ?? 0.35) * 1.1 }}
+          >
+            <source
+              src={heroData.bg_video}
+              type="video/mp4"
+            />
+          </video>
+        )}
 
         {/* Deep cinematic gradient overlay */}
         <div className="sviif-hero-overlay" />
 
         {/* Golden spinning watermark gear / crest behind title (matching SVIIF) */}
-        <div className="sviif-watermark" />
+        {(heroData.enable_watermark ?? true) && <div className="sviif-watermark" />}
 
         {/* Floating golden ember particle sparks */}
-        <div className="sviif-embers" aria-hidden="true">
-          {[
-            { top: '15%', left: '12%', size: 4, duration: 8, delay: 0 },
-            { top: '35%', left: '22%', size: 3, duration: 11, delay: 2 },
-            { top: '55%', left: '8%', size: 5, duration: 9, delay: 4 },
-            { top: '75%', left: '18%', size: 3, duration: 12, delay: 1 },
-            { top: '20%', right: '14%', size: 4, duration: 10, delay: 3 },
-            { top: '45%', right: '20%', size: 3, duration: 7, delay: 5 },
-            { top: '68%', right: '10%', size: 5, duration: 13, delay: 2 },
-            { top: '85%', right: '25%', size: 4, duration: 9, delay: 4 },
-            { top: '10%', left: '48%', size: 3, duration: 14, delay: 1 },
-            { top: '60%', left: '52%', size: 4, duration: 8, delay: 3 }
-          ].map((dot, i) => (
-            <span
-              key={i}
-              className="sviif-ember-dot"
-              style={{
-                top: dot.top,
-                left: dot.left,
-                right: dot.right,
-                width: `${dot.size}px`,
-                height: `${dot.size}px`,
-                animationDuration: `${dot.duration}s`,
-                animationDelay: `${dot.delay}s`
-              }}
-            />
-          ))}
-        </div>
+        {(heroData.enable_embers ?? true) && (
+          <div className="sviif-embers" aria-hidden="true">
+            {[
+              { top: '15%', left: '12%', size: 4, duration: 8, delay: 0 },
+              { top: '35%', left: '22%', size: 3, duration: 11, delay: 2 },
+              { top: '55%', left: '8%', size: 5, duration: 9, delay: 4 },
+              { top: '75%', left: '18%', size: 3, duration: 12, delay: 1 },
+              { top: '20%', right: '14%', size: 4, duration: 10, delay: 3 },
+              { top: '45%', right: '20%', size: 3, duration: 7, delay: 5 },
+              { top: '68%', right: '10%', size: 5, duration: 13, delay: 2 },
+              { top: '85%', right: '25%', size: 4, duration: 9, delay: 4 },
+              { top: '10%', left: '48%', size: 3, duration: 14, delay: 1 },
+              { top: '60%', left: '52%', size: 4, duration: 8, delay: 3 }
+            ].map((dot, i) => (
+              <span
+                key={i}
+                className="sviif-ember-dot"
+                style={{
+                  top: dot.top,
+                  left: dot.left,
+                  right: dot.right,
+                  width: `${dot.size}px`,
+                  height: `${dot.size}px`,
+                  animationDuration: `${dot.duration}s`,
+                  animationDelay: `${dot.delay}s`
+                }}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Hero Center Presentation Content */}
         <div className="sviif-hero-container">
           {/* Institutional Accreditation Pill */}
           <div className="sviif-hero-badge">
             <Sparkles size={14} color="#CC9900" />
-            <span>HỆ THỐNG ĐẤU TRƯỜNG SÁNG CHẾ & NCKH QUỐC TẾ • RIVA GLOBAL</span>
+            <span>{heroData.badge_text || 'HỆ THỐNG ĐẤU TRƯỜNG SÁNG CHẾ & NCKH QUỐC TẾ • RIVA GLOBAL'}</span>
           </div>
 
           {/* Grand SVIIF-Style Gold Title (Cinzel Serif) */}
           <h1 className="sviif-hero-title">
-            VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO & KIỂM ĐỊNH CHẤT LƯỢNG RIVA
+            {heroData.title || 'VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO & KIỂM ĐỊNH CHẤT LƯỢNG RIVA'}
           </h1>
 
           {/* Headline lớn: Đấu Trường Quốc Tế */}
           <div className="sviif-hero-sub">
-            ĐƯA TÀI NĂNG VIỆT NAM RA ĐẤU TRƯỜNG QUỐC TẾ
+            {heroData.subtitle || 'ĐƯA TÀI NĂNG VIỆT NAM RA ĐẤU TRƯỜNG QUỐC TẾ'}
           </div>
 
           {/* Slogan chính thống */}
           <div className="sviif-hero-location">
-            Kết nối tài năng Việt Nam với đấu trường khoa học & sáng tạo quốc tế
+            {heroData.location_slogan || 'Kết nối tài năng Việt Nam với đấu trường khoa học & sáng tạo quốc tế'}
           </div>
 
           {/* Action Button Group */}
@@ -143,7 +172,7 @@ export const Hero: React.FC<HeroProps> = ({
               className="sviif-btn-pill-primary"
               onClick={onRegisterClick}
             >
-              <span>CỔNG ĐĂNG KÝ SƠ TUYỂN ĐANG MỞ →</span>
+              <span>{heroData.primary_btn_text || 'CỔNG ĐĂNG KÝ SƠ TUYỂN ĐANG MỞ →'}</span>
             </button>
 
             {/* Explore Competitions Button */}

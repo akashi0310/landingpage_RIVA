@@ -56,9 +56,10 @@ import {
   ArticleBlock,
   Lead,
   ShowcaseSectionData,
-  ShowcasePhoto
+  ShowcasePhoto,
+  HeroBannerData
 } from '../types';
-import { defaultSiteSettings, defaultAboutArticle, defaultNewsArticles, defaultShowcaseData } from '../lib/content';
+import { defaultSiteSettings, defaultAboutArticle, defaultNewsArticles, defaultShowcaseData, defaultHeroData } from '../lib/content';
 import { ArticleModal } from './ArticleModal';
 import { CompetitionFlag, CompetitionFlagPicker } from './CompetitionFlag';
 import { setAdminPassword, sanitizeUrl } from '../lib/security';
@@ -191,7 +192,7 @@ export const ImageUploadField: React.FC<{
 };
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, onLogout }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'articles' | 'about' | 'settings' | 'competitions' | 'applications' | 'showcase'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'articles' | 'about' | 'settings' | 'competitions' | 'applications' | 'showcase' | 'hero_bg'>('overview');
 
   // Data states
   const [competitions, setCompetitions] = useState<Competition[]>([]);
@@ -206,6 +207,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
       if (saved) return JSON.parse(saved);
     } catch (e) {}
     return defaultShowcaseData;
+  });
+  const [heroData, setHeroData] = useState<HeroBannerData>(() => {
+    try {
+      const saved = localStorage.getItem('riva_hero_data');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return defaultHeroData;
   });
 
   // Sub-tabs & filter states
@@ -356,6 +364,29 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
       window.dispatchEvent(new Event('riva_showcase_updated'));
       addAuditLog('Khôi phục ảnh triển lãm', 'Khôi phục về ảnh mẫu mặc định');
       showToast('🔄 Đã khôi phục ảnh triển lãm về mặc định!');
+    }
+  };
+
+  // --- SAVE HERO BACKGROUND & BANNER DATA ---
+  const handleSaveHeroData = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    try {
+      localStorage.setItem('riva_hero_data', JSON.stringify(heroData));
+      window.dispatchEvent(new Event('riva_hero_updated'));
+      addAuditLog('Cập nhật Hình nền & Video Hero', 'Lưu thay đổi ảnh/video background trang chủ');
+      showToast('✅ Đã cập nhật Hình nền & Video Hero trên trang chủ!');
+    } catch (err) {
+      showToast('❌ Lỗi khi lưu: ' + (err as Error).message);
+    }
+  };
+
+  const handleResetHeroData = () => {
+    if (window.confirm('Bạn có chắc muốn khôi phục Hình nền & Video Hero về mặc định ban đầu không?')) {
+      setHeroData(defaultHeroData);
+      localStorage.setItem('riva_hero_data', JSON.stringify(defaultHeroData));
+      window.dispatchEvent(new Event('riva_hero_updated'));
+      addAuditLog('Khôi phục Hình nền Hero', 'Khôi phục ảnh hội trường & video SVIIF mặc định');
+      showToast('🔄 Đã khôi phục Hình nền & Video Hero về mặc định!');
     }
   };
 
@@ -711,6 +742,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
           >
             <ImageIcon size={15} />
             <span>Ảnh Sân Khấu & Triển Lãm ({showcaseData.photos.length})</span>
+          </button>
+
+          <button
+            className={`tab-item ${activeTab === 'hero_bg' ? 'active' : ''}`}
+            onClick={() => setActiveTab('hero_bg')}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+          >
+            <Sparkles size={15} />
+            <span>Hình Nền & Video Hero</span>
           </button>
         </div>
 
@@ -2139,6 +2179,345 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
               >
                 <Save size={18} />
                 <span>LƯU TẤT CẢ THAY ĐỔI ẢNH TRIỂN LÃM</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB 8: HÌNH NỀN & VIDEO BACKGROUND ĐẦU TRANG (HERO BANNER)
+            ========================================================================= */}
+        {activeTab === 'hero_bg' && (
+          <div className="glass-card" style={{ padding: '32px', maxWidth: '1040px', margin: '0 auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '16px', flexWrap: 'wrap', gap: '14px' }}>
+              <div>
+                <div className="badge badge-gold" style={{ marginBottom: '8px' }}>
+                  <Sparkles size={13} />
+                  HÌNH NỀN & VIDEO BACKGROUND ĐẦU TRANG (HERO BANNER)
+                </div>
+                <h3 style={{ fontSize: '22px', fontWeight: 900, color: 'white' }}>
+                  Tùy Biến Ảnh Nền & Video Chuyển Động Trang Chủ
+                </h3>
+                <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+                  Admin có toàn quyền đổi ảnh nền hội trường/khán giả, video chuyển động, độ mờ sáng tối và khẩu hiệu hiển thị ngay đầu website.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="btn btn-sm btn-ghost"
+                onClick={handleResetHeroData}
+                style={{ color: 'var(--color-gold-bright)', border: '1px solid rgba(204, 153, 0, 0.3)', gap: '6px' }}
+              >
+                <RotateCcw size={13} />
+                <span>Khôi phục mặc định SVIIF</span>
+              </button>
+            </div>
+
+            {/* Live Preview Box */}
+            <div style={{ marginBottom: '28px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-gold-bright)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Eye size={15} />
+                <span>Xem Trước Khung Hiển Thị Thực Tế (Live Preview):</span>
+              </div>
+              <div
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  height: '240px',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  background: '#00004D',
+                  border: '2px solid rgba(204, 153, 0, 0.4)',
+                  boxShadow: '0 8px 30px rgba(0, 0, 0, 0.6)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                  padding: '20px'
+                }}
+              >
+                {/* Fallback Image */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    backgroundImage: `url('${heroData.bg_image || defaultHeroData.bg_image}')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center 30%',
+                    opacity: heroData.bg_opacity ?? 0.35,
+                    transition: 'all 0.3s ease'
+                  }}
+                />
+
+                {/* Video if enabled */}
+                {heroData.enable_video && heroData.bg_video && (
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      opacity: (heroData.bg_opacity ?? 0.35) * 1.1,
+                      pointerEvents: 'none'
+                    }}
+                  >
+                    <source src={heroData.bg_video} type="video/mp4" />
+                  </video>
+                )}
+
+                {/* Deep Overlay Gradient */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'radial-gradient(ellipse at 50% 45%, rgba(0, 0, 77, 0.3) 0%, rgba(0, 0, 77, 0.75) 60%, #00004D 100%)',
+                    pointerEvents: 'none'
+                  }}
+                />
+
+                {/* Center Content Preview */}
+                <div style={{ position: 'relative', zIndex: 3, maxWidth: '650px' }}>
+                  <div style={{ fontSize: '10px', color: '#CC9900', letterSpacing: '0.08em', fontWeight: 800, marginBottom: '6px' }}>
+                    {heroData.badge_text || 'HỆ THỐNG ĐẤU TRƯỜNG SÁNG CHẾ & NCKH QUỐC TẾ • RIVA GLOBAL'}
+                  </div>
+                  <h4
+                    style={{
+                      fontFamily: "'Cinzel', Georgia, serif",
+                      fontSize: '18px',
+                      fontWeight: 800,
+                      color: 'transparent',
+                      background: 'linear-gradient(180deg, #FFFFFF 0%, #F5DEB3 25%, #CC9900 65%, #8A6700 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      margin: '0 0 6px',
+                      lineHeight: 1.25
+                    }}
+                  >
+                    {heroData.title || 'VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO & KIỂM ĐỊNH CHẤT LƯỢNG RIVA'}
+                  </h4>
+                  <div style={{ fontSize: '11px', fontWeight: 700, color: 'white', letterSpacing: '0.04em', marginBottom: '10px' }}>
+                    {heroData.subtitle || 'ĐƯA TÀI NĂNG VIỆT NAM RA ĐẤU TRƯỜNG QUỐC TẾ'}
+                  </div>
+                  <div style={{ display: 'inline-flex', padding: '5px 14px', borderRadius: '999px', background: 'white', color: '#00004D', fontSize: '11px', fontWeight: 800 }}>
+                    {heroData.primary_btn_text || 'CỔNG ĐĂNG KÝ SƠ TUYỂN ĐANG MỞ →'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Presets Gallery Quick-Select */}
+            <div style={{ marginBottom: '24px', padding: '18px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: 'white', marginBottom: '10px' }}>
+                🌟 Thư viện ảnh nền mẫu độ nét cao (Bấm để áp dụng nhanh):
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                {[
+                  {
+                    title: 'Khán giả & Hội trường SVIIF (Mặc định)',
+                    url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1920&auto=format&fit=crop&q=85'
+                  },
+                  {
+                    title: 'Sân khấu Trao giải & Vinh danh',
+                    url: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=1920&auto=format&fit=crop&q=85'
+                  },
+                  {
+                    title: 'Thung lũng Silicon & Tech Hub',
+                    url: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&auto=format&fit=crop&q=85'
+                  },
+                  {
+                    title: 'Phòng Thí nghiệm & AI Lab',
+                    url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1920&auto=format&fit=crop&q=85'
+                  }
+                ].map((preset, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => setHeroData({ ...heroData, bg_image: preset.url })}
+                    style={{
+                      cursor: 'pointer',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      border: heroData.bg_image === preset.url ? '2px solid var(--color-gold-bright)' : '1px solid rgba(255, 255, 255, 0.15)',
+                      background: 'rgba(0, 0, 0, 0.4)',
+                      transition: 'all 0.2s ease',
+                      position: 'relative'
+                    }}
+                  >
+                    <img src={preset.url} alt={preset.title} style={{ width: '100%', height: '80px', objectFit: 'cover' }} />
+                    <div style={{ padding: '6px 8px', fontSize: '11px', fontWeight: 600, color: 'white', textAlign: 'center' }}>
+                      {preset.title}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Image & Video Form Inputs */}
+            <div style={{ marginBottom: '24px' }}>
+              <ImageUploadField
+                label="Ảnh nền chính (Tải trực tiếp từ máy tính hoặc dán URL ảnh)"
+                value={heroData.bg_image || ''}
+                onChange={(val) => setHeroData({ ...heroData, bg_image: val })}
+                placeholder="Dán link ảnh hoặc bấm 'Tải từ máy tính'..."
+                height="160px"
+              />
+            </div>
+
+            {/* Video Controls */}
+            <div style={{ marginBottom: '24px', padding: '18px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: 'white' }}>
+                  <input
+                    type="checkbox"
+                    checked={heroData.enable_video}
+                    onChange={(e) => setHeroData({ ...heroData, enable_video: e.target.checked })}
+                    style={{ width: '18px', height: '18px', accentColor: '#CC9900' }}
+                  />
+                  <span>Kích hoạt Video nền chuyển động (Ambient Loop Video)</span>
+                </label>
+                <span style={{ fontSize: '11px', color: 'var(--color-text-dim)' }}>
+                  {heroData.enable_video ? '🟢 Đang bật video' : '⚪ Đang tắt (chỉ hiển thị ảnh nền tĩnh)'}
+                </span>
+              </div>
+
+              {heroData.enable_video && (
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="form-label">Đường dẫn Video MP4 chuyển động (Link trực tiếp file .mp4):</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={heroData.bg_video || ''}
+                    onChange={(e) => setHeroData({ ...heroData, bg_video: e.target.value })}
+                    placeholder="https://.../video.mp4"
+                  />
+                  <div style={{ fontSize: '11px', color: 'var(--color-text-dim)', marginTop: '4px' }}>
+                    💡 Video sẽ tự động phát lặp lại không tiếng (muted loop), tạo hiệu ứng công nghệ hiện đại.
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Opacity / Darkening Level */}
+            <div style={{ marginBottom: '24px', padding: '18px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+              <label className="form-label" style={{ marginBottom: '10px' }}>
+                Độ mờ / Độ tối hình nền (Background Opacity & Spotlight):
+              </label>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                {[
+                  { val: 0.20, label: '20% (Rất tối - Tiêu đề vàng siêu nét)' },
+                  { val: 0.35, label: '35% (Chuẩn SVIIF - Cân bằng nhất)' },
+                  { val: 0.50, label: '50% (Sáng vừa - Thấy rõ khán giả / sân khấu)' },
+                  { val: 0.70, label: '70% (Rất sáng - Ảnh nền nổi bật tối đa)' }
+                ].map((op) => (
+                  <button
+                    key={op.val}
+                    type="button"
+                    onClick={() => setHeroData({ ...heroData, bg_opacity: op.val })}
+                    className={`btn btn-sm ${heroData.bg_opacity === op.val ? 'btn-gold' : 'btn-outline'}`}
+                    style={{ fontSize: '12px', padding: '7px 14px' }}
+                  >
+                    {op.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Effects & Text Customization */}
+            <div style={{ marginBottom: '28px', padding: '18px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+              <h4 style={{ fontSize: '14px', fontWeight: 800, color: 'white', marginBottom: '14px' }}>
+                Tùy chỉnh Văn bản & Hiệu ứng Banner
+              </h4>
+
+              <div style={{ display: 'flex', gap: '20px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: 'white' }}>
+                  <input
+                    type="checkbox"
+                    checked={heroData.enable_embers ?? true}
+                    onChange={(e) => setHeroData({ ...heroData, enable_embers: e.target.checked })}
+                    style={{ width: '16px', height: '16px', accentColor: '#CC9900' }}
+                  />
+                  <span>Hạt bụi vàng phát sáng bay lơ lửng (Golden Embers)</span>
+                </label>
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: 'white' }}>
+                  <input
+                    type="checkbox"
+                    checked={heroData.enable_watermark ?? true}
+                    onChange={(e) => setHeroData({ ...heroData, enable_watermark: e.target.checked })}
+                    style={{ width: '16px', height: '16px', accentColor: '#CC9900' }}
+                  />
+                  <span>Vòng xoay chìm thương hiệu phía sau tiêu đề (Watermark)</span>
+                </label>
+              </div>
+
+              <div className="grid-2" style={{ gap: '14px', marginBottom: '14px' }}>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="form-label">Huy hiệu nhỏ trên cùng:</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={heroData.badge_text || ''}
+                    onChange={(e) => setHeroData({ ...heroData, badge_text: e.target.value })}
+                  />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="form-label">Nút kêu gọi chính:</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={heroData.primary_btn_text || ''}
+                    onChange={(e) => setHeroData({ ...heroData, primary_btn_text: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '14px' }}>
+                <label className="form-label">Tiêu đề vàng chính (Font Cinzel):</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={heroData.title || ''}
+                  onChange={(e) => setHeroData({ ...heroData, title: e.target.value })}
+                />
+              </div>
+
+              <div className="grid-2" style={{ gap: '14px', marginBottom: 0 }}>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="form-label">Dòng chữ phụ nổi bật:</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={heroData.subtitle || ''}
+                    onChange={(e) => setHeroData({ ...heroData, subtitle: e.target.value })}
+                  />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="form-label">Khẩu hiệu / Địa điểm:</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={heroData.location_slogan || ''}
+                    onChange={(e) => setHeroData({ ...heroData, location_slogan: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Save Button */}
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <button
+                type="button"
+                className="btn btn-lg btn-gold"
+                style={{ minWidth: '320px', justifyContent: 'center', gap: '8px', padding: '16px' }}
+                onClick={() => handleSaveHeroData()}
+              >
+                <Save size={18} />
+                <span>LƯU TẤT CẢ THAY ĐỔI HÌNH NỀN HERO</span>
               </button>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import type { Competition, Achievement, SiteSettings, AboutArticleData, NewsArticle, ShowcaseSectionData, ShowcasePhoto } from '../types';
+import type { Competition, Achievement, SiteSettings, AboutArticleData, NewsArticle, ShowcaseSectionData, ShowcasePhoto, HeroBannerData } from '../types';
 
 export const competitions: Competition[] = [
   {
@@ -308,5 +308,19 @@ export const defaultShowcaseData: ShowcaseSectionData = {
       badgeType: 'success'
     }
   ]
+};
+
+export const defaultHeroData: HeroBannerData = {
+  bg_image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1920&auto=format&fit=crop&q=85',
+  bg_video: 'https://assets.mixkit.co/videos/preview/mixkit-global-technological-network-animated-loop-41584-large.mp4',
+  enable_video: true,
+  bg_opacity: 0.35,
+  enable_embers: true,
+  enable_watermark: true,
+  badge_text: 'HỆ THỐNG ĐẤU TRƯỜNG SÁNG CHẾ & NCKH QUỐC TẾ • RIVA GLOBAL',
+  title: 'VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO & KIỂM ĐỊNH CHẤT LƯỢNG RIVA',
+  subtitle: 'ĐƯA TÀI NĂNG VIỆT NAM RA ĐẤU TRƯỜNG QUỐC TẾ',
+  location_slogan: 'Kết nối tài năng Việt Nam với đấu trường khoa học & sáng tạo quốc tế',
+  primary_btn_text: 'CỔNG ĐĂNG KÝ SƠ TUYỂN ĐANG MỞ →'
 };
 
