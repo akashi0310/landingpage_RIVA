@@ -3,7 +3,6 @@ import { Phone, Sparkles, ShieldCheck, Settings, Eye, LogOut } from 'lucide-reac
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { TrustSection } from './components/TrustSection';
-import { OpportunityFinder } from './components/OpportunityFinder';
 import { CompetitionDetailView } from './components/CompetitionDetailView';
 import { AboutSection } from './components/AboutSection';
 import { GlobalNetwork } from './components/GlobalNetwork';
@@ -301,13 +300,6 @@ export const App: React.FC = () => {
 
           {/* Trust logos & international accreditation */}
           <TrustSection />
-
-          {/* Smart Opportunity Finder (Slide 6 UX focus) */}
-          <OpportunityFinder 
-            competitions={competitions}
-            onSelectCompetition={handleSelectCompetition}
-          />
-
 
           {/* About RIVA & Innovation Mentoring (Slide 2 & 8) - Newspaper Article Feature */}
           <AboutSection onConsultClick={() => navigateToSection('register-lead')} />
