@@ -98,7 +98,7 @@ export const Hero: React.FC<HeroProps> = ({
 
           {/* Grand SVIIF-Style Gold Title (Cinzel Serif) */}
           <h1 className="sviif-hero-title">
-            VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO RIVA
+            VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO & KIỂM ĐỊNH CHẤT LƯỢNG RIVA
           </h1>
 
           {/* Bold Clean Sub-header (Like SVIIF: Inventions, Artificial Intelligence & Future Technologies) */}
@@ -318,7 +318,7 @@ export const Hero: React.FC<HeroProps> = ({
             {/* Modal Footer Caption */}
             <div style={{ marginTop: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
               <div style={{ fontSize: '13px', color: 'var(--color-text-light)' }}>
-                📍 Silicon Valley, California, USA • Bản quyền tư liệu thuộc Viện Nghiên Cứu Đổi Mới Sáng Tạo RIVA
+                📍 Silicon Valley, California, USA • Bản quyền tư liệu thuộc VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO & KIỂM ĐỊNH CHẤT LƯỢNG RIVA
               </div>
               <button
                 type="button"
