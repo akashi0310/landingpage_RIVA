@@ -113,6 +113,20 @@ export interface AboutArticleData {
   metrics: { val: string; label: string; desc?: string }[];
 }
 
+export interface ShowcasePhoto {
+  id: string;
+  title: string;
+  imageUrl: string;
+  badgeType: 'gold' | 'sky' | 'success';
+}
+
+export interface ShowcaseSectionData {
+  heading: string;
+  subheading: string;
+  description: string;
+  photos: ShowcasePhoto[];
+}
+
 export type ActiveView = 
   | 'home' 
   | 'competition-detail' 

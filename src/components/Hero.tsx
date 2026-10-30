@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sparkles,
   ArrowRight,
@@ -14,6 +14,8 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { InteractiveWorldMap } from './InteractiveWorldMap';
+import { defaultShowcaseData } from '../lib/content';
+import { ShowcaseSectionData } from '../types';
 
 interface HeroProps {
   onExploreClick: () => void;
@@ -27,6 +29,28 @@ export const Hero: React.FC<HeroProps> = ({
   onSelectCompetition
 }) => {
   const [showVideoModal, setShowVideoModal] = useState(false);
+  const [showcaseData, setShowcaseData] = useState<ShowcaseSectionData>(() => {
+    try {
+      const saved = localStorage.getItem('riva_showcase_data');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return defaultShowcaseData;
+  });
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      try {
+        const saved = localStorage.getItem('riva_showcase_data');
+        if (saved) setShowcaseData(JSON.parse(saved));
+      } catch (e) {}
+    };
+    window.addEventListener('riva_showcase_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('riva_showcase_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
 
   return (
     <>
@@ -153,7 +177,7 @@ export const Hero: React.FC<HeroProps> = ({
         <div className="container">
           {/* Section Heading in Gold Cinzel Serif */}
           <h2 className="sviif-global-heading">
-            A TRULY GLOBAL INNOVATION PLATFORM
+            {showcaseData.heading}
           </h2>
 
           <div style={{ textAlign: 'center', marginBottom: '14px' }}>
@@ -164,52 +188,36 @@ export const Hero: React.FC<HeroProps> = ({
               letterSpacing: '0.08em',
               textTransform: 'uppercase'
             }}>
-              ĐẤU TRƯỜNG KHOA HỌC & SÁNG CHẾ QUỐC TẾ HÀNG ĐẦU
+              {showcaseData.subheading}
             </span>
           </div>
 
           {/* SVIIF-style Narrative Introduction */}
           <p className="sviif-global-desc">
-            RIVA quy tụ các nhà sáng chế trẻ, học sinh, sinh viên và các nhóm nghiên cứu khoa học xuất sắc của Việt Nam tự tin giới thiệu những giải pháp đột phá về <strong>Trí tuệ Nhân tạo (AI), Năng lượng xanh, Y sinh và STEM</strong> ra đấu trường toàn cầu: <strong>SVIIF Thung Lũng Silicon (Mỹ), Geneva Inventions (Thụy Sĩ), iENA Nuremberg (Đức) và IPITEX Bangkok (Thái Lan)</strong>. RIVA bảo trợ toàn diện từ giai đoạn hoàn thiện hồ sơ, đăng ký sở hữu trí tuệ đến tập huấn thuyết trình tiếng Anh và trực tiếp dẫn đoàn thi đấu.
+            {showcaseData.description}
           </p>
 
-          {/* 3-Photo Festival Live Showcase Grid (Matching SVIIF 3 real photos) */}
+          {/* 3-Photo Festival Live Showcase Grid (Dynamic from Admin) */}
           <div className="sviif-live-gallery">
-            <div className="sviif-gallery-card">
-              <img
-                src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=80"
-                alt="Lễ trao giải sân khấu quốc tế"
-                className="sviif-gallery-img"
-              />
-              <div className="sviif-gallery-caption">
-                <Award size={18} color="#CC9900" />
-                <span>Lễ Trao Giải & Vinh Danh Huy Chương Vàng Quốc Tế</span>
+            {showcaseData.photos.map((photo) => (
+              <div key={photo.id} className="sviif-gallery-card">
+                <img
+                  src={photo.imageUrl}
+                  alt={photo.title}
+                  className="sviif-gallery-img"
+                  onError={(e) => {
+                    // Fallback image if custom url fails
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=80';
+                  }}
+                />
+                <div className="sviif-gallery-caption">
+                  {photo.badgeType === 'gold' && <Award size={18} color="#CC9900" />}
+                  {photo.badgeType === 'sky' && <Globe2 size={18} color="#75C2FA" />}
+                  {photo.badgeType === 'success' && <ShieldCheck size={18} color="#34D399" />}
+                  <span>{photo.title}</span>
+                </div>
               </div>
-            </div>
-
-            <div className="sviif-gallery-card">
-              <img
-                src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&auto=format&fit=crop&q=80"
-                alt="Ban giám khảo phỏng vấn tại gian hàng triển lãm"
-                className="sviif-gallery-img"
-              />
-              <div className="sviif-gallery-caption">
-                <Globe2 size={18} color="#75C2FA" />
-                <span>Thuyết Trình Đề Tài Trước Hội Đồng Giám Khảo Quốc Tế</span>
-              </div>
-            </div>
-
-            <div className="sviif-gallery-card">
-              <img
-                src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop&q=80"
-                alt="Đoàn Việt Nam rạng rỡ cờ đỏ sao vàng"
-                className="sviif-gallery-img"
-              />
-              <div className="sviif-gallery-caption">
-                <ShieldCheck size={18} color="#34D399" />
-                <span>Đoàn Việt Nam Gặt Hái Thành Tích Vô Địch & Cúp Đặc Biệt</span>
-              </div>
-            </div>
+            ))}
           </div>
 
           {/* Digital World Map & Flight Network Explorer */}

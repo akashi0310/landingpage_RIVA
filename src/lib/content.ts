@@ -1,4 +1,4 @@
-import type { Competition, Achievement, SiteSettings, AboutArticleData, NewsArticle } from '../types';
+import type { Competition, Achievement, SiteSettings, AboutArticleData, NewsArticle, ShowcaseSectionData, ShowcasePhoto } from '../types';
 
 export const competitions: Competition[] = [
   {
@@ -283,4 +283,30 @@ export const defaultNewsArticles: NewsArticle[] = [
     ]
   }
 ];
+
+export const defaultShowcaseData: ShowcaseSectionData = {
+  heading: 'A TRULY GLOBAL INNOVATION PLATFORM',
+  subheading: 'ĐẤU TRƯỜNG KHOA HỌC & SÁNG CHẾ QUỐC TẾ HÀNG ĐẦU',
+  description: 'RIVA quy tụ các nhà sáng chế trẻ, học sinh, sinh viên và các nhóm nghiên cứu khoa học xuất sắc của Việt Nam tự tin giới thiệu những giải pháp đột phá về Trí tuệ Nhân tạo (AI), Năng lượng xanh, Y sinh và STEM ra đấu trường toàn cầu: SVIIF Thung Lũng Silicon (Mỹ), Geneva Inventions (Thụy Sĩ), iENA Nuremberg (Đức) và IPITEX Bangkok (Thái Lan). RIVA bảo trợ toàn diện từ giai đoạn hoàn thiện hồ sơ, đăng ký sở hữu trí tuệ đến tập huấn thuyết trình tiếng Anh và trực tiếp dẫn đoàn thi đấu.',
+  photos: [
+    {
+      id: 'showcase-1',
+      title: 'Lễ Trao Giải & Vinh Danh Huy Chương Vàng Quốc Tế',
+      imageUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=80',
+      badgeType: 'gold'
+    },
+    {
+      id: 'showcase-2',
+      title: 'Thuyết Trình Đề Tài Trước Hội Đồng Giám Khảo Quốc Tế',
+      imageUrl: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&auto=format&fit=crop&q=80',
+      badgeType: 'sky'
+    },
+    {
+      id: 'showcase-3',
+      title: 'Đoàn Việt Nam Gặt Hái Thành Tích Vô Địch & Cúp Đặc Biệt',
+      imageUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop&q=80',
+      badgeType: 'success'
+    }
+  ]
+};
 
