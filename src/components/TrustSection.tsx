@@ -3,14 +3,14 @@ import { ShieldCheck, Award, CheckCircle2 } from 'lucide-react';
 
 export const TrustSection: React.FC = () => {
   const partners = [
-    { name: 'IFIA', desc: 'Hiệp hội Quốc tế các Nhà Phát minh', country: 'Geneva / Global' },
-    { name: 'WIIPA', desc: 'Hiệp hội Sở hữu Trí tuệ Thế giới', country: 'Global' },
-    { name: 'SVIIF', desc: 'Silicon Valley Invention Festival', country: 'Hoa Kỳ' },
-    { name: 'IPITEX', desc: 'Triển lãm Phát minh Bangkok', country: 'Thái Lan' },
-    { name: 'iENA', desc: 'Triển lãm Sáng chế Nuremberg', country: 'Cộng hòa LB Đức' },
-    { name: 'GENEVA INVENTIONS', desc: 'Triển lãm Sáng chế Quốc tế Geneva', country: 'Thụy Sĩ' },
-    { name: 'KIPA', desc: 'Hiệp hội Thúc đẩy Sáng chế Hàn Quốc', country: 'Hàn Quốc' },
-    { name: 'WIPO PARTNER', desc: 'Tổ chức Sở hữu Trí tuệ Thế giới', country: 'LHQ' }
+    { name: 'IFIA', desc: 'Hiệp hội Quốc tế các Nhà Phát minh', country: 'Thụy Sĩ / Geneva', flag: '🇨🇭' },
+    { name: 'WIIPA', desc: 'Hiệp hội Sở hữu Trí tuệ Thế giới', country: 'Quốc tế', flag: '🌐' },
+    { name: 'SVIIF', desc: 'Silicon Valley Invention Festival', country: 'Hoa Kỳ', flag: '🇺🇸' },
+    { name: 'IPITEX', desc: 'Triển lãm Phát minh Bangkok', country: 'Thái Lan', flag: '🇹🇭' },
+    { name: 'iENA', desc: 'Triển lãm Sáng chế Nuremberg', country: 'Cộng hòa LB Đức', flag: '🇩🇪' },
+    { name: 'GENEVA INVENTIONS', desc: 'Triển lãm Sáng chế Quốc tế Geneva', country: 'Thụy Sĩ', flag: '🇨🇭' },
+    { name: 'KIPA', desc: 'Hiệp hội Thúc đẩy Sáng chế Hàn Quốc', country: 'Hàn Quốc', flag: '🇰🇷' },
+    { name: 'WIPO PARTNER', desc: 'Tổ chức Sở hữu Trí tuệ Thế giới', country: 'Liên Hợp Quốc', flag: '🇺🇳' }
   ];
 
   return (
@@ -24,18 +24,17 @@ export const TrustSection: React.FC = () => {
           {partners.map((p, idx) => (
             <div key={idx} className="partner-logo-item">
               <div style={{
-                width: '32px',
-                height: '32px',
+                width: '36px',
+                height: '36px',
                 borderRadius: '8px',
-                background: 'rgba(51, 102, 255, 0.28)',
-                color: 'var(--color-sky)',
+                background: 'rgba(51, 102, 255, 0.25)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: 800,
-                fontSize: '12px'
+                fontSize: '22px',
+                lineHeight: 1
               }}>
-                {p.name.slice(0, 2)}
+                {p.flag}
               </div>
               <div>
                 <div className="partner-logo-text" style={{ color: 'white' }}>{p.name}</div>

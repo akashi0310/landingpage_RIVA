@@ -129,7 +129,7 @@ VALUES
     'US', 
     '🇺🇸', 
     'Santa Clara Convention Center, Silicon Valley, California, USA', 
-    'STEM, AI & Sáng chế Đổi mới', 
+    'STEM, AI & Sáng chế Đổi mới',  
     'open', 
     '2027-06-15', 
     'Tháng 8/2027', 

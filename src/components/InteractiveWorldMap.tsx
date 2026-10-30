@@ -566,8 +566,8 @@ export const InteractiveWorldMap: React.FC<InteractiveWorldMapProps> = ({
                 <span style={{ fontWeight: 800, color: 'white', fontSize: '14px' }}>
                   {activeDest ? activeDest.title : 'TRUNG TÂM ĐIỀU PHỐI RIVA VIỆT NAM'}
                 </span>
-                <span className="badge badge-gold" style={{ fontSize: '10px', padding: '2px 6px' }}>
-                  {activeDest ? activeDest.countryCode : 'HUB QUỐC GIA'}
+                <span className="badge badge-gold" style={{ fontSize: '11px', padding: '2px 8px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  {activeDest ? `${activeDest.flag} ${activeDest.country}` : '🇻🇳 HUB QUỐC GIA'}
                 </span>
               </div>
               <div style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginTop: '2px' }}>

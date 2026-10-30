@@ -96,7 +96,7 @@ export const AchievementsAndProcess: React.FC<AchievementsAndProcessProps> = ({
               <span>LỘ TRÌNH CHUẨN HÓA</span>
             </div>
             <h2 className="section-title">
-              QUY TRÌNH THAM DỰ TINH GỌN & CHUYÊN NGHIỆP
+              QUY TRÌNH THAM DỰ
             </h2>
             <p className="section-desc">
               Hệ thống 7 bước khép kín từ khâu tiếp nhận ý tưởng đến khi vinh danh trên bục trao giải quốc tế.

@@ -27,7 +27,7 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
   onBack,
   onRegister
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'eligibility' | 'categories' | 'dossier' | 'timeline' | 'faq'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'eligibility' | 'categories' | 'dossier' | 'faq'>('overview');
 
   return (
     <div style={{ minHeight: '100vh', paddingBottom: '100px' }}>
@@ -55,7 +55,7 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
 
       {/* Hero Banner for Competition Detail (matching 8.png top middle) */}
       <div style={{
-        background: 'radial-gradient(ellipse at 50% 20%, rgba(51, 102, 255, 0.4) 0%, rgba(9, 21, 61, 0.96) 65%, #050d26 100%)',
+        background: 'radial-gradient(ellipse at 50% 20%, rgba(20, 55, 160, 0.4) 0%, rgba(5, 13, 38, 0.98) 65%, #030818 100%)',
         borderBottom: '1px solid var(--color-border)',
         padding: '50px 0 40px',
         position: 'relative'
@@ -127,7 +127,7 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
             className={`tab-item ${activeTab === 'eligibility' ? 'active' : ''}`}
             onClick={() => setActiveTab('eligibility')}
           >
-            ĐIỀU KIỆN
+            ĐỐI TƯỢNG THAM GIA
           </button>
           <button 
             className={`tab-item ${activeTab === 'categories' ? 'active' : ''}`}
@@ -140,12 +140,6 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
             onClick={() => setActiveTab('dossier')}
           >
             HỒ SƠ
-          </button>
-          <button 
-            className={`tab-item ${activeTab === 'timeline' ? 'active' : ''}`}
-            onClick={() => setActiveTab('timeline')}
-          >
-            TIMELINE
           </button>
           <button 
             className={`tab-item ${activeTab === 'faq' ? 'active' : ''}`}
@@ -204,10 +198,6 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
                   <div style={{ fontWeight: 700, color: 'var(--color-gold-bright)', marginTop: '4px' }}>{competition.event_date}</div>
                 </div>
 
-                <div style={{ padding: '14px', background: 'rgba(255, 255, 255, 0.04)', borderRadius: '8px' }}>
-                  <div style={{ fontSize: '12px', color: 'var(--color-text-dim)' }}>Quy chế đoàn Việt Nam:</div>
-                  <div style={{ fontWeight: 700, color: '#60A5FA', marginTop: '4px' }}>Tập huấn trước xuất cảnh & Trực tiếp hỗ trợ xin Visa</div>
-                </div>
               </div>
             </div>
           </div>
@@ -216,7 +206,7 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
         {/* Tab 2: Eligibility */}
         {activeTab === 'eligibility' && (
           <div className="glass-card" style={{ padding: '36px' }}>
-            <h3 style={{ fontSize: '22px', marginBottom: '20px' }}>Đối tượng & Điều kiện tham gia</h3>
+            <h3 style={{ fontSize: '22px', marginBottom: '20px' }}>Đối tượng tham gia</h3>
             <div className="grid-3" style={{ gap: '20px' }}>
               <div style={{ padding: '24px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', border: '1px solid var(--color-border)' }}>
                 <div style={{ fontSize: '28px', marginBottom: '12px' }}>👨‍🎓</div>
@@ -292,45 +282,6 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
           </div>
         )}
 
-        {/* Tab 5: Timeline */}
-        {activeTab === 'timeline' && (
-          <div className="glass-card" style={{ padding: '36px' }}>
-            <h3 style={{ fontSize: '22px', marginBottom: '24px' }}>Lộ trình các mốc thời gian (Timeline)</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {(competition.timeline || [
-                { step: '01', title: 'Mở cổng nộp hồ sơ sơ tuyển', desc: 'Thí sinh đăng ký qua website RIVA, hội đồng thẩm định tính mới của đề tài', date: '01/01/2027' },
-                { step: '02', title: 'Cố vấn chuyên môn & Thử nghiệm', desc: 'Chuyên gia RIVA hỗ trợ tối ưu Poster, tập dượt thuyết trình tiếng Anh', date: '15/04/2027' },
-                { step: '03', title: 'Hoàn tất thủ tục BTC Quốc tế & Visa', desc: 'Nộp danh sách chính thức cho ban tổ chức tại Mỹ, tập huấn phỏng vấn visa', date: '15/06/2027' },
-                { step: '04', title: 'Tranh tài tại Silicon Valley', desc: 'Thuyết trình trước ban giám khảo quốc tế tại California, tham quan Đại học Stanford', date: '12/08/2027' }
-              ]).map((tl, idx) => (
-                <div key={idx} style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
-                  <div style={{ 
-                    width: '46px', 
-                    height: '46px', 
-                    borderRadius: '12px', 
-                    background: 'linear-gradient(135deg, #CC9900, #F0F2C0)', 
-                    color: '#050d26',
-                    fontWeight: 900,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '18px',
-                    flexShrink: 0
-                  }}>
-                    {tl.step}
-                  </div>
-                  <div style={{ flex: 1, paddingBottom: '18px', borderBottom: '1px solid var(--color-border)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                      <h4 style={{ fontSize: '17px', color: 'white' }}>{tl.title}</h4>
-                      <span className="badge badge-gold">{tl.date}</span>
-                    </div>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '14px' }}>{tl.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Tab 7: FAQ */}
         {activeTab === 'faq' && (
