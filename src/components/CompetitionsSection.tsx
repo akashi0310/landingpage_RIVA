@@ -10,6 +10,7 @@ import {
   Clock
 } from 'lucide-react';
 import { Competition } from '../types';
+import { CompetitionFlag } from './CompetitionFlag';
 
 interface CompetitionsSectionProps {
   competitions: Competition[];
@@ -65,7 +66,7 @@ export const CompetitionsSection: React.FC<CompetitionsSectionProps> = ({
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '28px' }}>{comp.flag_emoji}</span>
+                      <CompetitionFlag flag={comp.flag_emoji} countryCode={comp.country_code} size="md" />
                       <div>
                         <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                           Quốc gia

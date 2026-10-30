@@ -60,6 +60,7 @@ import {
 } from '../types';
 import { defaultSiteSettings, defaultAboutArticle, defaultNewsArticles, defaultShowcaseData } from '../lib/content';
 import { ArticleModal } from './ArticleModal';
+import { CompetitionFlag, CompetitionFlagPicker } from './CompetitionFlag';
 import { setAdminPassword, sanitizeUrl } from '../lib/security';
 
 interface AdminDashboardProps {
@@ -1688,7 +1689,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                       <tr key={c.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
                         <td style={{ padding: '16px 20px', fontWeight: 700, color: 'white' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontSize: '18px' }}>{c.flag_emoji}</span>
+                            <CompetitionFlag flag={c.flag_emoji} countryCode={c.country_code} size="sm" />
                             <div>
                               <div>{c.code} — {c.title}</div>
                               {c.organizer && <div style={{ fontSize: '11px', color: 'var(--color-text-dim)', fontWeight: 400 }}>BTC: {c.organizer}</div>}
@@ -2393,29 +2394,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
               </div>
 
               <form onSubmit={handleSaveCompSubmit}>
-                <div className="grid-2" style={{ gap: '14px', marginBottom: '14px' }}>
-                  <div className="form-group">
-                    <label className="form-label">Mã viết tắt (ví dụ: SVIIF, INTARG) *</label>
-                    <input
-                      type="text"
-                      required
-                      className="form-input"
-                      placeholder="SVIIF"
-                      value={editingComp.code || ''}
-                      onChange={(e) => setEditingComp({ ...editingComp, code: e.target.value })}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Emoji Quốc kỳ (ví dụ: 🇺🇸, 🇵🇱, 🇲🇾)</label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      placeholder="🇺🇸"
-                      value={editingComp.flag_emoji || ''}
-                      onChange={(e) => setEditingComp({ ...editingComp, flag_emoji: e.target.value })}
-                    />
-                  </div>
+                <div className="form-group" style={{ marginBottom: '14px' }}>
+                  <label className="form-label">Mã viết tắt cuộc thi (ví dụ: SVIIF, INTARG, iENA...) *</label>
+                  <input
+                    type="text"
+                    required
+                    className="form-input"
+                    placeholder="SVIIF"
+                    value={editingComp.code || ''}
+                    onChange={(e) => setEditingComp({ ...editingComp, code: e.target.value })}
+                  />
                 </div>
+
+                {/* Bộ định danh Quốc kỳ: Nhập mã chữ US/DE hoặc Tải ảnh siêu nhỏ từ máy */}
+                <CompetitionFlagPicker
+                  value={editingComp.flag_emoji || ''}
+                  countryCode={editingComp.country_code || 'US'}
+                  onChange={(newFlag, newCountryCode) => {
+                    setEditingComp({
+                      ...editingComp,
+                      flag_emoji: newFlag,
+                      country_code: newCountryCode || editingComp.country_code || 'US'
+                    });
+                  }}
+                />
 
                 <div className="form-group" style={{ marginBottom: '14px' }}>
                   <label className="form-label">Tên đầy đủ cuộc thi *</label>

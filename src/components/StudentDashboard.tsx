@@ -456,11 +456,16 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                   value={formData.competition_code}
                   onChange={(e) => setFormData({ ...formData, competition_code: e.target.value })}
                 >
-                  {competitions.map(c => (
-                    <option key={c.id} value={c.code}>
-                      {c.flag_emoji} {c.title}
-                    </option>
-                  ))}
+                  {competitions.map(c => {
+                    const flagLabel = (!c.flag_emoji || c.flag_emoji.startsWith('data:') || c.flag_emoji.startsWith('http'))
+                      ? (c.country_code ? `[${c.country_code}]` : '🌐')
+                      : c.flag_emoji;
+                    return (
+                      <option key={c.id} value={c.code}>
+                        {flagLabel} {c.title}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
             </div>

@@ -15,6 +15,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { Competition } from '../types';
+import { CompetitionFlag } from './CompetitionFlag';
 
 interface CompetitionDetailViewProps {
   competition: Competition;
@@ -65,7 +66,7 @@ export const CompetitionDetailView: React.FC<CompetitionDetailViewProps> = ({
             {/* Left: Flag & Title */}
             <div style={{ maxWidth: '750px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-                <span style={{ fontSize: '48px', lineHeight: 1 }}>{competition.flag_emoji}</span>
+                <CompetitionFlag flag={competition.flag_emoji} countryCode={competition.country_code} size="lg" />
                 <div>
                   <div style={{
                     fontSize: '14px',

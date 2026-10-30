@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Sparkles, Filter, ArrowRight, UserCheck, CheckCircle2 } from 'lucide-react';
 import { Competition } from '../types';
+import { CompetitionFlag } from './CompetitionFlag';
 
 interface OpportunityFinderProps {
   competitions: Competition[];
@@ -132,7 +133,7 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
                   onClick={() => onSelectCompetition(comp.code)}
                   style={{ gap: '6px' }}
                 >
-                  <span>{comp.flag_emoji}</span>
+                  <CompetitionFlag flag={comp.flag_emoji} countryCode={comp.country_code} size="sm" />
                   <span>{comp.code}</span>
                   <ArrowRight size={12} />
                 </button>
