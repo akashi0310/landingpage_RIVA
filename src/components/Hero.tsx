@@ -101,19 +101,19 @@ export const Hero: React.FC<HeroProps> = ({
             VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO & KIỂM ĐỊNH CHẤT LƯỢNG RIVA
           </h1>
 
-          {/* Bold Clean Sub-header (Like SVIIF: Inventions, Artificial Intelligence & Future Technologies) */}
+          {/* Headline lớn: Đấu Trường Quốc Tế */}
           <div className="sviif-hero-sub">
-            Sáng chế, Trí tuệ Nhân tạo & Các Công nghệ Tương lai
+            ĐƯA TÀI NĂNG VIỆT NAM RA ĐẤU TRƯỜNG QUỐC TẾ
           </div>
 
-          {/* Location & Global Hubs (Like SVIIF: Silicon Valley, California, USA) */}
+          {/* Slogan chính thống */}
           <div className="sviif-hero-location">
-            Thung lũng Silicon (Mỹ) • Geneva (Thụy Sĩ) • Nuremberg (Đức) • Bangkok (Thái Lan)
+            Kết nối tài năng Việt Nam với đấu trường khoa học & sáng tạo quốc tế
           </div>
 
-          {/* Season / Dates (Like SVIIF: August 6-8, 2027) */}
+          {/* Các đấu trường danh giá & Mùa giải */}
           <div className="sviif-hero-date">
-            MÙA GIẢI TUYỂN CHỌN & DẪN ĐOÀN THI ĐẤU QUỐC TẾ 2026 – 2027
+            SVIIF (Mỹ) • Geneva (Thụy Sĩ) • iENA (Đức) • IPITEX (Thái Lan) • MÙA GIẢI 2026 – 2027
           </div>
 
           {/* Action Button Group */}
