@@ -129,15 +129,16 @@ export const App: React.FC = () => {
     const el = document.getElementById(id);
     if (!el) return;
 
-    let offset = 74;
+    const baseOffset = isAdminLoggedIn ? 112 : 74;
+    let offset = baseOffset;
     if (id === 'competitions') {
-      offset = 80;
+      offset = baseOffset + 6;
     } else if (id === 'about') {
-      offset = 60;
+      offset = baseOffset - 10;
     } else if (id === 'process') {
-      offset = 60;
+      offset = baseOffset - 10;
     } else if (id === 'achievements') {
-      offset = 60;
+      offset = baseOffset - 10;
     }
 
     const rect = el.getBoundingClientRect();
@@ -222,75 +223,64 @@ export const App: React.FC = () => {
 
   return (
     <div className="app-root">
-      {/* Top Admin Quick Bar if Admin is logged in */}
-      {isAdminLoggedIn && (
-        <div style={{
-          background: 'linear-gradient(90deg, #09153d 0%, #10245e 50%, #09153d 100%)',
-          borderBottom: '1px solid rgba(204, 153, 0, 0.4)',
-          padding: '8px 16px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          fontSize: '12px',
-          color: 'white',
-          position: 'sticky',
-          top: 0,
-          zIndex: 1000
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <ShieldCheck size={16} color="var(--color-gold-bright)" />
-            <span style={{ fontWeight: 700 }}>Chế độ Quản Trị Viên RIVA đang hoạt động</span>
-          </div>
+      {/* Frozen / Fixed Top Navigation Bar (Luôn ghim ở đỉnh màn hình kể cả khi lướt xuống cuối trang) */}
+      {activeView !== 'admin-dashboard' && (
+        <div className="site-frozen-header-wrapper">
+          {isAdminLoggedIn && (
+            <div style={{
+              background: 'linear-gradient(90deg, #09153d 0%, #10245e 50%, #09153d 100%)',
+              borderBottom: '1px solid rgba(204, 153, 0, 0.4)',
+              padding: '8px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontSize: '12px',
+              color: 'white'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ShieldCheck size={16} color="var(--color-gold-bright)" />
+                <span style={{ fontWeight: 700 }}>Chế độ Quản Trị Viên RIVA đang hoạt động</span>
+              </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            {activeView !== 'admin-dashboard' ? (
-              <button 
-                className="btn btn-sm btn-gold" 
-                style={{ padding: '4px 10px', fontSize: '11px', gap: '4px' }}
-                onClick={() => { setActiveView('admin-dashboard'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              >
-                <Settings size={13} />
-                <span>Vào Dashboard Quản Trị</span>
-              </button>
-            ) : (
-              <button 
-                className="btn btn-sm btn-outline" 
-                style={{ padding: '4px 10px', fontSize: '11px', gap: '4px' }}
-                onClick={() => { setActiveView('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              >
-                <Eye size={13} />
-                <span>Xem Website</span>
-              </button>
-            )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <button 
+                  className="btn btn-sm btn-gold" 
+                  style={{ padding: '4px 10px', fontSize: '11px', gap: '4px' }}
+                  onClick={() => { setActiveView('admin-dashboard'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                >
+                  <Settings size={13} />
+                  <span>Vào Dashboard Quản Trị</span>
+                </button>
 
-            <button 
-              onClick={handleAdminLogout} 
-              style={{ background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-            >
-              <LogOut size={13} />
-              <span>Đăng xuất</span>
-            </button>
-          </div>
+                <button 
+                  onClick={handleAdminLogout} 
+                  style={{ background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                >
+                  <LogOut size={13} />
+                  <span>Đăng xuất</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          <Header 
+            onNavigate={navigateToSection} 
+            onOpenAdmin={() => {
+              if (isAdminLoggedIn) {
+                setActiveView('admin-dashboard');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                handleOpenAdminLogin();
+              }
+            }}
+            siteSettings={siteSettings}
+          />
         </div>
       )}
 
-      {/* Landing page navigation */}
-      <Header 
-        onNavigate={navigateToSection} 
-        onOpenAdmin={() => {
-          if (isAdminLoggedIn) {
-            setActiveView('admin-dashboard');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          } else {
-            handleOpenAdminLogin();
-          }
-        }}
-        siteSettings={siteSettings}
-      />
-
       {/* VIEW 1: HOME LANDING PAGE */}
       {activeView === 'home' && (
-        <main id="top" className="landing-page">
+        <main id="top" className="landing-page" style={{ paddingTop: isAdminLoggedIn ? '106px' : '68px' }}>
           {/* Hero with glowing interactive map */}
           <Hero 
             onExploreClick={() => navigateToSection('competitions')}
@@ -343,19 +333,21 @@ export const App: React.FC = () => {
 
       {/* VIEW 2: CHI TIẾT CUỘC THI (SVIIF / IPITEX / iENA / GENEVA...) */}
       {activeView === 'competition-detail' && currentCompetition && (
-        <CompetitionDetailView 
-          competition={currentCompetition}
-          onBack={() => {
-            if (window.history.length > 1 && window.location.hash.startsWith('#competition-')) {
-              window.history.back();
-            } else {
-              setActiveView('home');
-              window.history.pushState({ view: 'home' }, '', window.location.pathname + window.location.search);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-          }}
-          onRegister={(code) => handleApplyCompetition(code)}
-        />
+        <div style={{ paddingTop: isAdminLoggedIn ? '106px' : '68px' }}>
+          <CompetitionDetailView 
+            competition={currentCompetition}
+            onBack={() => {
+              if (window.history.length > 1 && window.location.hash.startsWith('#competition-')) {
+                window.history.back();
+              } else {
+                setActiveView('home');
+                window.history.pushState({ view: 'home' }, '', window.location.pathname + window.location.search);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+            onRegister={(code) => handleApplyCompetition(code)}
+          />
+        </div>
       )}
 
       {/* VIEW 3: ADMIN DASHBOARD */}

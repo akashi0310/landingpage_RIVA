@@ -105,7 +105,7 @@ html {
 }
 
 body {
-  overflow-x: hidden;
+  overflow-x: clip;
   min-height: 100vh;
   width: 100%;
   position: relative;
@@ -113,26 +113,50 @@ body {
   background-color: #050d26;
 }
 
-
 #root,
-.app-root,
-.landing-page {
-  overflow-x: hidden;
+.app-root {
+  overflow-x: clip;
   width: 100%;
   max-width: 100%;
 }
 
-/* Typography Utilities */
-/* Header & Navigation */
-.site-header {
-  position: sticky;
+.landing-page {
+  overflow-x: clip;
+  width: 100%;
+  max-width: 100%;
+  padding-top: var(--header-height, 68px);
+}
+
+.competition-detail-view {
+  padding-top: var(--header-height, 68px);
+}
+
+/* Header & Navigation (Frozen / Fixed Top Navigation Bar) */
+.site-frozen-header-wrapper {
+  position: fixed;
   top: 0;
-  z-index: 900;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  pointer-events: auto;
+}
+
+.site-header {
+  position: relative;
+  width: 100%;
   background: rgba(5, 13, 38, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(117, 194, 250, 0.2);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(117, 194, 250, 0.22);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
   transition: all 0.25s ease;
+}
+
+.site-header.is-scrolled {
+  background: rgba(4, 10, 30, 0.98);
+  border-bottom: 1px solid rgba(204, 153, 0, 0.35);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.8), 0 0 24px rgba(51, 102, 255, 0.2);
 }
 
 .site-nav {

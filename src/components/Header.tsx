@@ -18,6 +18,17 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin, siteSettings }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Detect scroll to apply enhanced glassmorphism and shadow
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 15);
+    };
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Close mobile menu on resize to desktop
   useEffect(() => {
@@ -50,7 +61,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin, siteSet
   const hotlineNum = siteSettings?.hotline || '0988.234.567';
 
   return (
-    <header className="site-header">
+    <header className={`site-header ${isScrolled ? 'is-scrolled' : ''}`}>
       <nav aria-label="Điều hướng chính" className="container site-nav">
         {/* Logo RIVA */}
         <div
