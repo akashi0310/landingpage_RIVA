@@ -8,7 +8,7 @@ interface StudentStoriesProps {
 
 export const StudentStories: React.FC<StudentStoriesProps> = ({ achievements }) => {
   return (
-    <section id="stories" style={{ padding: '90px 0', background: 'rgba(5, 16, 38, 0.5)' }}>
+    <section id="achievements" style={{ padding: '90px 0', background: 'rgba(5, 16, 38, 0.5)' }}>
       <div className="container">
         {/* Section Header */}
         <div className="section-header">

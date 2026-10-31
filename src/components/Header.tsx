@@ -5,7 +5,6 @@ import { SiteSettings } from '../types';
 const links = [
   ['about', 'Giới thiệu'],
   ['competitions', 'Cuộc thi'],
-  ['finder', 'Tìm cơ hội'],
   ['achievements', 'Thành tích'],
   ['process', 'Quy trình'],
   ['news', 'Tin tức']
