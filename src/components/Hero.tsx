@@ -35,7 +35,7 @@ export const Hero: React.FC<HeroProps> = ({
     try {
       const saved = localStorage.getItem('riva_showcase_data');
       if (saved) return JSON.parse(saved);
-    } catch (e) {}
+    } catch (e) { }
     return defaultShowcaseData;
   });
 
@@ -43,7 +43,7 @@ export const Hero: React.FC<HeroProps> = ({
     try {
       const saved = localStorage.getItem('riva_hero_data');
       if (saved) return JSON.parse(saved);
-    } catch (e) {}
+    } catch (e) { }
     return defaultHeroData;
   });
 
@@ -55,7 +55,7 @@ export const Hero: React.FC<HeroProps> = ({
     try {
       const list = await api.getNewsArticles();
       if (list && list.length > 0) setNewsArticles(list);
-    } catch (e) {}
+    } catch (e) { }
   };
 
   useEffect(() => {
@@ -63,13 +63,13 @@ export const Hero: React.FC<HeroProps> = ({
       try {
         const saved = localStorage.getItem('riva_showcase_data');
         if (saved) setShowcaseData(JSON.parse(saved));
-      } catch (e) {}
+      } catch (e) { }
     };
     const handleHeroUpdate = () => {
       try {
         const saved = localStorage.getItem('riva_hero_data');
         if (saved) setHeroData(JSON.parse(saved));
-      } catch (e) {}
+      } catch (e) { }
     };
     window.addEventListener('riva_showcase_updated', handleUpdate);
     window.addEventListener('riva_hero_updated', handleHeroUpdate);
@@ -260,7 +260,7 @@ export const Hero: React.FC<HeroProps> = ({
 
           {/* Grand SVIIF-Style Gold Title (Cinzel Serif) */}
           <h1 className="sviif-hero-title">
-            {heroData.title || 'VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO & KIỂM ĐỊNH CHẤT LƯỢNG RIVA'}
+            {heroData.title || 'VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO VÀ KIỂM ĐỊNH CHẤT LƯỢNG RIVA'}
           </h1>
 
           {/* Headline lớn: Đấu Trường Quốc Tế */}
@@ -470,7 +470,7 @@ export const Hero: React.FC<HeroProps> = ({
             {/* Modal Footer Caption */}
             <div style={{ marginTop: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
               <div style={{ fontSize: '13px', color: 'var(--color-text-light)' }}>
-                📍 Silicon Valley, California, USA • Bản quyền tư liệu thuộc VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO & KIỂM ĐỊNH CHẤT LƯỢNG RIVA
+                📍 Silicon Valley, California, USA • Bản quyền tư liệu thuộc VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO VÀ KIỂM ĐỊNH CHẤT LƯỢNG RIVA
               </div>
               <button
                 type="button"

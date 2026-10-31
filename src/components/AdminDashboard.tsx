@@ -205,14 +205,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
     try {
       const saved = localStorage.getItem('riva_showcase_data');
       if (saved) return JSON.parse(saved);
-    } catch (e) {}
+    } catch (e) { }
     return defaultShowcaseData;
   });
   const [heroData, setHeroData] = useState<HeroBannerData>(() => {
     try {
       const saved = localStorage.getItem('riva_hero_data');
       if (saved) return JSON.parse(saved);
-    } catch (e) {}
+    } catch (e) { }
     return defaultHeroData;
   });
 
@@ -416,7 +416,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
       try {
         localStorage.setItem('riva_showcase_data', JSON.stringify(newShowcase));
         window.dispatchEvent(new Event('riva_showcase_updated'));
-      } catch (e) {}
+      } catch (e) { }
       showToast(`ℹ️ Đã hủy liên kết bài báo ở Vị trí ${slotIdx + 1}`);
       return;
     }
@@ -442,7 +442,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
       try {
         localStorage.setItem('riva_showcase_data', JSON.stringify(newShowcase));
         window.dispatchEvent(new Event('riva_showcase_updated'));
-      } catch (e) {}
+      } catch (e) { }
       addAuditLog('Liên kết bài báo với Ảnh Sân Khấu', `Vị trí ${slotIdx + 1}: ${targetArticle.title}`);
       showToast(`✅ Đã liên kết Vị trí ${slotIdx + 1} với bài báo: "${targetArticle.title}"`);
     }
@@ -551,7 +551,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
         try {
           localStorage.setItem('riva_showcase_data', JSON.stringify(newShowcaseData));
           window.dispatchEvent(new Event('riva_showcase_updated'));
-        } catch (err) {}
+        } catch (err) { }
       }
       addAuditLog(isEdit ? 'Chỉnh sửa bài viết tin tức' : 'Thêm bài viết tin tức mới', articleToSave.title);
       showToast('✅ Đã lưu bài viết và xuất bản thành công!');
@@ -579,7 +579,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
         try {
           localStorage.setItem('riva_showcase_data', JSON.stringify(newShowcase));
           window.dispatchEvent(new Event('riva_showcase_updated'));
-        } catch (e) {}
+        } catch (e) { }
       }
 
       window.dispatchEvent(new Event('riva_news_updated'));
@@ -2694,7 +2694,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome, on
                       lineHeight: 1.25
                     }}
                   >
-                    {heroData.title || 'VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO & KIỂM ĐỊNH CHẤT LƯỢNG RIVA'}
+                    {heroData.title || 'VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO VÀ KIỂM ĐỊNH CHẤT LƯỢNG RIVA'}
                   </h4>
                   <div style={{ fontSize: '11px', fontWeight: 700, color: 'white', letterSpacing: '0.04em', marginBottom: '10px' }}>
                     {heroData.subtitle || 'ĐƯA TÀI NĂNG VIỆT NAM RA ĐẤU TRƯỜNG QUỐC TẾ'}

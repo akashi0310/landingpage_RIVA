@@ -321,7 +321,7 @@ export const defaultHeroData: HeroBannerData = {
   enable_embers: true,
   enable_watermark: true,
   badge_text: 'HỆ THỐNG ĐẤU TRƯỜNG SÁNG CHẾ & NCKH QUỐC TẾ • RIVA GLOBAL',
-  title: 'VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO & KIỂM ĐỊNH CHẤT LƯỢNG RIVA',
+  title: 'VIỆN NGHIÊN CỨU ĐỔI MỚI SÁNG TẠO VÀ KIỂM ĐỊNH CHẤT LƯỢNG RIVA',
   subtitle: 'ĐƯA TÀI NĂNG VIỆT NAM RA ĐẤU TRƯỜNG QUỐC TẾ',
   location_slogan: 'Kết nối tài năng Việt Nam với đấu trường khoa học & sáng tạo quốc tế',
   primary_btn_text: 'CỔNG ĐĂNG KÝ SƠ TUYỂN ĐANG MỞ →'
